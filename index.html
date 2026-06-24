@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="A professional slide presentation on ICD-11, how it works inside an EMR, its differences from ICD-10, and the case for HCD — the Harvey-road Classification of Diseases. By Dr Manuwa Tolu, Harvey Road General Hospital, Yaba." />
+  <meta name="description" content="A professional slide presentation on ICD-11 — what it is, how its codes are built, and how it works inside an EMR, with a live ICD-11 coder connected to the WHO ICD-11 API. By Dr Manuwa Tolu, Harvey Road General Hospital, Yaba." />
   <meta name="author" content="Dr Manuwa Tolu" />
-  <title>ICD-11 &amp; HCD — Harvey Road General Hospital, Yaba</title>
+  <title>ICD-11 — Harvey Road General Hospital, Yaba</title>
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,21 +16,6 @@
 
   <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
-  <header class="topbar" id="topbar">
-    <a class="brand" href="#cover" data-target="cover" aria-label="Go to cover slide">
-      <img src="assets/img/logo.svg" alt="" class="brand__logo" />
-      <span class="brand__text">
-        <strong>Harvey Road General Hospital</strong>
-        <small>Yaba, Lagos</small>
-      </span>
-    </a>
-
-    <div class="topbar__actions">
-      <button class="btn btn--ghost" id="btnPdf" type="button" title="Save the deck as a PDF">PDF</button>
-      <button class="btn btn--solid" id="btnPptx" type="button" title="Download as PowerPoint">PowerPoint</button>
-    </div>
-  </header>
-
   <div class="deck" id="deck">
     <div class="stage" id="stage">
 
@@ -40,8 +25,8 @@
       <div class="cover__inner">
         <img src="assets/img/logo.svg" alt="Harvey Road General Hospital crest" class="cover__logo" />
         <p class="eyebrow">Harvey Road General Hospital &bull; Yaba, Lagos</p>
-        <h1 class="cover__title">From <span>ICD-11</span> to <span>HCD</span></h1>
-        <p class="cover__subtitle">Modern disease classification &mdash; and a practical, local layer for our hospital.</p>
+        <h1 class="cover__title">Understanding <span>ICD-11</span></h1>
+        <p class="cover__subtitle">The WHO&rsquo;s modern standard for classifying disease &mdash; and how it actually works.</p>
         <div class="cover__byline">
           <div class="avatar" aria-hidden="true">MT</div>
           <div>
@@ -53,7 +38,6 @@
           <button class="btn btn--solid btn--lg" data-target="what-is-icd" type="button">Begin &rarr;</button>
           <button class="btn btn--ghost btn--lg" id="btnPptx2" type="button">Download deck</button>
         </div>
-        <p class="cover__hint">Navigate with the arrows below, your &larr; &rarr; keys, or swipe.</p>
       </div>
     </section>
 
@@ -159,7 +143,7 @@
               <li><span class="d d-1"></span><strong>1</strong> &mdash; chapter (01 Infectious)</li>
               <li><span class="d d-2"></span><strong>F</strong> &mdash; block (2nd char is always a letter)</li>
               <li><span class="d d-3"></span><strong>40</strong> &mdash; category (falciparum malaria)</li>
-              <li><span class="d d-4"></span><strong>.0</strong> &mdash; detail (cerebral) &middot; can also cluster extensions</li>
+              <li><span class="d d-4"></span><strong>.0</strong> &mdash; detail (cerebral) &middot; can cluster extensions</li>
             </ul>
             <p class="ca-note">Letters <strong>O</strong> and <strong>I</strong> are never used &mdash; no confusion with 0 and 1.</p>
           </div>
@@ -167,30 +151,31 @@
       </div>
     </section>
 
-    <!-- ============ 6 · EXAMPLES ============ -->
-    <section class="slide" id="examples" data-title="Worked examples">
+    <!-- ============ 6 · BUILDING A CODE / EXTENSIONS ============ -->
+    <section class="slide" id="examples" data-title="Extensions">
       <div class="slide__inner">
-        <p class="kicker">See it in action</p>
-        <h2>ICD-10 &rarr; ICD-11</h2>
-        <p class="lead">More specific, with the cause built in.</p>
+        <p class="kicker">Post-coordination</p>
+        <h2>How extensions work</h2>
+        <p class="lead">Combine a <strong>stem code</strong> with <strong>extension codes</strong> to add detail &mdash; instead of a separate code for every case.</p>
 
-        <div class="grid grid-3">
-          <div class="example-card">
-            <span class="tag">Severe malaria</span>
-            <div class="ex-codes"><code class="old">B50.0</code><span>&rarr;</span><code class="new">1F40.0</code></div>
-            <small>Falciparum, cerebral complications.</small>
+        <div class="build">
+          <div class="build__step">
+            <span class="build__label">Stem code</span>
+            <div class="build__chip build__chip--stem"><code>NC92</code><small>Fracture of forearm</small></div>
           </div>
-          <div class="example-card">
-            <span class="tag">UTI, E. coli</span>
-            <div class="ex-codes"><code class="old">N39.0 + B96.2</code><span>&rarr;</span><code class="new">GC08.0</code></div>
-            <small>Two codes &rarr; one precise code.</small>
+          <div class="build__op">+</div>
+          <div class="build__step">
+            <span class="build__label">Extension</span>
+            <div class="build__chip build__chip--ext"><code>XK8G</code><small>Left</small></div>
           </div>
-          <div class="example-card">
-            <span class="tag">Pneumonia</span>
-            <div class="ex-codes"><code class="old">J18.9</code><span>&rarr;</span><code class="new">CA40.Z</code></div>
-            <small>Add an organism extension later.</small>
+          <div class="build__op">=</div>
+          <div class="build__step">
+            <span class="build__label">Cluster</span>
+            <div class="build__chip build__chip--result"><code>NC92&nbsp;&amp;&nbsp;XK8G</code><small>Fracture of left forearm</small></div>
           </div>
         </div>
+
+        <p class="footnote">Extensions capture <strong>laterality, severity, cause, timing</strong> and more &mdash; the same mechanism for any stem code.</p>
       </div>
     </section>
 
@@ -230,60 +215,49 @@
     <section class="slide" id="demo" data-title="Live ICD-11 coder">
       <div class="slide__inner slide__inner--wide">
         <p class="kicker">Try it yourself</p>
-        <h2>Live demo &mdash; code it the ICD-11 way</h2>
-        <p class="lead"><strong>Search</strong> &rarr; <strong>pick</strong> &rarr; <strong>refine</strong>, then we auto-map to HCD.</p>
+        <h2>Live ICD-11 coder</h2>
+        <p class="lead">Exactly how an EMR works: <strong>search</strong> the WHO ICD-11 classification, <strong>pick</strong> a code, then <strong>add an extension</strong>.</p>
 
         <div class="coder">
           <!-- search column -->
           <div class="coder__search">
             <div class="searchbox">
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-              <input type="text" id="icdSearch" placeholder="Search — malaria, sugar, broken arm…" autocomplete="off" aria-label="Search ICD-11" />
+              <input type="text" id="icdSearch" placeholder="Search ICD-11 — malaria, asthma, fracture…" autocomplete="off" aria-label="Search ICD-11" />
             </div>
-            <p class="coder__quicklabel">Common at HRGH:</p>
+            <div class="coder__status" id="coderStatus"><span class="dotpulse"></span> Type a diagnosis to search ICD-11</div>
+            <p class="coder__quicklabel">Common searches:</p>
             <div class="coder__quick" id="coderQuick"></div>
             <ul class="coder__results" id="icdResults" aria-live="polite"></ul>
           </div>
 
           <!-- selection column -->
-          <div class="coder__panel" id="coderPanel">
+          <div class="coder__panel">
             <div class="coder__selected" id="coderSelected">
               <span class="coder__chaptag" id="selChapter">&mdash;</span>
               <h3 id="selTitle">&mdash;</h3>
 
-              <div class="coder__refine" id="refineWrap" hidden>
-                <span class="coder__sublabel">Refine (more specific code):</span>
-                <div class="chipset" id="refineChips"></div>
+              <div class="coder__refine">
+                <span class="coder__sublabel">Add an extension &mdash; post-coordination:</span>
+                <div class="chipset" id="extChips"></div>
               </div>
 
-              <div class="coder__refine" id="latWrap" hidden>
-                <span class="coder__sublabel">Add extension &mdash; post-coordination:</span>
-                <div class="chipset" id="latChips"></div>
+              <div class="bigcode">
+                <span class="code-card__label">ICD-11 code / cluster</span>
+                <code id="outIcd">&mdash;</code>
+                <small id="outIcdTitle">&mdash;</small>
               </div>
 
-              <div class="code-cards">
-                <div class="code-card code-card--icd">
-                  <span class="code-card__label">ICD-11 cluster</span>
-                  <code id="outIcd">&mdash;</code>
-                  <small id="outIcdTitle">&mdash;</small>
-                </div>
-                <div class="code-card code-card--hcd">
-                  <span class="code-card__label">HCD (auto-mapped)</span>
-                  <code id="outHcd">&mdash;</code>
-                  <small id="outHcdTitle">&mdash;</small>
-                </div>
-              </div>
-
-              <p class="coder__note">✔ ICD-11 stored for NHIS/global reporting; HCD drives our local dashboard.</p>
+              <p class="coder__note" id="coderNote">Add an extension above to post-coordinate (e.g. laterality).</p>
             </div>
           </div>
         </div>
-        <p class="result-disclaimer">Mirrors the WHO Embedded Coding Tool (ICD-API). ICD-11 codes are real; HCD is a proposed local scheme. Demonstration only.</p>
+        <p class="result-disclaimer">Live results come from the WHO ICD-11 API when configured; otherwise built-in ICD-11 sample data is used. Extension codes shown illustrate post-coordination.</p>
       </div>
     </section>
 
     <!-- ============ 9 · PROS & CONS ============ -->
-    <section class="slide" id="proscons" data-title="Pros & Cons of ICD-11">
+    <section class="slide slide--tint" id="proscons" data-title="Pros & Cons of ICD-11">
       <div class="slide__inner">
         <p class="kicker">An honest appraisal</p>
         <h2>ICD-11: pros &amp; cons</h2>
@@ -302,100 +276,19 @@
             <ul>
               <li>Learning curve for ICD-10 staff.</li>
               <li>Needs tooling &amp; connectivity.</li>
-              <li>Not tuned to our local burden.</li>
+              <li>Migration &amp; retraining effort.</li>
             </ul>
           </div>
         </div>
-        <div class="callout callout--accent">That last gap &mdash; <strong>local fit</strong> &mdash; is what <strong>HCD</strong> closes.</div>
       </div>
     </section>
 
-    <!-- ============ 10 · HCD ============ -->
-    <section class="slide slide--dark" id="hcd" data-title="Introducing HCD">
-      <div class="slide__inner">
-        <p class="kicker kicker--light">Our proposal</p>
-        <h2>Introducing <span class="accent-text">HCD</span></h2>
-        <p class="lead lead--light">A light, local layer <em>on top of</em> ICD-11 &mdash; never a replacement.</p>
-
-        <div class="grid grid-2">
-          <div class="card card--dark">
-            <div class="card__icon">🦟</div>
-            <h3>Tuned to our burden</h3>
-            <p>Our top conditions &mdash; one tap away.</p>
-          </div>
-          <div class="card card--dark">
-            <div class="card__icon">⚡</div>
-            <h3>Fast at the OPD</h3>
-            <p>Short codes cut clicks and errors.</p>
-          </div>
-          <div class="card card--dark">
-            <div class="card__icon">📍</div>
-            <h3>Local context</h3>
-            <p>Season, RDT vs clinical, catchment.</p>
-          </div>
-          <div class="card card--dark">
-            <div class="card__icon">🔁</div>
-            <h3>ICD-11 compatible</h3>
-            <p>Stores the cluster &mdash; reporting is automatic.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ 11 · HCD STRUCTURE ============ -->
-    <section class="slide" id="hcd-structure" data-title="How HCD is built">
-      <div class="slide__inner">
-        <p class="kicker">Under the hood</p>
-        <h2>How an HCD code is built</h2>
-
-        <div class="anatomy">
-          <div class="anatomy__code">
-            <span class="seg seg-1">HCD</span><span class="dash">-</span><span class="seg seg-2">COM</span><span class="dash">-</span><span class="seg seg-3">01</span><span class="dot">.</span><span class="seg seg-4">Pf</span>
-          </div>
-          <div class="anatomy__legend">
-            <div><span class="dot-1"></span><strong>HCD</strong> &mdash; namespace</div>
-            <div><span class="dot-2"></span><strong>COM</strong> &mdash; chapter (Communicable)</div>
-            <div><span class="dot-3"></span><strong>01</strong> &mdash; condition (Malaria)</div>
-            <div><span class="dot-4"></span><strong>Pf</strong> &mdash; local modifier (P. falciparum)</div>
-          </div>
-        </div>
-
-        <div class="map-box">
-          <div class="map-box__hcd">
-            <span class="lbl">HCD code</span>
-            <code>HCD-COM-01.Pf</code>
-            <small>Malaria &mdash; falciparum</small>
-          </div>
-          <div class="map-box__arrow">maps to&nbsp;&rarr;</div>
-          <div class="map-box__icd">
-            <span class="lbl">ICD-11 (auto-stored)</span>
-            <code>1F40</code>
-            <small>Malaria due to P. falciparum</small>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ 12 · ROADMAP ============ -->
-    <section class="slide slide--tint" id="roadmap" data-title="Roadmap">
-      <div class="slide__inner">
-        <p class="kicker">Making it real</p>
-        <h2>Implementation roadmap</h2>
-
-        <ol class="timeline">
-          <li><span class="timeline__phase">0&ndash;3 months</span><h3>Define &amp; map</h3><p>Catalogue our top 50 conditions; map each to ICD-11.</p></li>
-          <li><span class="timeline__phase">3&ndash;6 months</span><h3>Build into the EMR</h3><p>Embed the coding tool; auto-store ICD-11 behind every HCD entry.</p></li>
-          <li><span class="timeline__phase">6&ndash;12 months</span><h3>Pilot, scale &amp; report</h3><p>Train, pilot in OPD, then roll out with a live dashboard.</p></li>
-        </ol>
-      </div>
-    </section>
-
-    <!-- ============ 13 · CLOSE ============ -->
+    <!-- ============ 10 · CLOSE ============ -->
     <section class="slide slide--dark close" id="close" data-title="Thank you">
       <div class="slide__inner close__inner">
         <img src="assets/img/logo.svg" alt="" class="close__logo" />
-        <h2>A global standard, a local advantage</h2>
-        <p class="lead lead--light">ICD-11 modernises classification. <strong>HCD</strong> lets us use it on our own terms.</p>
+        <h2>ICD-11 &mdash; a modern standard, ready for our EMR</h2>
+        <p class="lead lead--light">Searchable, precise and digital-native &mdash; classification built for how we actually work.</p>
         <div class="close__byline">
           <div class="avatar avatar--lg" aria-hidden="true">MT</div>
           <div>
@@ -408,7 +301,7 @@
           <button class="btn btn--ghost btn--lg" id="btnPdf2" type="button">Save as PDF</button>
         </div>
         <p class="close__thanks">Thank you.</p>
-        <p class="close__copyright">&copy; <span id="year"></span> Harvey Road General Hospital, Yaba · Educational use. ICD-11 is a product of the WHO; HCD is a proposed local concept.</p>
+        <p class="close__copyright">&copy; <span id="year"></span> Harvey Road General Hospital, Yaba · Educational use. ICD-11 is a product of the World Health Organization.</p>
       </div>
     </section>
 

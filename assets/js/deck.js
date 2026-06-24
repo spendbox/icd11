@@ -1,26 +1,28 @@
 /* =========================================================
-   Slide-deck engine: left/right navigation (buttons,
-   keyboard, swipe, dots), direction-aware transitions,
-   the interactive ICD-11 coder demo, and export wiring.
+   Slide-deck engine: left/right navigation, the live
+   ICD-11 coder (WHO ICD-11 API with sample fallback),
+   and export bindings.
    ========================================================= */
 (function () {
   "use strict";
 
-  var yearEl = document.getElementById("year");
+  function byId(id) { return document.getElementById(id); }
+  function esc(s) { return (s || "").replace(/[&<>"]/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]; }); }
+
+  var yearEl = byId("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
   /* =========================================================
      DECK NAVIGATION
      ========================================================= */
-  var stage   = document.getElementById("stage");
-  var slides  = Array.prototype.slice.call(document.querySelectorAll(".slide"));
-  var progress = document.getElementById("scrollProgress");
-  var counterNow = document.getElementById("counterNow");
-  var counterTotal = document.getElementById("counterTotal");
-  var btnPrev = document.getElementById("btnPrev");
-  var btnNext = document.getElementById("btnNext");
-  var dotsWrap = document.getElementById("dots");
-  var navLinks = Array.prototype.slice.call(document.querySelectorAll(".topnav a"));
+  var stage = byId("stage");
+  var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+  var progress = byId("scrollProgress");
+  var counterNow = byId("counterNow");
+  var counterTotal = byId("counterTotal");
+  var btnPrev = byId("btnPrev");
+  var btnNext = byId("btnNext");
+  var dotsWrap = byId("dots");
 
   var idToIndex = {};
   slides.forEach(function (s, i) { idToIndex[s.id] = i; });
@@ -50,8 +52,6 @@
       d.classList.toggle("active", i === current);
       d.setAttribute("aria-selected", i === current ? "true" : "false");
     });
-    var activeId = slides[current].id;
-    navLinks.forEach(function (l) { l.classList.toggle("active", l.getAttribute("data-target") === activeId); });
   }
 
   function go(to, dirOverride) {
@@ -77,7 +77,7 @@
   document.querySelectorAll("[data-target]").forEach(function (el) {
     el.addEventListener("click", function (e) {
       var id = el.getAttribute("data-target");
-      if (id && idToIndex[id] != null) { e.preventDefault(); go(idToIndex[id]); closeMenu(); }
+      if (id && idToIndex[id] != null) { e.preventDefault(); go(idToIndex[id]); }
     });
   });
 
@@ -102,148 +102,135 @@
     touchX = touchY = null;
   }, { passive: true });
 
-  var hamburger = document.getElementById("hamburger");
-  var topnav = document.getElementById("topnav");
-  function closeMenu() { if (topnav) topnav.classList.remove("open"); if (hamburger) hamburger.setAttribute("aria-expanded", "false"); }
-  if (hamburger && topnav) {
-    hamburger.addEventListener("click", function () {
-      var open = topnav.classList.toggle("open");
-      hamburger.setAttribute("aria-expanded", open ? "true" : "false");
-    });
-  }
-
   updateChrome();
 
   /* =========================================================
-     ICD-11 CODER DEMO
+     LIVE ICD-11 CODER  (WHO API + sample fallback)
      ========================================================= */
   var icd = window.ICD11;
   if (icd) {
-    var input   = document.getElementById("icdSearch");
-    var results = document.getElementById("icdResults");
-    var quick   = document.getElementById("coderQuick");
-    var selected = document.getElementById("coderSelected");
+    var input = byId("icdSearch");
+    var results = byId("icdResults");
+    var quick = byId("coderQuick");
+    var statusEl = byId("coderStatus");
+    var extChips = byId("extChips");
+    var sel = { item: null, ext: null };
+    var debounce;
 
-    var state = { entity: null, refine: null, lat: null };
-
-    // quick-pick chips for common HRGH presentations
-    icd.QUICK.forEach(function (id) {
-      var e = icd.byId(id);
-      if (!e) return;
+    // quick-search chips
+    icd.QUICK.forEach(function (term) {
       var b = document.createElement("button");
-      b.type = "button"; b.className = "quickchip"; b.textContent = e.title.split(",")[0].split(" or ")[0];
-      b.addEventListener("click", function () { input.value = ""; results.innerHTML = ""; selectEntity(e); });
+      b.type = "button"; b.className = "quickchip";
+      b.textContent = term.charAt(0).toUpperCase() + term.slice(1);
+      b.addEventListener("click", function () { input.value = term; runSearch(term, true); });
       quick.appendChild(b);
     });
 
-    function renderResults(list) {
-      results.innerHTML = "";
-      list.forEach(function (e) {
-        var li = document.createElement("li");
-        li.className = "coder__result";
-        li.innerHTML =
-          '<code>' + e.code + '</code>' +
-          '<span class="coder__result-body"><b>' + e.title + '</b>' +
-          '<small>' + e.chapter + '</small></span>';
-        li.addEventListener("click", function () { selectEntity(e); });
-        results.appendChild(li);
+    function setStatus(kind) {
+      if (!statusEl) return;
+      var map = {
+        idle:      ["", "Type a diagnosis to search ICD-11"],
+        searching: ["is-searching", "Searching the WHO ICD-11 API…"],
+        live:      ["is-live", "Connected to the WHO ICD-11 API"],
+        sample:    ["is-sample", "Using built-in ICD-11 sample data (WHO API not configured)"]
+      };
+      var m = map[kind] || map.idle;
+      statusEl.className = "coder__status " + m[0];
+      statusEl.innerHTML = '<span class="dotpulse"></span> ' + m[1];
+    }
+
+    function apiSearch(q) {
+      return fetch("/.netlify/functions/icd-search?q=" + encodeURIComponent(q), { headers: { Accept: "application/json" } })
+        .then(function (r) { if (!r.ok) throw new Error("http"); return r.json(); })
+        .then(function (j) { if (j && j.results && j.results.length) return j.results; throw new Error("empty"); });
+    }
+
+    function runSearch(q, autoSelect) {
+      q = (q || "").trim();
+      if (!q) { results.innerHTML = ""; setStatus("idle"); return; }
+      setStatus("searching");
+      apiSearch(q).then(function (list) {
+        setStatus("live"); renderResults(list, autoSelect);
+      }).catch(function () {
+        setStatus("sample"); renderResults(icd.search(q), autoSelect);
       });
     }
 
-    input.addEventListener("input", function () {
-      var q = input.value;
-      if (!q.trim()) { results.innerHTML = ""; return; }
-      var list = icd.search(q);
-      if (list.length) renderResults(list);
-      else results.innerHTML = '<li class="coder__noresult">No match &mdash; try &ldquo;malaria&rdquo;, &ldquo;sugar&rdquo;, &ldquo;BP&rdquo;…</li>';
-    });
-    // Enter selects the top result
-    input.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        var list = icd.search(input.value);
-        if (list.length) { results.innerHTML = ""; selectEntity(list[0]); }
-      }
-    });
-
-    function selectEntity(e) {
-      state.entity = e; state.refine = null; state.lat = null;
+    function renderResults(list, autoSelect) {
       results.innerHTML = "";
+      if (!list.length) {
+        results.innerHTML = '<li class="coder__noresult">No match &mdash; try &ldquo;malaria&rdquo;, &ldquo;asthma&rdquo;, &ldquo;fracture&rdquo;…</li>';
+        return;
+      }
+      list.forEach(function (it) {
+        var li = document.createElement("li");
+        li.className = "coder__result";
+        li.innerHTML = '<code>' + esc(it.code) + '</code><span class="coder__result-body"><b>' +
+          esc(it.title) + '</b><small>' + esc(it.chapter || "ICD-11 MMS") + '</small></span>';
+        li.addEventListener("click", function () { selectItem(it); });
+        results.appendChild(li);
+      });
+      if (autoSelect) selectItem(list[0]);
+    }
 
-      document.getElementById("selChapter").textContent = e.chapter;
-      document.getElementById("selTitle").textContent = e.title;
+    function selectItem(it) {
+      sel.item = it; sel.ext = null;
+      results.innerHTML = "";
+      byId("selChapter").textContent = it.chapter || "ICD-11 MMS";
+      byId("selTitle").textContent = it.title;
 
-      // refine chips
-      var refineWrap = document.getElementById("refineWrap");
-      var refineChips = document.getElementById("refineChips");
-      refineChips.innerHTML = "";
-      if (e.refine && e.refine.length) {
-        refineWrap.hidden = false;
-        e.refine.forEach(function (r) {
-          var b = document.createElement("button");
-          b.type = "button"; b.className = "rchip"; b.textContent = r.label + " · " + r.code;
-          b.addEventListener("click", function () {
-            state.refine = (state.refine === r) ? null : r;
-            Array.prototype.forEach.call(refineChips.children, function (c) { c.classList.remove("active"); });
-            if (state.refine) b.classList.add("active");
-            renderOutput();
-          });
-          refineChips.appendChild(b);
+      extChips.innerHTML = "";
+      icd.LAT.forEach(function (l) {
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "rchip"; b.textContent = l.label + " · " + l.ext;
+        b.addEventListener("click", function () {
+          sel.ext = (sel.ext === l) ? null : l;
+          Array.prototype.forEach.call(extChips.children, function (c) { c.classList.remove("active"); });
+          if (sel.ext) b.classList.add("active");
+          renderOutput();
         });
-      } else { refineWrap.hidden = true; }
-
-      // laterality (post-coordination) chips
-      var latWrap = document.getElementById("latWrap");
-      var latChips = document.getElementById("latChips");
-      latChips.innerHTML = "";
-      if (e.laterality) {
-        latWrap.hidden = false;
-        icd.LAT.forEach(function (l) {
-          var b = document.createElement("button");
-          b.type = "button"; b.className = "rchip"; b.textContent = l.label + " · " + l.ext;
-          b.addEventListener("click", function () {
-            state.lat = (state.lat === l) ? null : l;
-            Array.prototype.forEach.call(latChips.children, function (c) { c.classList.remove("active"); });
-            if (state.lat) b.classList.add("active");
-            renderOutput();
-          });
-          latChips.appendChild(b);
-        });
-      } else { latWrap.hidden = true; }
-
+        extChips.appendChild(b);
+      });
       renderOutput();
     }
 
     function renderOutput() {
-      var e = state.entity;
-      var stemCode = state.refine ? state.refine.code : e.code;
-      var stemTitle = state.refine ? (e.title.split(",")[0] + " — " + state.refine.label) : e.title;
-      var icdStr = stemCode + (state.lat ? " & " + state.lat.ext : "");
-      var hcdStr = e.hcd + (state.refine ? state.refine.suffix : "") + (state.lat ? state.lat.suffix : "");
-
-      document.getElementById("outIcd").textContent = icdStr;
-      document.getElementById("outIcdTitle").textContent = stemTitle + (state.lat ? " (" + state.lat.label.toLowerCase() + ")" : "");
-      document.getElementById("outHcd").textContent = hcdStr;
-      document.getElementById("outHcdTitle").textContent = e.hcdTitle;
+      var it = sel.item;
+      var cluster = it.code + (sel.ext ? " & " + sel.ext.ext : "");
+      var title = it.title + (sel.ext ? " — " + sel.ext.label.toLowerCase() : "");
+      byId("outIcd").textContent = cluster;
+      byId("outIcdTitle").textContent = title;
+      byId("coderNote").textContent = sel.ext
+        ? "Cluster: stem " + it.code + " post-coordinated with extension " + sel.ext.ext + "."
+        : "Add an extension above to post-coordinate (e.g. laterality).";
     }
 
+    input.addEventListener("input", function () {
+      clearTimeout(debounce);
+      var q = input.value;
+      debounce = window.setTimeout(function () { runSearch(q, false); }, 250);
+    });
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); clearTimeout(debounce); runSearch(input.value, true); }
+    });
+
     // start with a worked example so the panel is never blank
-    var first = icd.byId("malaria");
-    if (first) selectEntity(first);
+    setStatus("idle");
+    selectItem(icd.ITEMS[0]);
   }
 
   /* =========================================================
-     EXPORT BUTTONS
+     EXPORT BUTTONS  (download deck — unchanged feature)
      ========================================================= */
   function bindPptx(id) {
-    var el = document.getElementById(id);
+    var el = byId(id);
     if (el) el.addEventListener("click", function () {
       if (window.HCD_EXPORT && window.HCD_EXPORT.toPptx) window.HCD_EXPORT.toPptx(el);
     });
   }
   function bindPdf(id) {
-    var el = document.getElementById(id);
-    if (el) el.addEventListener("click", function () { closeMenu(); window.print(); });
+    var el = byId(id);
+    if (el) el.addEventListener("click", function () { window.print(); });
   }
   ["btnPptx", "btnPptx2", "btnPptx3"].forEach(bindPptx);
   ["btnPdf", "btnPdf2"].forEach(bindPdf);

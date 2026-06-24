@@ -623,3 +623,44 @@ table.compare tbody tr:last-child td { border-bottom: none; }
 .ca-note { font-size: 0.84rem; color: var(--muted); margin: 0; padding-top: 0.4rem; border-top: 1px dashed var(--line); }
 
 @media (max-width: 760px) { .ca-grid { grid-template-columns: 1fr; } }
+
+/* =========================================================
+   EXTENSION BUILDER (examples slide)
+   ========================================================= */
+.build { display: flex; flex-wrap: wrap; align-items: stretch; justify-content: center; gap: 1rem; margin: 0.5rem 0 1.6rem; }
+.build__step { display: flex; flex-direction: column; gap: 0.5rem; flex: 1 1 220px; max-width: 300px; }
+.build__label { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); text-align: center; }
+.build__chip { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 1.2rem 1rem; text-align: center; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 0.35rem; height: 100%; justify-content: center; }
+.build__chip code { font-size: 1.4rem; background: transparent; padding: 0; }
+.build__chip small { font-size: 0.85rem; color: var(--ink-soft); }
+.build__chip--stem { border-top: 4px solid var(--teal-500); }
+.build__chip--stem code { color: var(--teal-700); }
+.build__chip--ext { border-top: 4px solid var(--purple); }
+.build__chip--ext code { color: var(--purple); }
+.build__chip--result { border-top: 4px solid var(--amber); background: #fffaf2; }
+.build__chip--result code { color: var(--amber); }
+.build__op { display: flex; align-items: center; font-family: var(--font-serif); font-size: 2rem; font-weight: 700; color: var(--teal-500); padding-top: 1.4rem; }
+
+@media (max-width: 760px) {
+  .build { flex-direction: column; align-items: stretch; }
+  .build__step { max-width: none; }
+  .build__op { justify-content: center; padding: 0; }
+}
+
+/* =========================================================
+   DEMO — API status + output box
+   ========================================================= */
+.coder__status { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 0.9rem; font-size: 0.82rem; font-weight: 600; color: var(--muted); }
+.coder__status .dotpulse { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); flex: none; }
+.coder__status.is-live { color: var(--green); }
+.coder__status.is-live .dotpulse { background: var(--green); box-shadow: 0 0 0 0 rgba(47,158,107,0.5); animation: pulse 1.8s infinite; }
+.coder__status.is-sample { color: var(--amber); }
+.coder__status.is-sample .dotpulse { background: var(--amber); }
+.coder__status.is-searching { color: var(--teal-700); }
+.coder__status.is-searching .dotpulse { background: var(--teal-500); animation: pulse 1s infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(47,158,107,0.5); } 70% { box-shadow: 0 0 0 7px rgba(47,158,107,0); } 100% { box-shadow: 0 0 0 0 rgba(47,158,107,0); } }
+
+.bigcode { margin-top: 0.4rem; padding: 1.2rem 1.3rem; border: 1px solid var(--line); border-top: 3px solid var(--purple); border-radius: var(--radius-sm); background: #fcfbfe; }
+.bigcode .code-card__label { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; margin-bottom: 0.4rem; }
+.bigcode code { font-size: 1.6rem; background: transparent; padding: 0; color: var(--purple); font-weight: 700; }
+.bigcode small { display: block; font-size: 0.9rem; color: var(--ink-soft); margin-top: 0.3rem; }
