@@ -67,6 +67,7 @@
     window.setTimeout(function () { leaving.classList.remove("is-leaving"); animating = false; }, 560);
     current = to;
     updateChrome();
+    if (entering.id === "demo-walkthrough") window.setTimeout(playWalkthrough, 300);
   }
   function next() { go(current + 1, "next"); }
   function prev() { go(current - 1, "prev"); }
@@ -103,6 +104,38 @@
   }, { passive: true });
 
   updateChrome();
+
+  /* =========================================================
+     WALKTHROUGH — auto-playing illustration
+     ========================================================= */
+  var wtEl = document.querySelector("#demo-walkthrough .wt");
+  var wtTyped = byId("wtTyped");
+  var wtToken = 0;
+  var WT_WORD = "fracture";
+
+  function playWalkthrough() {
+    if (!wtEl || !wtTyped) return;
+    var myToken = ++wtToken;
+    wtEl.classList.remove("show-results", "show-pick", "show-ext", "show-cluster");
+    wtTyped.textContent = "";
+    var i = 0;
+    (function type() {
+      if (myToken !== wtToken) return;
+      if (i <= WT_WORD.length) { wtTyped.textContent = WT_WORD.slice(0, i); i++; window.setTimeout(type, 95); return; }
+      step("show-results", 450);
+    })();
+    function step(cls, delay) {
+      window.setTimeout(function () {
+        if (myToken !== wtToken) return;
+        wtEl.classList.add(cls);
+        if (cls === "show-results") step("show-pick", 750);
+        else if (cls === "show-pick") step("show-ext", 850);
+        else if (cls === "show-ext") step("show-cluster", 750);
+      }, delay);
+    }
+  }
+  var wtReplay = byId("wtReplay");
+  if (wtReplay) wtReplay.addEventListener("click", playWalkthrough);
 
   /* =========================================================
      LIVE ICD-11 CODER  (WHO API + sample fallback)

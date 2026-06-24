@@ -68,6 +68,42 @@
       </div>
     </section>
 
+    <!-- ============ HISTORY ============ -->
+    <section class="slide slide--tint" id="history" data-title="A short history">
+      <div class="slide__inner">
+        <p class="kicker">Where it came from</p>
+        <h2>A short history</h2>
+        <p class="lead">130 years of classifying disease.</p>
+
+        <ol class="htl">
+          <li>
+            <span class="htl__dot"></span>
+            <span class="htl__year">1893</span>
+            <h3>The first list</h3>
+            <p>Bertillon&rsquo;s International List of Causes of Death.</p>
+          </li>
+          <li>
+            <span class="htl__dot"></span>
+            <span class="htl__year">1948</span>
+            <h3>WHO takes over</h3>
+            <p>ICD-6 &mdash; first to include illness, not just death.</p>
+          </li>
+          <li>
+            <span class="htl__dot"></span>
+            <span class="htl__year">1994</span>
+            <h3>ICD-10</h3>
+            <p>The version most of the world still uses today.</p>
+          </li>
+          <li>
+            <span class="htl__dot"></span>
+            <span class="htl__year">2022</span>
+            <h3>ICD-11</h3>
+            <p>Adopted 2019; in effect since 1 Jan 2022.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
     <!-- ============ 3 · ICD-11 ============ -->
     <section class="slide slide--tint" id="icd11" data-title="ICD-11 in brief">
       <div class="slide__inner">
@@ -161,7 +197,7 @@
         <div class="build">
           <div class="build__step">
             <span class="build__label">Stem code</span>
-            <div class="build__chip build__chip--stem"><code>NC92</code><small>Fracture of forearm</small></div>
+            <div class="build__chip build__chip--stem"><code>NC32</code><small>Fracture of forearm</small></div>
           </div>
           <div class="build__op">+</div>
           <div class="build__step">
@@ -171,7 +207,7 @@
           <div class="build__op">=</div>
           <div class="build__step">
             <span class="build__label">Cluster</span>
-            <div class="build__chip build__chip--result"><code>NC92&nbsp;&amp;&nbsp;XK8G</code><small>Fracture of left forearm</small></div>
+            <div class="build__chip build__chip--result"><code>NC32&nbsp;&amp;&nbsp;XK8G</code><small>Fracture of left forearm</small></div>
           </div>
         </div>
 
@@ -208,6 +244,41 @@
             <p>The API can run on a local server &mdash; vital for poor connectivity.</p>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- ============ WALKTHROUGH (illustration) ============ -->
+    <section class="slide" id="demo-walkthrough" data-title="How a code is generated">
+      <div class="slide__inner">
+        <p class="kicker">Watch first</p>
+        <h2>How a code is generated</h2>
+        <p class="lead">Type the diagnosis &rarr; pick the match &rarr; add an extension.</p>
+
+        <div class="wt">
+          <div class="wt__left">
+            <div class="searchbox searchbox--demo">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <span class="wt__typed" id="wtTyped"></span><span class="wt__caret" id="wtCaret"></span>
+            </div>
+            <ul class="wt__results" id="wtResults">
+              <li data-pick="1"><code>NC32</code><span>Fracture of forearm</span></li>
+              <li><code>NC72</code><span>Fracture of femur</span></li>
+              <li><code>NC92</code><span>Fracture of lower leg, including ankle</span></li>
+            </ul>
+          </div>
+
+          <div class="wt__right" id="wtPick">
+            <span class="wt__tag">Selected code</span>
+            <div class="wt__code wt__code--stem"><code>NC32</code><small>Fracture of forearm</small></div>
+            <div class="wt__ext" id="wtExt">
+              <span class="wt__plus">＋ extension</span>
+              <span class="wt__chip">XK8G · Left</span>
+            </div>
+            <div class="wt__code wt__code--cluster" id="wtCluster"><code>NC32&nbsp;&amp;&nbsp;XK8G</code><small>Fracture of left forearm</small></div>
+          </div>
+        </div>
+
+        <button class="btn btn--ghost wt__replay" id="wtReplay" type="button">↻ Replay</button>
       </div>
     </section>
 
@@ -280,6 +351,24 @@
             </ul>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- ============ IMPLEMENTATION ============ -->
+    <section class="slide" id="implementation" data-title="Into practice">
+      <div class="slide__inner">
+        <p class="kicker">From theory to ward</p>
+        <h2>How do we put ICD-11 into practice?</h2>
+        <p class="lead">Four practical steps &mdash; no rip-and-replace required.</p>
+
+        <ol class="timeline">
+          <li><span class="timeline__phase">Step 1</span><h3>Get API access</h3><p>Register for free WHO ICD-API credentials.</p></li>
+          <li><span class="timeline__phase">Step 2</span><h3>Embed the Coding Tool</h3><p>Drop the WHO widget into the EMR&rsquo;s diagnosis field.</p></li>
+          <li><span class="timeline__phase">Step 3</span><h3>Transition from ICD-10</h3><p>Crosswalk old data; dual-code during the changeover.</p></li>
+          <li><span class="timeline__phase">Step 4</span><h3>Train &amp; audit</h3><p>Short training on search &amp; extensions; check coding quality.</p></li>
+        </ol>
+
+        <div class="callout">Poor internet? The same API can run on a local server on-site.</div>
       </div>
     </section>
 

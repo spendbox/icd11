@@ -35,7 +35,9 @@
     { code: "3A51",   title: "Sickle cell disorders or other haemoglobinopathies", chapter: "03 · Blood", syn: ["sickle", "sickle cell", "scd", "hbss", "crisis"] },
     { code: "3A9Z",   title: "Anaemia, unspecified", chapter: "03 · Blood", syn: ["anaemia", "anemia", "pallor", "low pcv"] },
     { code: "8A80",   title: "Migraine", chapter: "08 · Nervous system", syn: ["migraine", "headache"] },
-    { code: "NC92",   title: "Fracture of forearm", chapter: "22 · Injury", syn: ["fracture", "broken arm", "radius", "ulna", "forearm"] }
+    { code: "NC32",   title: "Fracture of forearm", chapter: "22 · Injury", syn: ["fracture", "broken arm", "radius", "ulna", "forearm", "broken"] },
+    { code: "NC72",   title: "Fracture of femur", chapter: "22 · Injury", syn: ["fracture", "femur", "thigh", "broken leg"] },
+    { code: "NC92",   title: "Fracture of lower leg, including ankle", chapter: "22 · Injury", syn: ["fracture", "tibia", "fibula", "ankle", "lower leg"] }
   ];
 
   var QUICK = ["malaria", "typhoid", "pneumonia", "hypertension", "diabetes", "tuberculosis", "asthma", "fracture"];
