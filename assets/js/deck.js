@@ -67,7 +67,18 @@
     window.setTimeout(function () { leaving.classList.remove("is-leaving"); animating = false; }, 560);
     current = to;
     updateChrome();
-    if (entering.id === "demo-walkthrough") window.setTimeout(playWalkthrough, 300);
+    onEnterSlide(entering);
+  }
+
+  // Per-slide hooks. Called on navigation and on initial load so the
+  // walkthrough reliably plays the first time the slide is shown.
+  function onEnterSlide(slide) {
+    if (!slide) return;
+    if (slide.id === "demo-walkthrough") {
+      // start after the slide-in transition (~560ms) so the typing is
+      // visible from the very first character.
+      window.setTimeout(playWalkthrough, 620);
+    }
   }
   function next() { go(current + 1, "next"); }
   function prev() { go(current - 1, "prev"); }
@@ -104,6 +115,8 @@
   }, { passive: true });
 
   updateChrome();
+  // If the deck happens to load directly on the walkthrough slide, play it.
+  onEnterSlide(slides[current]);
 
   /* =========================================================
      WALKTHROUGH — auto-playing illustration
@@ -141,101 +154,179 @@
      LIVE ICD-11 CODER  (WHO API + sample fallback)
      ========================================================= */
   var icd = window.ICD11;
-  if (icd) {
+  if (icd && byId("icdSearch")) {
     var input = byId("icdSearch");
     var results = byId("icdResults");
     var quick = byId("coderQuick");
     var statusEl = byId("coderStatus");
     var extChips = byId("extChips");
-    var sel = { item: null, ext: null };
+    var sel = { item: null, exts: {} };   // exts keyed by extension-group key
     var debounce;
+    var reqToken = 0;                      // guards against out-of-order responses
+    var activeIdx = -1;                    // keyboard-highlighted result
+    var lastResults = [];
+
+    // apiConfigured: null = unknown (not yet probed), true/false once known.
+    var apiConfigured = null;
 
     // quick-search chips
     icd.QUICK.forEach(function (term) {
       var b = document.createElement("button");
       b.type = "button"; b.className = "quickchip";
       b.textContent = term.charAt(0).toUpperCase() + term.slice(1);
-      b.addEventListener("click", function () { input.value = term; runSearch(term, true); });
+      b.addEventListener("click", function () { input.value = term; input.focus(); runSearch(term, true); });
       quick.appendChild(b);
     });
 
-    function setStatus(kind) {
+    function setStatus(kind, extra) {
       if (!statusEl) return;
       var map = {
-        idle:      ["", "Type a diagnosis to search ICD-11"],
-        searching: ["is-searching", "Searching the WHO ICD-11 API…"],
-        live:      ["is-live", "Connected to the WHO ICD-11 API"],
-        sample:    ["is-sample", "Using built-in ICD-11 sample data (WHO API not configured)"]
+        idle:      ["", "Type a diagnosis to search the WHO ICD-11 classification"],
+        ready:     ["is-live", "Connected to the WHO ICD-11 API — start typing"],
+        searching: ["is-searching", "Searching ICD-11…"],
+        live:      ["is-live", "Live results from the WHO ICD-11 API"],
+        sample:    ["is-sample", "Built-in ICD-11 sample data (WHO API not configured)"],
+        error:     ["is-sample", extra || "WHO API unavailable — showing sample data"]
       };
       var m = map[kind] || map.idle;
       statusEl.className = "coder__status " + m[0];
-      statusEl.innerHTML = '<span class="dotpulse"></span> ' + m[1];
+      statusEl.innerHTML = '<span class="dotpulse"></span> ' + esc(m[1]);
+    }
+
+    // One-time probe so the status reflects reality before the first search.
+    function probeApi() {
+      return fetch("/.netlify/functions/icd-search?ping=1", { headers: { Accept: "application/json" } })
+        .then(function (r) { return r.ok ? r.json() : { configured: false }; })
+        .then(function (j) { apiConfigured = !!(j && j.configured); return apiConfigured; })
+        .catch(function () { apiConfigured = false; return false; }); // function not deployed → sample mode
     }
 
     function apiSearch(q) {
       return fetch("/.netlify/functions/icd-search?q=" + encodeURIComponent(q), { headers: { Accept: "application/json" } })
-        .then(function (r) { if (!r.ok) throw new Error("http"); return r.json(); })
-        .then(function (j) { if (j && j.results && j.results.length) return j.results; throw new Error("empty"); });
+        .then(function (r) {
+          return r.json().catch(function () { return {}; }).then(function (j) {
+            return { ok: r.ok, status: r.status, body: j };
+          });
+        });
     }
 
     function runSearch(q, autoSelect) {
       q = (q || "").trim();
-      if (!q) { results.innerHTML = ""; setStatus("idle"); return; }
+      var myToken = ++reqToken;
+      if (!q) { renderResults([], false); setStatus(apiConfigured ? "ready" : "idle"); return; }
+
+      // If we already know the API isn't configured, skip the round-trip.
+      if (apiConfigured === false) {
+        setStatus("sample"); renderResults(icd.search(q), autoSelect); return;
+      }
+
       setStatus("searching");
-      apiSearch(q).then(function (list) {
-        setStatus("live"); renderResults(list, autoSelect);
+      apiSearch(q).then(function (res) {
+        if (myToken !== reqToken) return;          // a newer search superseded this one
+        var body = res.body || {};
+        if (res.ok && body.results && body.results.length) {
+          apiConfigured = true;
+          setStatus("live"); renderResults(body.results, autoSelect); return;
+        }
+        if (res.ok && body.results && !body.results.length) {
+          // API answered but found nothing — try the local set so the user still sees codes.
+          apiConfigured = true;
+          setStatus("live");
+          renderResults(icd.search(q), autoSelect); return;
+        }
+        // Not configured (503) or upstream error (5xx) — fall back to sample.
+        apiConfigured = body.configured === true ? true : (res.status === 503 ? false : apiConfigured);
+        setStatus(res.status === 503 ? "sample" : "error");
+        renderResults(icd.search(q), autoSelect);
       }).catch(function () {
+        if (myToken !== reqToken) return;
+        apiConfigured = false;                     // endpoint unreachable (e.g. not on Netlify)
         setStatus("sample"); renderResults(icd.search(q), autoSelect);
+      });
+    }
+
+    function highlight(idx) {
+      var lis = results.querySelectorAll(".coder__result");
+      activeIdx = idx;
+      Array.prototype.forEach.call(lis, function (li, i) {
+        li.classList.toggle("is-active", i === idx);
+        if (i === idx) li.scrollIntoView({ block: "nearest" });
       });
     }
 
     function renderResults(list, autoSelect) {
       results.innerHTML = "";
-      if (!list.length) {
+      lastResults = list || [];
+      activeIdx = -1;
+      if (!lastResults.length) {
         results.innerHTML = '<li class="coder__noresult">No match &mdash; try &ldquo;malaria&rdquo;, &ldquo;asthma&rdquo;, &ldquo;fracture&rdquo;…</li>';
         return;
       }
-      list.forEach(function (it) {
+      lastResults.forEach(function (it, i) {
         var li = document.createElement("li");
         li.className = "coder__result";
+        li.setAttribute("role", "option");
         li.innerHTML = '<code>' + esc(it.code) + '</code><span class="coder__result-body"><b>' +
           esc(it.title) + '</b><small>' + esc(it.chapter || "ICD-11 MMS") + '</small></span>';
         li.addEventListener("click", function () { selectItem(it); });
+        li.addEventListener("mousemove", function () { if (activeIdx !== i) highlight(i); });
         results.appendChild(li);
       });
-      if (autoSelect) selectItem(list[0]);
+      if (autoSelect) selectItem(lastResults[0]);
     }
 
     function selectItem(it) {
-      sel.item = it; sel.ext = null;
+      sel.item = it; sel.exts = {};
       results.innerHTML = "";
+      lastResults = []; activeIdx = -1;
       byId("selChapter").textContent = it.chapter || "ICD-11 MMS";
       byId("selTitle").textContent = it.title;
 
+      // Render each extension dimension (laterality, severity, …) as a chip row.
       extChips.innerHTML = "";
-      icd.LAT.forEach(function (l) {
-        var b = document.createElement("button");
-        b.type = "button"; b.className = "rchip"; b.textContent = l.label + " · " + l.ext;
-        b.addEventListener("click", function () {
-          sel.ext = (sel.ext === l) ? null : l;
-          Array.prototype.forEach.call(extChips.children, function (c) { c.classList.remove("active"); });
-          if (sel.ext) b.classList.add("active");
-          renderOutput();
+      icd.EXT_GROUPS.forEach(function (group) {
+        var row = document.createElement("div");
+        row.className = "extgroup";
+        var lbl = document.createElement("span");
+        lbl.className = "extgroup__label";
+        lbl.textContent = group.label;
+        row.appendChild(lbl);
+        group.options.forEach(function (opt) {
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "rchip";
+          b.textContent = opt.label + " · " + opt.ext;
+          b.addEventListener("click", function () {
+            var current = sel.exts[group.key];
+            // toggle: clicking the active option clears it
+            sel.exts[group.key] = (current === opt) ? null : opt;
+            Array.prototype.forEach.call(row.querySelectorAll(".rchip"), function (c) { c.classList.remove("active"); });
+            if (sel.exts[group.key]) b.classList.add("active");
+            renderOutput();
+          });
+          row.appendChild(b);
         });
-        extChips.appendChild(b);
+        extChips.appendChild(row);
       });
       renderOutput();
     }
 
+    function chosenExts() {
+      var out = [];
+      icd.EXT_GROUPS.forEach(function (g) { if (sel.exts[g.key]) out.push(sel.exts[g.key]); });
+      return out;
+    }
+
     function renderOutput() {
       var it = sel.item;
-      var cluster = it.code + (sel.ext ? " & " + sel.ext.ext : "");
-      var title = it.title + (sel.ext ? " — " + sel.ext.label.toLowerCase() : "");
+      if (!it) return;
+      var exts = chosenExts();
+      var cluster = it.code + exts.map(function (e) { return " & " + e.ext; }).join("");
+      var title = it.title + (exts.length ? " — " + exts.map(function (e) { return e.label.toLowerCase(); }).join(", ") : "");
       byId("outIcd").textContent = cluster;
       byId("outIcdTitle").textContent = title;
-      byId("coderNote").textContent = sel.ext
-        ? "Cluster: stem " + it.code + " post-coordinated with extension " + sel.ext.ext + "."
-        : "Add an extension above to post-coordinate (e.g. laterality).";
+      byId("coderNote").textContent = exts.length
+        ? "Cluster: stem " + it.code + " post-coordinated with " + exts.map(function (e) { return e.ext; }).join(" + ") + "."
+        : "Add an extension above to post-coordinate (e.g. laterality, severity).";
     }
 
     input.addEventListener("input", function () {
@@ -244,12 +335,25 @@
       debounce = window.setTimeout(function () { runSearch(q, false); }, 250);
     });
     input.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") { e.preventDefault(); clearTimeout(debounce); runSearch(input.value, true); }
+      if (e.key === "ArrowDown" && lastResults.length) {
+        e.preventDefault(); highlight(Math.min(activeIdx + 1, lastResults.length - 1));
+      } else if (e.key === "ArrowUp" && lastResults.length) {
+        e.preventDefault(); highlight(Math.max(activeIdx - 1, 0));
+      } else if (e.key === "Enter") {
+        e.preventDefault(); clearTimeout(debounce);
+        if (activeIdx >= 0 && lastResults[activeIdx]) selectItem(lastResults[activeIdx]);
+        else runSearch(input.value, true);
+      } else if (e.key === "Escape") {
+        renderResults([], false);
+      }
     });
 
-    // start with a worked example so the panel is never blank
-    setStatus("idle");
+    // start with a worked example so the panel is never blank, then probe the API
     selectItem(icd.ITEMS[0]);
+    setStatus("idle");
+    probeApi().then(function (configured) {
+      if (!input.value) setStatus(configured ? "ready" : "idle");
+    });
   }
 
   /* =========================================================
