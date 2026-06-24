@@ -31,7 +31,7 @@
 
   --radius: 16px;
   --radius-sm: 10px;
-  --maxw: 1080px;
+  --maxw: 980px;
 
   --topbar-h: 62px;
   --controls-h: 64px;
@@ -133,7 +133,7 @@ code {
   position: absolute; inset: 0;
   display: flex;                          /* center content, scroll if tall */
   overflow-y: auto; overflow-x: hidden;
-  padding: clamp(1.5rem, 4vh, 3rem) clamp(1.2rem, 5vw, 3.5rem);
+  padding: clamp(2rem, 6vh, 4.5rem) clamp(1.5rem, 6vw, 4.5rem);
   opacity: 0; visibility: hidden;
   pointer-events: none;
   -webkit-overflow-scrolling: touch;
@@ -180,9 +180,9 @@ code {
   color: var(--teal-700); margin: 0 0 0.7rem;
 }
 .kicker--light { color: var(--teal-300); }
-.slide h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); margin-bottom: 0.8rem; }
+.slide h2 { font-size: clamp(1.7rem, 3.6vw, 2.6rem); margin-bottom: 0.9rem; }
 .slide h2 span.accent-text { color: var(--teal-300); }
-.lead { font-size: clamp(1.02rem, 1.7vw, 1.22rem); color: var(--ink-soft); max-width: 62ch; margin-bottom: 2.2rem; }
+.lead { font-size: clamp(1.02rem, 1.7vw, 1.2rem); color: var(--ink-soft); max-width: 58ch; margin-bottom: 2.6rem; }
 .lead--light { color: #bfe3e5; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -275,18 +275,18 @@ code {
 /* =========================================================
    GRIDS & CARDS
    ========================================================= */
-.grid { display: grid; gap: 1.3rem; }
+.grid { display: grid; gap: 1.6rem; }
 .grid-2 { grid-template-columns: repeat(2, 1fr); }
 .grid-3 { grid-template-columns: repeat(3, 1fr); }
 
 .card {
   background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
-  padding: 1.5rem; box-shadow: var(--shadow-sm); transition: transform 0.2s, box-shadow 0.2s;
+  padding: 1.7rem 1.6rem; box-shadow: var(--shadow-sm); transition: transform 0.2s, box-shadow 0.2s;
 }
 .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
-.card__icon { font-size: 1.8rem; margin-bottom: 0.6rem; }
-.card h3 { font-size: 1.16rem; margin-bottom: 0.4rem; color: var(--teal-800); }
-.card p { font-size: 0.94rem; color: var(--ink-soft); margin: 0; }
+.card__icon { font-size: 1.9rem; margin-bottom: 0.7rem; }
+.card h3 { font-size: 1.18rem; margin-bottom: 0.45rem; color: var(--teal-800); }
+.card p { font-size: 0.96rem; color: var(--ink-soft); margin: 0; }
 .card--dark { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); }
 .card--dark h3 { color: #fff; }
 .card--dark p { color: #c6e3e4; }
@@ -590,3 +590,36 @@ table.compare tbody tr:last-child td { border-bottom: none; }
 @media (max-width: 900px) {
   .coder { grid-template-columns: 1fr; }
 }
+
+/* =========================================================
+   ANATOMY OF A CODE (ICD-10 vs ICD-11)
+   ========================================================= */
+.ca-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; }
+.ca-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 1.6rem 1.7rem; box-shadow: var(--shadow-sm); }
+.ca-card--new { border-top: 4px solid var(--teal-500); }
+.ca-card--old { border-top: 4px solid var(--muted); }
+.ca-tag { display: inline-block; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); background: #f1f4f4; padding: 0.22rem 0.7rem; border-radius: 999px; }
+.ca-tag--new { color: var(--teal-700); background: var(--teal-50); }
+.ca-code { font-family: var(--font-serif); font-size: clamp(2rem, 6vw, 3.2rem); font-weight: 700; margin: 1rem 0 1.2rem; letter-spacing: 0.02em; }
+.ca-code .seg { padding: 0.04em 0.16em; border-radius: 8px; }
+.ca-code .dot { color: var(--muted); }
+/* ICD-10 segment colours */
+.ca-code .s-a { color: var(--teal-700); background: var(--teal-50); }
+.ca-code .s-b { color: var(--amber); background: #fbf0df; }
+.ca-code .s-c { color: var(--rose); background: #fbe6e4; }
+/* ICD-11 segment colours */
+.ca-code .s-1 { color: var(--teal-700); background: var(--teal-50); }
+.ca-code .s-2 { color: var(--purple); background: #f1e9fb; }
+.ca-code .s-3 { color: var(--amber); background: #fbf0df; }
+.ca-code .s-4 { color: var(--rose); background: #fbe6e4; }
+.ca-legend { list-style: none; padding: 0; margin: 0 0 1rem; display: grid; gap: 0.55rem; }
+.ca-legend li { font-size: 0.92rem; color: var(--ink-soft); display: flex; align-items: baseline; gap: 0.5rem; }
+.ca-legend strong { color: var(--ink); }
+.ca-legend .d { width: 11px; height: 11px; border-radius: 3px; flex: none; position: relative; top: 1px; }
+.ca-legend .d-a, .ca-legend .d-1 { background: var(--teal-700); }
+.ca-legend .d-b, .ca-legend .d-3 { background: var(--amber); }
+.ca-legend .d-c, .ca-legend .d-4 { background: var(--rose); }
+.ca-legend .d-2 { background: var(--purple); }
+.ca-note { font-size: 0.84rem; color: var(--muted); margin: 0; padding-top: 0.4rem; border-top: 1px dashed var(--line); }
+
+@media (max-width: 760px) { .ca-grid { grid-template-columns: 1fr; } }

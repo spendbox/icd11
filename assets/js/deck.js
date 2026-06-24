@@ -122,7 +122,6 @@
     var input   = document.getElementById("icdSearch");
     var results = document.getElementById("icdResults");
     var quick   = document.getElementById("coderQuick");
-    var empty   = document.getElementById("coderEmpty");
     var selected = document.getElementById("coderSelected");
 
     var state = { entity: null, refine: null, lat: null };
@@ -167,16 +166,8 @@
       }
     });
 
-    function chip(label, active, onClick) {
-      var b = document.createElement("button");
-      b.type = "button"; b.className = "rchip" + (active ? " active" : ""); b.textContent = label;
-      b.addEventListener("click", onClick);
-      return b;
-    }
-
     function selectEntity(e) {
       state.entity = e; state.refine = null; state.lat = null;
-      empty.hidden = true; selected.hidden = false;
       results.innerHTML = "";
 
       document.getElementById("selChapter").textContent = e.chapter;
@@ -189,12 +180,15 @@
       if (e.refine && e.refine.length) {
         refineWrap.hidden = false;
         e.refine.forEach(function (r) {
-          refineChips.appendChild(chip(r.label + " · " + r.code, false, function () {
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "rchip"; b.textContent = r.label + " · " + r.code;
+          b.addEventListener("click", function () {
             state.refine = (state.refine === r) ? null : r;
             Array.prototype.forEach.call(refineChips.children, function (c) { c.classList.remove("active"); });
-            if (state.refine) this.classList.add("active");
+            if (state.refine) b.classList.add("active");
             renderOutput();
-          }));
+          });
+          refineChips.appendChild(b);
         });
       } else { refineWrap.hidden = true; }
 
@@ -205,12 +199,15 @@
       if (e.laterality) {
         latWrap.hidden = false;
         icd.LAT.forEach(function (l) {
-          latChips.appendChild(chip(l.label + " · " + l.ext, false, function () {
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "rchip"; b.textContent = l.label + " · " + l.ext;
+          b.addEventListener("click", function () {
             state.lat = (state.lat === l) ? null : l;
             Array.prototype.forEach.call(latChips.children, function (c) { c.classList.remove("active"); });
-            if (state.lat) this.classList.add("active");
+            if (state.lat) b.classList.add("active");
             renderOutput();
-          }));
+          });
+          latChips.appendChild(b);
         });
       } else { latWrap.hidden = true; }
 
@@ -229,6 +226,10 @@
       document.getElementById("outHcd").textContent = hcdStr;
       document.getElementById("outHcdTitle").textContent = e.hcdTitle;
     }
+
+    // start with a worked example so the panel is never blank
+    var first = icd.byId("malaria");
+    if (first) selectEntity(first);
   }
 
   /* =========================================================
