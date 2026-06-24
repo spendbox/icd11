@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="A professional presentation on ICD-11, its differences from ICD-10, and the case for HCD — the Harvey-road Classification of Diseases for Harvey Road General Hospital, Yaba. By Dr Manuwa Tolu." />
+  <meta name="description" content="A professional slide presentation on ICD-11, its differences from ICD-10, and the case for HCD — the Harvey-road Classification of Diseases for Harvey Road General Hospital, Yaba. By Dr Manuwa Tolu." />
   <meta name="author" content="Dr Manuwa Tolu" />
   <title>ICD-11 &amp; HCD — Harvey Road General Hospital, Yaba</title>
   <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg" />
@@ -14,12 +14,12 @@
 </head>
 <body>
 
-  <!-- Progress bar -->
+  <!-- Slide-position progress bar -->
   <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
   <!-- Top navigation -->
   <header class="topbar" id="topbar">
-    <a class="brand" href="#cover" aria-label="Harvey Road General Hospital home">
+    <a class="brand" href="#cover" data-target="cover" aria-label="Go to cover slide">
       <img src="assets/img/logo.svg" alt="" class="brand__logo" />
       <span class="brand__text">
         <strong>Harvey Road General Hospital</strong>
@@ -27,15 +27,15 @@
       </span>
     </a>
 
-    <nav class="topnav" id="topnav" aria-label="Section navigation">
-      <a href="#what-is-icd">ICD</a>
-      <a href="#icd11">ICD-11</a>
-      <a href="#compare">10 vs 11</a>
-      <a href="#examples">Examples</a>
-      <a href="#proscons">Pros &amp; Cons</a>
-      <a href="#hcd">HCD</a>
-      <a href="#demo">Live Demo</a>
-      <a href="#roadmap">Roadmap</a>
+    <nav class="topnav" id="topnav" aria-label="Slide navigation">
+      <a href="#what-is-icd" data-target="what-is-icd">ICD</a>
+      <a href="#icd11" data-target="icd11">ICD-11</a>
+      <a href="#compare" data-target="compare">10 vs 11</a>
+      <a href="#examples" data-target="examples">Examples</a>
+      <a href="#proscons" data-target="proscons">Pros &amp; Cons</a>
+      <a href="#hcd" data-target="hcd">HCD</a>
+      <a href="#demo" data-target="demo">Live Demo</a>
+      <a href="#roadmap" data-target="roadmap">Roadmap</a>
     </nav>
 
     <div class="topbar__actions">
@@ -47,10 +47,12 @@
     </div>
   </header>
 
-  <main>
+  <!-- ============ DECK ============ -->
+  <div class="deck" id="deck">
+    <div class="stage" id="stage">
 
     <!-- ============ COVER ============ -->
-    <section class="slide cover" id="cover" data-title="Cover">
+    <section class="slide cover is-active" id="cover" data-title="Cover">
       <div class="cover__bg" aria-hidden="true"></div>
       <div class="cover__inner">
         <img src="assets/img/logo.svg" alt="Harvey Road General Hospital crest" class="cover__logo" />
@@ -65,11 +67,11 @@
           </div>
         </div>
         <div class="cover__cta">
-          <a href="#what-is-icd" class="btn btn--solid btn--lg">Begin presentation</a>
+          <button class="btn btn--solid btn--lg" data-target="what-is-icd" type="button">Begin presentation &rarr;</button>
           <button class="btn btn--ghost btn--lg" id="btnPptx2" type="button">Download deck</button>
         </div>
+        <p class="cover__hint">Use the arrows below, your keyboard&rsquo;s &larr; &rarr; keys, or swipe.</p>
       </div>
-      <a href="#what-is-icd" class="scroll-hint" aria-label="Scroll down">Scroll<span></span></a>
     </section>
 
     <!-- ============ WHAT IS ICD ============ -->
@@ -126,8 +128,8 @@
         </div>
 
         <div class="stat-row">
-          <div class="stat"><span class="stat__num" data-count="17000">17,000+</span><span class="stat__label">diagnostic categories</span></div>
-          <div class="stat"><span class="stat__num" data-count="55000">55,000+</span><span class="stat__label">stem codes</span></div>
+          <div class="stat"><span class="stat__num">17,000+</span><span class="stat__label">diagnostic categories</span></div>
+          <div class="stat"><span class="stat__num">55,000+</span><span class="stat__label">stem codes</span></div>
           <div class="stat"><span class="stat__num">1.6M+</span><span class="stat__label">codable concepts</span></div>
           <div class="stat"><span class="stat__num">2022</span><span class="stat__label">came into effect</span></div>
         </div>
@@ -557,15 +559,28 @@
           <button class="btn btn--ghost btn--lg" id="btnPdf2" type="button">Save as PDF</button>
         </div>
         <p class="close__thanks">Thank you.</p>
+        <p class="close__copyright">&copy; <span id="year"></span> Harvey Road General Hospital, Yaba &middot; Presentation by Dr Manuwa Tolu. Educational use; ICD-11 is a product of the WHO. HCD is a proposed local classification concept.</p>
       </div>
     </section>
 
-  </main>
+    </div><!-- /stage -->
+  </div><!-- /deck -->
 
-  <footer class="sitefooter">
-    <p>&copy; <span id="year"></span> Harvey Road General Hospital, Yaba &middot; Presentation by Dr Manuwa Tolu</p>
-    <p class="sitefooter__note">Educational use. ICD-11 is a product of the World Health Organization. HCD is a proposed local classification concept.</p>
-  </footer>
+  <!-- ============ DECK CONTROLS ============ -->
+  <nav class="deck-controls" id="deckControls" aria-label="Slide controls">
+    <button class="navbtn navbtn--prev" id="btnPrev" type="button" aria-label="Previous slide">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+
+    <div class="deck-controls__center">
+      <div class="dots" id="dots" role="tablist" aria-label="Go to slide"></div>
+      <span class="counter"><span id="counterNow">1</span> / <span id="counterTotal">1</span></span>
+    </div>
+
+    <button class="navbtn navbtn--next" id="btnNext" type="button" aria-label="Next slide">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+  </nav>
 
   <!-- Export libraries (client-side, loaded from CDN) -->
   <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
