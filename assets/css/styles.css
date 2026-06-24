@@ -528,3 +528,65 @@ table.compare tbody tr:last-child td { border-bottom: none; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   a[href]::after { content: ""; }
 }
+
+/* =========================================================
+   ICD-11 CODER DEMO  +  trimmed-slide helpers
+   ========================================================= */
+.feature-list--lg { gap: 1.1rem; }
+.feature-list--lg li { font-size: 1.05rem; }
+
+.emr-how-grid .card p code { font-size: 0.85em; }
+
+/* examples: compact code pairs */
+.ex-codes { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin: 0.4rem 0 0.6rem; }
+.ex-codes span { color: var(--teal-500); font-weight: 800; }
+.ex-codes code { font-size: 0.95rem; }
+.ex-codes code.old { background: #f1f4f4; color: var(--muted); }
+.ex-codes code.new { background: var(--teal-50); color: var(--teal-800); }
+.example-card small { display: block; font-size: 0.86rem; color: var(--ink-soft); }
+
+/* ---- the coder ---- */
+.coder { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; align-items: start; }
+
+.coder__search { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 1.3rem; box-shadow: var(--shadow-md); }
+.searchbox { display: flex; align-items: center; gap: 0.6rem; border: 1.5px solid var(--line); border-radius: 999px; padding: 0.6rem 1rem; background: #fbfdfd; transition: border-color 0.15s, box-shadow 0.15s; color: var(--muted); }
+.searchbox:focus-within { border-color: var(--teal-500); box-shadow: 0 0 0 3px rgba(20,163,173,0.15); color: var(--teal-700); }
+.searchbox input { flex: 1; border: none; outline: none; background: transparent; font-family: var(--font-sans); font-size: 0.98rem; color: var(--ink); }
+
+.coder__quicklabel { margin: 1rem 0 0.5rem; font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.coder__quick { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.quickchip { font-family: var(--font-sans); font-size: 0.85rem; font-weight: 600; color: var(--teal-800); background: var(--teal-50); border: 1px solid var(--teal-100); border-radius: 999px; padding: 0.38rem 0.85rem; cursor: pointer; transition: background 0.15s, color 0.15s, transform 0.12s; }
+.quickchip:hover { background: var(--teal-700); color: #fff; transform: translateY(-1px); }
+
+.coder__results { list-style: none; margin: 1rem 0 0; padding: 0; display: grid; gap: 0.4rem; max-height: 230px; overflow-y: auto; }
+.coder__result { display: flex; align-items: center; gap: 0.8rem; padding: 0.6rem 0.7rem; border: 1px solid var(--line); border-radius: var(--radius-sm); cursor: pointer; transition: border-color 0.15s, background 0.15s, transform 0.12s; }
+.coder__result:hover { border-color: var(--teal-300); background: var(--teal-50); transform: translateX(2px); }
+.coder__result > code { flex: none; min-width: 62px; text-align: center; }
+.coder__result-body { display: flex; flex-direction: column; line-height: 1.3; }
+.coder__result-body b { font-size: 0.92rem; color: var(--ink); font-weight: 700; }
+.coder__result-body small { font-size: 0.74rem; color: var(--muted); }
+.coder__noresult { font-size: 0.9rem; color: var(--muted); padding: 0.6rem; }
+
+/* selection panel */
+.coder__panel { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-md); min-height: 220px; overflow: hidden; }
+.coder__empty { padding: 2.5rem 1.8rem; text-align: center; color: var(--ink-soft); }
+.coder__empty-icon { font-size: 2.2rem; margin-bottom: 0.6rem; }
+.coder__empty p { margin: 0; font-size: 0.94rem; }
+
+.coder__selected { padding: 1.4rem 1.5rem; }
+.coder__chaptag { display: inline-block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--teal-700); background: var(--teal-50); padding: 0.2rem 0.6rem; border-radius: 999px; }
+.coder__selected h3 { font-size: 1.3rem; color: var(--teal-800); margin: 0.5rem 0 1rem; }
+
+.coder__refine { margin-bottom: 1rem; }
+.coder__sublabel { display: block; font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.45rem; }
+.chipset { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.rchip { font-family: var(--font-sans); font-size: 0.82rem; font-weight: 600; color: var(--ink-soft); background: #fff; border: 1.5px solid var(--line); border-radius: 999px; padding: 0.35rem 0.8rem; cursor: pointer; transition: all 0.15s; }
+.rchip:hover { border-color: var(--teal-300); color: var(--teal-700); }
+.rchip.active { background: var(--teal-700); border-color: var(--teal-700); color: #fff; }
+
+.coder .code-cards { border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; margin-top: 0.6rem; }
+.coder__note { margin: 0.9rem 0 0; font-size: 0.82rem; color: var(--green); font-weight: 600; }
+
+@media (max-width: 900px) {
+  .coder { grid-template-columns: 1fr; }
+}
