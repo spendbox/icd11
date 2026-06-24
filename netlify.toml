@@ -1,0 +1,15 @@
+# Netlify configuration — static site, no build step required.
+[build]
+  publish = "."
+  command = ""
+
+# Long cache for static assets
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
