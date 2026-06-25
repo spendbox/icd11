@@ -323,7 +323,47 @@
             </div>
           </div>
         </div>
-        <p class="result-disclaimer">Live results come from the WHO ICD-11 API when configured; otherwise built-in ICD-11 sample data is used. Extension codes shown illustrate post-coordination.</p>
+        <p class="result-disclaimer">Live results come from the WHO ICD-11 API when configured; otherwise built-in ICD-11 sample data is used. Extensions shown are <em>context-aware</em> — only those that apply to the selected diagnosis appear.</p>
+      </div>
+    </section>
+
+    <!-- ============ ENCOUNTER CODER (multi-problem) ============ -->
+    <section class="slide slide--tint" id="encounter" data-title="Code a whole encounter">
+      <div class="slide__inner slide__inner--wide">
+        <p class="kicker">Try it yourself &middot; the ward-round way</p>
+        <h2>Code a whole encounter</h2>
+        <p class="lead">Real care is messy &mdash; several active problems, some still evolving. Type the clinical picture in plain words or shorthand; we suggest ICD-11 clusters as <strong>pills</strong> and you pick.</p>
+
+        <div class="enc">
+          <div class="enc__input">
+            <label class="enc__label" for="encNarrative">Clinical picture</label>
+            <textarea id="encNarrative" rows="3" placeholder="e.g. symptomatic uterine fibroids with anaemia, uncontrolled HTN, T2DM"></textarea>
+            <div class="enc__controls">
+              <button class="btn btn--solid" id="encSuggest" type="button">Suggest ICD-11 codes &rarr;</button>
+              <div class="enc__examples" id="encExamples"></div>
+            </div>
+            <div class="coder__status" id="encStatus"><span class="dotpulse"></span> Type the clinical picture, then press Suggest</div>
+          </div>
+
+          <div class="enc__work">
+            <div class="enc__suggestions" id="encSuggestions">
+              <p class="enc__hint">Suggestions appear here. Click a pill to add it to the problem list &rarr;</p>
+            </div>
+
+            <div class="enc__panel">
+              <div class="enc__panelhead">
+                <span class="coder__sublabel">Encounter problem list</span>
+                <span class="enc__count" id="encCount">0 problems</span>
+              </div>
+              <ul class="enc__list" id="encList"></ul>
+              <div class="bigcode">
+                <span class="code-card__label">Encounter ICD-11 codes</span>
+                <code id="encOut">&mdash;</code>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="result-disclaimer">Parsing uses an AI layer when an OpenAI key is configured, otherwise a built-in rule-based parser; codes come from the WHO ICD-11 API when configured, else sample data. Clinical-course labels (stable, uncontrolled&hellip;) are encounter annotations, not ICD-11 codes.</p>
       </div>
     </section>
 
@@ -414,5 +454,6 @@
   <script src="assets/js/emr.js"></script>
   <script src="assets/js/export.js"></script>
   <script src="assets/js/deck.js"></script>
+  <script src="assets/js/encounter.js"></script>
 </body>
 </html>

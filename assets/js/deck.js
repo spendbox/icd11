@@ -282,9 +282,15 @@
       byId("selChapter").textContent = it.chapter || "ICD-11 MMS";
       byId("selTitle").textContent = it.title;
 
-      // Render each extension dimension (laterality, severity, …) as a chip row.
+      // Only show extension dimensions that medically apply to THIS diagnosis.
+      var dims = icd.applicableExt(it.title, it.code);
+      var refine = document.querySelector("#demo .coder__refine");
+      if (refine) refine.style.display = dims.length ? "" : "none";
+
       extChips.innerHTML = "";
-      icd.EXT_GROUPS.forEach(function (group) {
+      dims.forEach(function (key) {
+        var group = icd.EXT[key];
+        if (!group) return;
         var row = document.createElement("div");
         row.className = "extgroup";
         var lbl = document.createElement("span");
@@ -312,7 +318,7 @@
 
     function chosenExts() {
       var out = [];
-      icd.EXT_GROUPS.forEach(function (g) { if (sel.exts[g.key]) out.push(sel.exts[g.key]); });
+      Object.keys(icd.EXT).forEach(function (k) { if (sel.exts[k]) out.push(sel.exts[k]); });
       return out;
     }
 
@@ -324,9 +330,12 @@
       var title = it.title + (exts.length ? " — " + exts.map(function (e) { return e.label.toLowerCase(); }).join(", ") : "");
       byId("outIcd").textContent = cluster;
       byId("outIcdTitle").textContent = title;
+      var dims = icd.applicableExt(it.title, it.code);
       byId("coderNote").textContent = exts.length
         ? "Cluster: stem " + it.code + " post-coordinated with " + exts.map(function (e) { return e.ext; }).join(" + ") + "."
-        : "Add an extension above to post-coordinate (e.g. laterality, severity).";
+        : dims.length
+          ? "Add an extension above to post-coordinate (e.g. " + dims.join(", ") + ")."
+          : "This diagnosis is fully specified by its stem code — no extension applies.";
     }
 
     input.addEventListener("input", function () {

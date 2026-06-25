@@ -39,6 +39,28 @@ python3 -m http.server 8080
 # then visit http://localhost:8080
 ```
 
+## Live coders & environment variables
+
+Two interactive slides talk to the WHO ICD-11 API through Netlify functions:
+
+- **Live ICD-11 coder** — search → pick → add *context-aware* extensions.
+- **Encounter coder** — type a free-text clinical picture (or shorthand like
+  `T2DM`); it parses the problems, suggests ICD-11 clusters as pills, and builds
+  a ward problem list with a clinical course per problem.
+
+Both work out of the box with built-in sample data. To go fully live, set these
+in **Netlify → Site settings → Environment variables**:
+
+| Variable | Purpose | Required |
+| --- | --- | --- |
+| `WHO_CLIENT_ID` / `WHO_CLIENT_SECRET` | WHO ICD-11 API credentials ([register free](https://icd.who.int/icdapi)) | for live ICD-11 search |
+| `WHO_ICD_RELEASE` | MMS release, e.g. `2024-01` | optional |
+| `OPENAI_API_KEY` | enables the AI narrative parser in the Encounter coder | optional |
+| `OPENAI_MODEL` | OpenAI model (default `gpt-4o-mini`) | optional |
+
+Without `OPENAI_API_KEY` the Encounter coder uses a built-in rule-based parser;
+without the WHO credentials both coders use the built-in sample dataset.
+
 ## Deploy on Netlify
 
 This repo is Netlify-ready (`netlify.toml` is included; no build step).
