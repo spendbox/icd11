@@ -719,6 +719,53 @@ table.compare tbody tr:last-child td { border-bottom: none; }
 @media (max-width: 900px) { .exttypes { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .exttypes { grid-template-columns: 1fr; } }
 
+/* ---- encounter output + assessment field ---- */
+.bigcode--enc { margin-top: 0.6rem; }
+.bigcode--enc code { white-space: pre-wrap; font-size: 1.05rem; line-height: 1.7; }
+.enc2__assessment { width: 100%; box-sizing: border-box; resize: vertical; min-height: 72px; margin-top: 0.45rem;
+  font-family: var(--font-sans); font-size: 0.98rem; color: var(--ink); line-height: 1.5;
+  border: 1.5px solid var(--line); border-radius: var(--radius-sm); padding: 0.7rem 0.85rem; outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+.enc2__assessment::placeholder { color: var(--muted); font-weight: 400; }
+.enc2__assessment:focus { border-color: var(--teal-500); box-shadow: 0 0 0 4px rgba(20,163,173,0.14); }
+.pill--query { background: #fff; border-style: dashed; color: var(--muted); }
+.pill--query.is-picked { background: var(--purple); border-color: var(--purple); border-style: solid; color: #fff; }
+
+/* =========================================================
+   PRESCRIBING DEMO (animated)
+   ========================================================= */
+.rx { max-width: 760px; }
+.rx__entry { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 1.2rem 1.3rem; box-shadow: var(--shadow-md); }
+.rx__label { display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.5rem; }
+.rx__box { cursor: default; }
+.rx__typed { font-size: 1.04rem; font-weight: 500; color: var(--ink); white-space: pre-wrap; }
+.rx__caret { display: inline-block; width: 2px; height: 1.15rem; background: var(--teal-600); margin-left: 1px; animation: blink 1s steps(1) infinite; vertical-align: middle; }
+
+.rx__suggestions { list-style: none; margin: 1rem 0 0; padding: 0; display: grid; gap: 0.55rem; }
+.rx__suggestions li {
+  display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.5rem 1rem;
+  background: #fff; border: 1.5px solid var(--line); border-radius: var(--radius-sm); padding: 0.75rem 0.95rem;
+  box-shadow: var(--shadow-sm); opacity: 0; transform: translateY(-10px);
+  transition: opacity 0.45s, transform 0.45s, border-color 0.3s, background 0.3s;
+}
+.rx.show-suggestions .rx__suggestions li { opacity: 1; transform: none; }
+.rx.show-suggestions .rx__suggestions li[data-rx="2"] { transition-delay: 0.12s; }
+.rx__pillmain { font-size: 0.98rem; font-weight: 600; color: var(--ink); }
+.rx__pillmain code { font-size: 0.78rem; margin-right: 0.5rem; }
+.rx__pillsig { font-size: 0.82rem; color: var(--ink-soft); }
+.rx__tick { grid-column: 2; grid-row: 1 / span 2; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--teal-50); color: var(--teal-300); font-weight: 800; border: 1.5px solid var(--teal-100); transition: all 0.25s; }
+.rx.pick-1 .rx__suggestions li[data-rx="1"],
+.rx.pick-2 .rx__suggestions li[data-rx="2"] { border-color: var(--teal-500); background: var(--teal-50); }
+.rx.pick-1 .rx__suggestions li[data-rx="1"] .rx__tick,
+.rx.pick-2 .rx__suggestions li[data-rx="2"] .rx__tick { background: var(--green); color: #fff; border-color: var(--green); }
+
+.rx__synced { margin-top: 1rem; display: inline-flex; align-items: center; gap: 0.55rem; font-size: 0.92rem; font-weight: 700; color: var(--green);
+  background: rgba(47,158,107,0.08); border: 1px solid rgba(47,158,107,0.25); border-radius: 999px; padding: 0.5rem 1rem;
+  opacity: 0; transform: translateY(8px); transition: opacity 0.5s, transform 0.5s; }
+.rx.show-synced .rx__synced { opacity: 1; transform: none; }
+.rx__synceddot { width: 9px; height: 9px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 rgba(47,158,107,0.5); animation: pulse 1.8s infinite; }
+.rx__replay { margin-top: 1.4rem; }
+
 /* =========================================================
    ANATOMY OF A CODE (ICD-10 vs ICD-11)
    ========================================================= */
