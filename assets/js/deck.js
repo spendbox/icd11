@@ -328,18 +328,25 @@
     }
 
     // Free search across the FULL extension catalogue.
+    var extFocused = false;
     function renderExtResults() {
       if (!extResultsEl) return;
       var q = extSearchEl ? extSearchEl.value : "";
-      if (!q.trim()) { extResultsEl.innerHTML = ""; return; }
-      var list = icd.extSearch(q).slice(0, 8);
+      var list;
+      if (q.trim()) {
+        list = icd.extSearch(q).slice(0, 8);
+      } else if (extFocused) {
+        list = icd.extSearch("").slice(0, 8);   // show options as soon as the box is focused
+      } else {
+        extResultsEl.innerHTML = ""; return;
+      }
       extResultsEl.innerHTML = "";
       if (!list.length) { extResultsEl.innerHTML = '<li class="extfind__none">No extension matches</li>'; return; }
       list.forEach(function (e) {
         var li = document.createElement("li");
         li.className = "extfind__item" + (hasExt(e.code) ? " is-on" : "");
         li.innerHTML = '<code>' + esc(e.code) + '</code><span>' + esc(e.label) + '</span><em>' + esc(e.catLabel) + '</em>';
-        li.addEventListener("click", function () { toggleExt(e.cat, e.label, e.code); });
+        li.addEventListener("mousedown", function (ev) { ev.preventDefault(); toggleExt(e.cat, e.label, e.code); });
         extResultsEl.appendChild(li);
       });
     }
@@ -371,7 +378,14 @@
         : "Pick a suggested extension, or search to add any extension.";
     }
 
-    if (extSearchEl) extSearchEl.addEventListener("input", renderExtResults);
+    if (extSearchEl) {
+      extSearchEl.addEventListener("input", renderExtResults);
+      extSearchEl.addEventListener("focus", function () { extFocused = true; renderExtResults(); });
+      extSearchEl.addEventListener("blur", function () {
+        extFocused = false;
+        window.setTimeout(function () { if (!extFocused && !extSearchEl.value.trim()) extResultsEl.innerHTML = ""; }, 120);
+      });
+    }
 
     input.addEventListener("input", function () {
       clearTimeout(debounce);
