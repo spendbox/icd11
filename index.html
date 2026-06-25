@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=20260625e" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=20260625g" />
 </head>
 <body>
 
@@ -23,12 +23,12 @@
     <section class="slide cover is-active" id="cover" data-title="Cover">
       <div class="cover__bg" aria-hidden="true"></div>
       <div class="cover__inner">
-        <img src="assets/img/logo.jpeg?v=20260625e" alt="Harvey Road General Hospital crest" class="cover__logo" />
+        <img src="assets/img/logo.jpeg?v=20260625g" alt="Harvey Road General Hospital crest" class="cover__logo" />
         <p class="eyebrow">Harvey Road General Hospital &bull; Yaba, Lagos</p>
         <h1 class="cover__title">Understanding <span>ICD-11</span></h1>
         <p class="cover__subtitle">The WHO&rsquo;s modern standard for classifying disease &mdash; and how it actually works.</p>
         <div class="cover__byline">
-          <div class="avatar" aria-hidden="true"><img class="avatar__img" src="assets/img/presenter.png?v=20260625e" alt="" onerror="this.remove()" />MT</div>
+          <div class="avatar" aria-hidden="true"><img class="avatar__img" src="assets/img/presenter.png?v=20260625g" alt="" onerror="this.remove()" />MT</div>
           <div>
             <strong>Dr Manuwa Tolu</strong>
             <span>Harvey Road General Hospital, Yaba</span>
@@ -196,11 +196,91 @@
             </div>
             <ul class="ca-legend">
               <li><span class="d d-1"></span><strong>1</strong> &mdash; chapter (01 Infectious)</li>
-              <li><span class="d d-2"></span><strong>F</strong> &mdash; block (2nd char is always a letter)</li>
-              <li><span class="d d-3"></span><strong>40</strong> &mdash; category (falciparum malaria)</li>
+              <li><span class="d d-2"></span><strong>F</strong> &mdash; block: a group of related categories (the 2nd char is always a letter)</li>
+              <li><span class="d d-3"></span><strong>40</strong> &mdash; category (the specific diagnosis: falciparum malaria)</li>
               <li><span class="d d-4"></span><strong>.0</strong> &mdash; detail (cerebral) &middot; can cluster extensions</li>
             </ul>
             <p class="ca-note">Letters <strong>O</strong> and <strong>I</strong> are never used &mdash; no confusion with 0 and 1.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STRUCTURE / COUNTS ============ -->
+    <section class="slide" id="structure" data-title="How ICD-11 is structured">
+      <div class="slide__inner slide__inner--wide">
+        <p class="kicker">Numbers &amp; structure</p>
+        <h2>The shape of ICD-11</h2>
+        <p class="lead">Every code is built the same way &mdash; and the first two characters place it on the map.</p>
+
+        <div class="stat-row">
+          <div class="stat"><span class="stat__num">28</span><span class="stat__label">chapters</span></div>
+          <div class="stat"><span class="stat__num">17,000+</span><span class="stat__label">stem codes (categories)</span></div>
+          <div class="stat"><span class="stat__num">120,000+</span><span class="stat__label">codable terms</span></div>
+          <div class="stat"><span class="stat__num">1.6M+</span><span class="stat__label">post-coordinated combinations</span></div>
+        </div>
+
+        <div class="struct-grid">
+          <div class="struct-block">
+            <h3 class="struct-h">Inside a code &mdash; what each position can be</h3>
+            <div class="table-wrap">
+              <table class="struct-table">
+                <thead><tr><th>Position</th><th>What it encodes</th><th>Possible values</th></tr></thead>
+                <tbody>
+                  <tr><td><code>1</code> 1st</td><td>Chapter</td><td>1&ndash;9, then A&ndash;Z</td></tr>
+                  <tr><td><code>A</code> 2nd</td><td>Block <span class="struct-mut">(group of categories)</span></td><td>A&ndash;Z &mdash; always a letter</td></tr>
+                  <tr><td><code>0</code> 3rd</td><td>Category</td><td>0&ndash;9 &mdash; forced digit</td></tr>
+                  <tr><td><code>0</code> 4th</td><td>Category</td><td>0&ndash;9, or A&ndash;Z</td></tr>
+                  <tr><td><code>.0</code> 5th&ndash;6th</td><td>Subcategory / detail</td><td>0&ndash;9, or A&ndash;Z</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="footnote">Letters <strong>I</strong> and <strong>O</strong> are never used (no confusion with 1 and 0). A full code runs <code>1A00.00</code> &rarr; <code>ZZ9Z.ZZ</code>. Extension codes (Chapter&nbsp;X) all start with <code>X</code> and post-coordinate onto a stem with <code>&amp;</code>.</p>
+          </div>
+
+          <div class="struct-block">
+            <h3 class="struct-h">The 28 chapters &mdash; and the character each one starts with</h3>
+            <div class="chapters-cols">
+              <table class="struct-table struct-table--chap">
+                <thead><tr><th>#</th><th>1st</th><th>Chapter</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td><code>1</code></td><td>Certain infectious or parasitic diseases</td></tr>
+                  <tr><td>2</td><td><code>2</code></td><td>Neoplasms</td></tr>
+                  <tr><td>3</td><td><code>3</code></td><td>Blood or blood-forming organs</td></tr>
+                  <tr><td>4</td><td><code>4</code></td><td>Immune system</td></tr>
+                  <tr><td>5</td><td><code>5</code></td><td>Endocrine, nutritional or metabolic</td></tr>
+                  <tr><td>6</td><td><code>6</code></td><td>Mental, behavioural or neurodevelopmental</td></tr>
+                  <tr><td>7</td><td><code>7</code></td><td>Sleep-wake disorders</td></tr>
+                  <tr><td>8</td><td><code>8</code></td><td>Nervous system</td></tr>
+                  <tr><td>9</td><td><code>9</code></td><td>Visual system</td></tr>
+                  <tr><td>10</td><td><code>A</code></td><td>Ear or mastoid process</td></tr>
+                  <tr><td>11</td><td><code>B</code></td><td>Circulatory system</td></tr>
+                  <tr><td>12</td><td><code>C</code></td><td>Respiratory system</td></tr>
+                  <tr><td>13</td><td><code>D</code></td><td>Digestive system</td></tr>
+                  <tr><td>14</td><td><code>E</code></td><td>Skin</td></tr>
+                </tbody>
+              </table>
+              <table class="struct-table struct-table--chap">
+                <thead><tr><th>#</th><th>1st</th><th>Chapter</th></tr></thead>
+                <tbody>
+                  <tr><td>15</td><td><code>F</code></td><td>Musculoskeletal system or connective tissue</td></tr>
+                  <tr><td>16</td><td><code>G</code></td><td>Genitourinary system</td></tr>
+                  <tr><td>17</td><td><code>H</code></td><td>Conditions related to sexual health</td></tr>
+                  <tr><td>18</td><td><code>J</code></td><td>Pregnancy, childbirth or the puerperium</td></tr>
+                  <tr><td>19</td><td><code>K</code></td><td>Certain conditions originating in the perinatal period</td></tr>
+                  <tr><td>20</td><td><code>L</code></td><td>Developmental anomalies</td></tr>
+                  <tr><td>21</td><td><code>M</code></td><td>Symptoms, signs or clinical findings, NEC</td></tr>
+                  <tr><td>22</td><td><code>N</code></td><td>Injury, poisoning or external-cause consequences</td></tr>
+                  <tr><td>23</td><td><code>P</code></td><td>External causes of morbidity or mortality</td></tr>
+                  <tr><td>24</td><td><code>Q</code></td><td>Factors influencing health status</td></tr>
+                  <tr><td>25</td><td><code>R</code></td><td>Codes for special purposes</td></tr>
+                  <tr><td>26</td><td><code>S</code></td><td>Traditional Medicine conditions (Module&nbsp;I)</td></tr>
+                  <tr><td>V</td><td><code>V</code></td><td>Supplementary section for functioning assessment</td></tr>
+                  <tr><td>X</td><td><code>X</code></td><td>Extension codes (for post-coordination)</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="footnote">Chapters 1&ndash;9 use digits; chapters 10&ndash;26 use letters A&ndash;S (skipping I and O); <code>V</code> and <code>X</code> are the two supplementary chapters.</p>
           </div>
         </div>
       </div>
@@ -650,11 +730,11 @@
     <!-- ============ 10 · CLOSE ============ -->
     <section class="slide slide--dark close" id="close" data-title="Thank you">
       <div class="slide__inner close__inner">
-        <img src="assets/img/logo.jpeg?v=20260625e" alt="" class="close__logo" />
+        <img src="assets/img/logo.jpeg?v=20260625g" alt="" class="close__logo" />
         <h2>ICD-11 &mdash; a modern standard, ready for our EMR</h2>
         <p class="lead lead--light">Searchable, precise and digital-native &mdash; classification built for how we actually work.</p>
         <div class="close__byline">
-          <div class="avatar avatar--lg" aria-hidden="true"><img class="avatar__img" src="assets/img/presenter.png?v=20260625e" alt="" onerror="this.remove()" />MT</div>
+          <div class="avatar avatar--lg" aria-hidden="true"><img class="avatar__img" src="assets/img/presenter.png?v=20260625g" alt="" onerror="this.remove()" />MT</div>
           <div>
             <strong>Dr Manuwa Tolu</strong>
             <span>Harvey Road General Hospital, Yaba, Lagos</span>
@@ -681,8 +761,8 @@
     </button>
   </nav>
 
-  <script src="assets/js/emr.js?v=20260625e"></script>
-  <script src="assets/js/deck.js?v=20260625e"></script>
-  <script src="assets/js/encounter.js?v=20260625e"></script>
+  <script src="assets/js/emr.js?v=20260625g"></script>
+  <script src="assets/js/deck.js?v=20260625g"></script>
+  <script src="assets/js/encounter.js?v=20260625g"></script>
 </body>
 </html>
