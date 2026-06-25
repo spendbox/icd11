@@ -374,7 +374,7 @@
           <div class="card">
             <div class="card__icon">⏱️</div>
             <h3>Fast at the point of care</h3>
-            <p>A clerking has several problems at once. Capturing them must take seconds, not menus &mdash; or clinicians simply won&rsquo;t do it.</p>
+            <p>A clerking has several problems at once. Capturing them must take seconds, not minutes &mdash; or clinicians simply won&rsquo;t do it.</p>
           </div>
           <div class="card">
             <div class="card__icon">🔄</div>
@@ -450,7 +450,7 @@
           </table>
         </div>
 
-        <div class="callout">So our build is small: a fast <strong>diagnosis</strong> coder that suggests context-aware extensions, plus an <strong>assessment</strong> field for the clinical course. That&rsquo;s the next slide.</div>
+        <div class="callout">Proposed solution: a fast <strong>diagnosis</strong> coder that suggests context-aware extensions, plus an <strong>assessment</strong> field for the clinical course. The assessment is typed manually &mdash; and for anything not yet diagnosed, we can <strong>query</strong> it.</div>
       </div>
     </section>
 
@@ -459,7 +459,7 @@
       <div class="slide__inner slide__inner--wide">
         <p class="kicker">Try it yourself &middot; natural language</p>
         <h2>Code a whole encounter</h2>
-        <p class="lead">Type the clinical picture the way you&rsquo;d say it. We split it into problems, suggest ICD-11 clusters you tap to add, and keep <strong>diagnosis</strong> and <strong>assessment</strong> in separate fields.</p>
+        <p class="lead">Type the clinical picture in plain words &mdash; tap the suggested ICD-11 clusters to add them. Diagnosis and assessment stay in separate fields.</p>
 
         <div class="enc2">
           <div class="enc2__entry">
@@ -468,30 +468,101 @@
             <div class="enc2__actions">
               <button class="btn btn--solid btn--lg" id="encSuggest" type="button">Suggest ICD-11 codes &rarr;</button>
               <button class="btn btn--ghost" id="encClear" type="button">Clear</button>
-              <span class="coder__status" id="encStatus"><span class="dotpulse"></span> Type the clinical picture, then press Suggest</span>
+              <span class="coder__status" id="encStatus" hidden></span>
             </div>
             <div class="enc2__try"><span class="enc2__trylabel">Try:</span><div class="enc__examples" id="encExamples"></div></div>
           </div>
 
           <div class="enc2__results">
             <div class="enc2__col">
-              <span class="coder__sublabel">Suggested codes &mdash; tap to add</span>
+              <span class="coder__sublabel">Suggested codes &mdash; tap to add or remove</span>
               <div class="enc__suggestions" id="encSuggestions"><p class="enc__hint">Suggestions will appear here once you press Suggest.</p></div>
             </div>
             <div class="enc2__col">
-              <div class="enc__panelhead">
-                <span class="coder__sublabel">Problem list</span>
-                <span class="enc__count" id="encCount">0 problems</span>
-              </div>
-              <ul class="enc__list" id="encList"></ul>
-              <div class="bigcode">
-                <span class="code-card__label">Encounter ICD-11 codes</span>
+              <span class="coder__sublabel">Diagnosis &mdash; ICD-11 codes</span>
+              <div class="bigcode bigcode--enc">
                 <code id="encOut">&mdash;</code>
               </div>
+              <label class="coder__sublabel" for="encAssessment" style="margin-top:1.1rem;">Assessment <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--muted);">&mdash; clinical course, typed</span></label>
+              <textarea id="encAssessment" class="enc2__assessment" rows="3" placeholder="e.g. fibroids symptomatic, for myomectomy · HTN uncontrolled, optimise · DM stable on metformin"></textarea>
             </div>
           </div>
         </div>
-        <p class="result-disclaimer">Parsing uses an AI layer when an OpenAI key is set, else a built-in rule-based parser; codes come from the WHO ICD-11 API when configured, else sample data. Assessment labels (stable, uncontrolled&hellip;) are clinical annotations, not ICD-11 codes.</p>
+        <p class="result-disclaimer">Codes come from the WHO ICD-11 API when configured, else built-in sample data. Free-text parsing uses an optional AI layer (OpenAI key) or a built-in rule-based parser. Assessment is free text, not coded.</p>
+      </div>
+    </section>
+
+    <!-- ============ WHY IT'S ACTUALLY FASTER ============ -->
+    <section class="slide" id="efficiency" data-title="Doesn't this slow us down?">
+      <div class="slide__inner">
+        <p class="kicker">The honest trade-off</p>
+        <h2>&ldquo;Won&rsquo;t careful coding slow us down?&rdquo;</h2>
+        <p class="lead">Coding one diagnosis well costs a few extra seconds. The win comes when the <strong>same</strong> pattern &mdash; natural language plus confirmation pills &mdash; runs the <strong>whole</strong> encounter.</p>
+
+        <div class="grid grid-3">
+          <div class="card">
+            <div class="card__icon">🩺</div>
+            <h3>Diagnosis</h3>
+            <p>Type it, tap the context-aware ICD-11 cluster. Coded as you think.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">💊</div>
+            <h3>Prescriptions</h3>
+            <p>Type the order, tap to confirm &mdash; it syncs straight to the <strong>pharmacy</strong>. No second screen, no tick-boxes.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">🧪</div>
+            <h3>Investigations</h3>
+            <p>Type the tests, tap to confirm &mdash; synced to the <strong>lab</strong>. One field, not a form.</p>
+          </div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat"><span class="stat__num">5 → 1</span><span class="stat__label">steps to send a medication</span></div>
+          <div class="stat"><span class="stat__num">3&ndash;5&times;</span><span class="stat__label">faster overall workflow</span></div>
+          <div class="stat"><span class="stat__num">1</span><span class="stat__label">screen for the whole visit</span></div>
+        </div>
+
+        <div class="callout">Today our EMR needs <strong>five steps</strong> just to send one drug to the pharmacy. With natural-language orders and confirmation pills that sync to the pharmacy and lab databases, that becomes <strong>type &rarr; tap</strong>.</div>
+      </div>
+    </section>
+
+    <!-- ============ PRESCRIBING DEMO (animated) ============ -->
+    <section class="slide slide--tint" id="rx-demo" data-title="Prescribing in natural language">
+      <div class="slide__inner">
+        <p class="kicker">Watch &middot; context-aware prescribing</p>
+        <h2>Prescribe by typing &mdash; the pharmacy syncs</h2>
+        <p class="lead">Write the order the way you already do. Confirmation pills map each drug to the pharmacy&rsquo;s database in one tap.</p>
+
+        <div class="rx">
+          <div class="rx__entry">
+            <span class="rx__label">Prescription</span>
+            <div class="searchbox searchbox--demo rx__box">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"></path></svg>
+              <span class="rx__typed" id="rxTyped"></span><span class="rx__caret" id="rxCaret"></span>
+            </div>
+          </div>
+
+          <ul class="rx__suggestions" id="rxSuggestions">
+            <li data-rx="1">
+              <span class="rx__pillmain"><code>PCM</code> Paracetamol 1 g tablet</span>
+              <span class="rx__pillsig">PO &middot; TDS &middot; 5 days &middot; 15 tabs</span>
+              <span class="rx__tick">✓</span>
+            </li>
+            <li data-rx="2">
+              <span class="rx__pillmain"><code>ACT</code> Artemether 80 mg / Lumefantrine 480 mg</span>
+              <span class="rx__pillsig">PO &middot; BD &middot; 3 days &middot; 6 tabs</span>
+              <span class="rx__tick">✓</span>
+            </li>
+          </ul>
+
+          <div class="rx__synced" id="rxSynced">
+            <span class="rx__synceddot"></span> Sent to pharmacy &mdash; 2 items queued for dispensing
+          </div>
+        </div>
+
+        <button class="btn btn--ghost rx__replay" id="rxReplay" type="button">↻ Replay</button>
+        <p class="result-disclaimer">Illustration. <em>pcm 1g tds x 5/7</em> = paracetamol 1 g three times daily for 5 days; <em>ACT 80/480 bd x 3/7</em> = artemether/lumefantrine twice daily for 3 days.</p>
       </div>
     </section>
 

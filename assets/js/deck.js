@@ -78,6 +78,8 @@
       // start after the slide-in transition (~560ms) so the typing is
       // visible from the very first character.
       window.setTimeout(playWalkthrough, 620);
+    } else if (slide.id === "rx-demo") {
+      window.setTimeout(playRx, 620);
     }
   }
   function next() { go(current + 1, "next"); }
@@ -149,6 +151,36 @@
   }
   var wtReplay = byId("wtReplay");
   if (wtReplay) wtReplay.addEventListener("click", playWalkthrough);
+
+  /* =========================================================
+     PRESCRIBING DEMO — auto-typing + confirmation pills
+     ========================================================= */
+  var rxEl = document.querySelector("#rx-demo .rx");
+  var rxTyped = byId("rxTyped");
+  var rxToken = 0;
+  var RX_TEXT = "tabs pcm 1g tds x 5/7, tabs ACT 80/480mg bd x 3/7";
+
+  function playRx() {
+    if (!rxEl || !rxTyped) return;
+    var myToken = ++rxToken;
+    rxEl.classList.remove("show-suggestions", "pick-1", "pick-2", "show-synced");
+    rxTyped.textContent = "";
+    var i = 0;
+    (function type() {
+      if (myToken !== rxToken) return;
+      if (i <= RX_TEXT.length) { rxTyped.textContent = RX_TEXT.slice(0, i); i++; window.setTimeout(type, 45); return; }
+      seq();
+    })();
+    function at(cls, delay) { window.setTimeout(function () { if (myToken === rxToken) rxEl.classList.add(cls); }, delay); }
+    function seq() {
+      at("show-suggestions", 400);
+      at("pick-1", 1150);
+      at("pick-2", 1700);
+      at("show-synced", 2350);
+    }
+  }
+  var rxReplay = byId("rxReplay");
+  if (rxReplay) rxReplay.addEventListener("click", playRx);
 
   /* =========================================================
      LIVE ICD-11 CODER  (WHO API + sample fallback)

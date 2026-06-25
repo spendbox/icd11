@@ -1,16 +1,14 @@
 /* =========================================================
    Encounter coder — type a free-text clinical picture (or
-   shorthand like "T2DM"), get suggested ICD-11 clusters as
-   pills, pick them into a problem list, and tag each with a
-   clinical course (stable / uncontrolled / improving…).
+   shorthand like "T2DM"); it splits into problems, suggests
+   ICD-11 clusters as pills you tap to add/remove, and writes
+   the codes (with & for post-coordination) into the Diagnosis
+   field. Assessment is a separate, free-text field.
 
-   Parsing:
-     1. If an OpenAI key is configured server-side
-        (/.netlify/functions/icd-parse), use the AI parser.
-     2. Otherwise fall back to a built-in rule-based parser.
-   Codes:
-     WHO ICD-11 API (/.netlify/functions/icd-search) when
-     configured, else the built-in sample dataset.
+   Parsing: optional OpenAI layer (/.netlify/functions/icd-parse)
+   when a key is set, else a built-in rule-based parser.
+   Codes: WHO ICD-11 API (/.netlify/functions/icd-search) when
+   configured, else the built-in sample dataset.
    ========================================================= */
 (function () {
   "use strict";
@@ -24,15 +22,13 @@
 
   var elSuggest = byId("encSuggest");
   var elSuggestions = byId("encSuggestions");
-  var elList = byId("encList");
   var elOut = byId("encOut");
-  var elCount = byId("encCount");
   var elStatus = byId("encStatus");
   var elExamples = byId("encExamples");
 
   var apiConfigured = null;   // WHO search proxy
   var aiAvailable = null;     // OpenAI parse function
-  var problems = [];          // accepted problem list
+  var selected = [];          // [{ id, code, title, cluster, isQuery }]
 
   var EXAMPLES = [
     "symptomatic uterine fibroids with anaemia, uncontrolled HTN, T2DM",
@@ -40,18 +36,18 @@
     "left forearm fracture, mild pneumonia"
   ];
 
-  /* ---------- status line ---------- */
-  function setStatus(cls, text) {
+  function showStatus(text) {
     if (!elStatus) return;
-    elStatus.className = "coder__status " + (cls || "");
+    if (!text) { elStatus.hidden = true; elStatus.textContent = ""; return; }
+    elStatus.hidden = false;
+    elStatus.className = "coder__status is-searching";
     elStatus.innerHTML = '<span class="dotpulse"></span> ' + esc(text);
   }
 
   /* ---------- probes ---------- */
   function probe(url) {
     return fetch(url, { headers: { Accept: "application/json" } })
-      .then(function (r) { return r.ok ? r.json() : {}; })
-      .catch(function () { return {}; });
+      .then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; });
   }
   Promise.all([
     probe("/.netlify/functions/icd-search?ping=1"),
@@ -61,19 +57,18 @@
     aiAvailable = !!(res[1] && res[1].openai);
   });
 
-  /* ---------- clinical-course & extension detection (rules) ---------- */
+  /* ---------- rule-based parsing ---------- */
   var COURSE_RULES = [
     [/\b(uncontrolled|poorly controlled|out of control)\b/i, "Uncontrolled"],
     [/\b(improving|recovering|better)\b/i, "Improving"],
     [/\b(worsening|deteriorating|progressing)\b/i, "Worsening"],
     [/\b(resolv(ing|ed)|settling)\b/i, "Resolving"],
     [/\b(stable|controlled|well controlled)\b/i, "Stable"],
-    [/\b(admitted for|presenting with|admission)\b/i, "Admitted for"],
-    [/\b(new(ly diagnosed)?|first episode)\b/i, "Active"]
+    [/\b(admitted for|presenting with|admission)\b/i, "Admitted for"]
   ];
   function detectCourse(s) {
     for (var i = 0; i < COURSE_RULES.length; i++) if (COURSE_RULES[i][0].test(s)) return COURSE_RULES[i][1];
-    return "Active";
+    return "";
   }
   function detectLaterality(s) {
     if (/\bbilateral\b/i.test(s)) return "XK70";
@@ -87,214 +82,142 @@
     if (/\bmild\b/i.test(s)) return "XS5W";
     return null;
   }
-
-  /* strip course/qualifier words so the search term is the diagnosis itself */
   var NOISE_RE = /\b(uncontrolled|poorly controlled|well controlled|controlled|improving|recovering|worsening|deteriorating|progressing|resolving|resolved|settling|stable|admitted for|presenting with|admission|newly diagnosed|new|first episode|symptomatic|known|chronic|acute|severe|moderate|mild|left|right|bilateral|of)\b/gi;
-  function cleanTerm(s) {
-    return s.replace(NOISE_RE, " ").replace(/\s+/g, " ").trim();
-  }
+  function cleanTerm(s) { return s.replace(NOISE_RE, " ").replace(/\s+/g, " ").trim(); }
 
-  /* ---------- rule-based splitter ---------- */
   function ruleParse(text) {
     var parts = text.split(/[,;\n]|\band\b|\bwith\b|\bplus\b|\+|&/i);
     return parts.map(function (p) { return p.trim(); }).filter(Boolean).map(function (clause) {
-      return {
-        raw: clause,
-        term: cleanTerm(clause) || clause,
-        course: detectCourse(clause),
-        laterality: detectLaterality(clause),
-        severity: detectSeverity(clause)
-      };
+      return { raw: clause, term: cleanTerm(clause) || clause, course: detectCourse(clause),
+        laterality: detectLaterality(clause), severity: detectSeverity(clause) };
     });
   }
 
-  /* ---------- AI parser (optional) ---------- */
   function aiParse(text) {
     return fetch("/.netlify/functions/icd-parse", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({ text: text })
     }).then(function (r) { return r.ok ? r.json() : null; })
       .then(function (j) {
         if (!j || !j.problems || !j.problems.length) return null;
         return j.problems.map(function (p) {
-          return {
-            raw: p.term || "",
-            term: p.term || "",
-            course: p.course || "Active",
-            laterality: p.laterality || null,
-            severity: p.severity || null
-          };
+          return { raw: p.term || "", term: p.term || "", course: p.course || "",
+            laterality: p.laterality || null, severity: p.severity || null };
         });
       }).catch(function () { return null; });
   }
 
   function parseNarrative(text) {
-    if (aiAvailable) {
-      return aiParse(text).then(function (ai) { return ai || ruleParse(text); });
-    }
+    if (aiAvailable) return aiParse(text).then(function (ai) { return ai || ruleParse(text); });
     return Promise.resolve(ruleParse(text));
   }
 
-  /* ---------- candidate lookup (WHO proxy → local fallback) ---------- */
+  /* ---------- candidate lookup ---------- */
   function getCandidates(term) {
     var local = icd.search(term).slice(0, 4);
     var abbr = icd.expandAbbrev(term);
     function withAbbr(list) {
       if (!abbr) return list;
-      var has = list.some(function (x) { return x.code === abbr.code; });
-      return has ? list : [abbr].concat(list);
+      return list.some(function (x) { return x.code === abbr.code; }) ? list : [abbr].concat(list);
     }
     if (apiConfigured === false) return Promise.resolve(withAbbr(local).slice(0, 4));
     return fetch("/.netlify/functions/icd-search?q=" + encodeURIComponent(term), { headers: { Accept: "application/json" } })
       .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
       .then(function (res) {
-        if (res.ok && res.j && res.j.results && res.j.results.length) {
-          apiConfigured = true;
-          return withAbbr(res.j.results.slice(0, 4));
-        }
+        if (res.ok && res.j && res.j.results && res.j.results.length) { apiConfigured = true; return withAbbr(res.j.results.slice(0, 4)); }
         if (res.j && res.j.configured === false) apiConfigured = false;
         return withAbbr(local).slice(0, 4);
-      })
-      .catch(function () { apiConfigured = false; return withAbbr(local).slice(0, 4); });
+      }).catch(function () { apiConfigured = false; return withAbbr(local).slice(0, 4); });
   }
 
-  /* ---------- render suggestions (pills) ---------- */
-  function renderSuggestions(parsed, candidateLists) {
+  /* ---------- cluster building ---------- */
+  function clusterFor(item, parsed) {
+    var dims = icd.applicableExt(item.title, item.code);
+    var exts = [];
+    function ext(key, code) {
+      var g = icd.EXT[key]; if (!g) return;
+      g.options.forEach(function (o) { if (o.ext === code) exts.push(o.ext); });
+    }
+    if (dims.indexOf("laterality") !== -1 && parsed.laterality) ext("laterality", parsed.laterality);
+    if (dims.indexOf("severity") !== -1 && parsed.severity) ext("severity", parsed.severity);
+    return item.code + exts.map(function (e) { return " & " + e; }).join("");
+  }
+
+  /* ---------- selection ---------- */
+  function isSel(id) { return selected.some(function (s) { return s.id === id; }); }
+  function toggle(entry) {
+    if (isSel(entry.id)) selected = selected.filter(function (s) { return s.id !== entry.id; });
+    else selected.push(entry);
+    renderSuggestionsState(); renderOutput();
+  }
+
+  /* ---------- render suggestions ---------- */
+  function renderSuggestions(parsed, lists) {
     elSuggestions.innerHTML = "";
-    var any = false;
     parsed.forEach(function (p, i) {
-      var cands = candidateLists[i] || [];
+      var cands = lists[i] || [];
       var block = document.createElement("div");
       block.className = "enc__sug";
       var head = '<div class="enc__sughead"><b>' + esc(p.term || p.raw) + '</b>';
-      if (p.course && p.course !== "Active") head += '<span class="enc__course-badge">' + esc(p.course) + '</span>';
+      if (p.course) head += '<span class="enc__course-badge">' + esc(p.course) + '</span>';
       head += '</div>';
       block.innerHTML = head;
+
       var pills = document.createElement("div");
       pills.className = "enc__pills";
-      if (!cands.length) {
-        pills.innerHTML = '<span class="enc__nomatch">no match — refine the wording</span>';
-      } else {
-        any = true;
-        cands.forEach(function (c) {
-          var pill = document.createElement("button");
-          pill.type = "button"; pill.className = "pill";
-          pill.innerHTML = '<code>' + esc(c.code) + '</code><span>' + esc(c.title) + '</span>';
-          pill.addEventListener("click", function () {
-            addProblem(c, p);
-            pill.classList.add("is-picked");
-          });
-          pills.appendChild(pill);
-        });
-      }
+      cands.forEach(function (c) {
+        var cluster = clusterFor(c, p);
+        var entry = { id: cluster, code: c.code, title: c.title, cluster: cluster, isQuery: false };
+        var pill = document.createElement("button");
+        pill.type = "button";
+        pill.className = "pill" + (isSel(entry.id) ? " is-picked" : "");
+        pill.dataset.id = entry.id;
+        pill.innerHTML = '<code>' + esc(cluster) + '</code><span>' + esc(c.title) + '</span>';
+        pill.addEventListener("click", function () { toggle(entry); });
+        pills.appendChild(pill);
+      });
+
+      // query option — for problems not yet diagnosed
+      var qid = "q:" + (p.term || p.raw);
+      var q = { id: qid, code: "", title: p.term || p.raw, cluster: "", isQuery: true };
+      var qpill = document.createElement("button");
+      qpill.type = "button";
+      qpill.className = "pill pill--query" + (isSel(qid) ? " is-picked" : "");
+      qpill.dataset.id = qid;
+      qpill.innerHTML = '<span>⟲ Query — work up</span>';
+      qpill.title = "Not yet diagnosed — flag for investigation";
+      qpill.addEventListener("click", function () { toggle(q); });
+      pills.appendChild(qpill);
+
       block.appendChild(pills);
       elSuggestions.appendChild(block);
     });
-    if (!any && parsed.length) {
-      elSuggestions.insertAdjacentHTML("afterbegin", '<p class="enc__hint">No codes matched. Try fuller terms (e.g. “anaemia”, “hypertension”).</p>');
-    }
   }
 
-  /* ---------- problem list ---------- */
-  function buildExts(item, parsed) {
-    // pre-apply detected extensions only when they apply to this diagnosis
-    var dims = icd.applicableExt(item.title, item.code);
-    var exts = [];
-    function findOpt(key, code) {
-      var g = icd.EXT[key]; if (!g) return null;
-      for (var i = 0; i < g.options.length; i++) if (g.options[i].ext === code) return g.options[i];
-      return null;
-    }
-    if (dims.indexOf("laterality") !== -1 && parsed.laterality) {
-      var l = findOpt("laterality", parsed.laterality); if (l) exts.push(l);
-    }
-    if (dims.indexOf("severity") !== -1 && parsed.severity) {
-      var s = findOpt("severity", parsed.severity); if (s) exts.push(s);
-    }
-    return exts;
-  }
-
-  function addProblem(item, parsed) {
-    if (problems.some(function (p) { return p.code === item.code; })) { renderList(); return; }
-    problems.push({
-      code: item.code,
-      title: item.title,
-      chapter: item.chapter || "ICD-11 MMS",
-      course: parsed ? parsed.course : "Active",
-      exts: parsed ? buildExts(item, parsed) : []
+  // sync only the picked state (no full rebuild) when toggling
+  function renderSuggestionsState() {
+    var pills = elSuggestions.querySelectorAll(".pill");
+    Array.prototype.forEach.call(pills, function (pill) {
+      pill.classList.toggle("is-picked", isSel(pill.dataset.id));
     });
-    renderList();
   }
 
-  function clusterOf(p) {
-    return p.code + p.exts.map(function (e) { return " & " + e.ext; }).join("");
-  }
-
-  function renderList() {
-    elList.innerHTML = "";
-    if (!problems.length) {
-      elList.innerHTML = '<li class="enc__empty">No problems added yet.</li>';
-    }
-    problems.forEach(function (p, idx) {
-      var li = document.createElement("li");
-      li.className = "enc__item";
-
-      var sel = document.createElement("select");
-      sel.className = "enc__select";
-      sel.title = "Assessment / clinical course";
-      sel.setAttribute("aria-label", "Assessment for " + p.title);
-      icd.COURSE.forEach(function (c) {
-        var o = document.createElement("option");
-        o.value = c; o.textContent = c; if (c === p.course) o.selected = true;
-        sel.appendChild(o);
-      });
-      sel.addEventListener("change", function () { p.course = sel.value; renderOut(); });
-
-      var rm = document.createElement("button");
-      rm.type = "button"; rm.className = "enc__rm"; rm.setAttribute("aria-label", "Remove"); rm.textContent = "×";
-      rm.addEventListener("click", function () { problems.splice(idx, 1); renderList(); });
-
-      li.innerHTML =
-        '<code class="enc__code">' + esc(clusterOf(p)) + '</code>' +
-        '<span class="enc__body"><b>' + esc(p.title) + '</b><small>' + esc(p.chapter) + '</small></span>';
-      var ctl = document.createElement("span");
-      ctl.className = "enc__ctl";
-      var clab = document.createElement("span");
-      clab.className = "enc__ctllabel"; clab.textContent = "Assessment";
-      ctl.appendChild(clab);
-      ctl.appendChild(sel);
-      ctl.appendChild(rm);
-      li.appendChild(ctl);
-      elList.appendChild(li);
-    });
-    renderOut();
-  }
-
-  function renderOut() {
-    elCount.textContent = problems.length + (problems.length === 1 ? " problem" : " problems");
-    if (!problems.length) { elOut.textContent = "—"; return; }
-    elOut.textContent = problems.map(function (p) {
-      var label = p.course && p.course !== "Active" ? "  [" + p.course + "]" : "";
-      return clusterOf(p) + label;
+  function renderOutput() {
+    if (!selected.length) { elOut.textContent = "—"; return; }
+    elOut.textContent = selected.map(function (s) {
+      return s.isQuery ? "Query: " + s.title + " (for work-up)" : s.cluster;
     }).join("\n");
   }
 
   /* ---------- run ---------- */
   function run() {
     var text = (narrative.value || "").trim();
-    if (!text) { setStatus("", "Type the clinical picture, then press Suggest"); return; }
-    setStatus("is-searching", "Parsing the clinical picture…");
+    if (!text) { elSuggestions.innerHTML = '<p class="enc__hint">Type the clinical picture, then press Suggest.</p>'; return; }
+    showStatus("Suggesting…");
     parseNarrative(text).then(function (parsed) {
-      if (!parsed.length) { setStatus("is-sample", "Couldn’t identify any problems — try rephrasing."); return; }
+      if (!parsed.length) { showStatus(""); elSuggestions.innerHTML = '<p class="enc__hint">Couldn’t identify any problems — try rephrasing.</p>'; return; }
       return Promise.all(parsed.map(function (p) { return getCandidates(p.term || p.raw); }))
-        .then(function (lists) {
-          renderSuggestions(parsed, lists);
-          var src = aiAvailable ? "AI parser" : "rule-based parser";
-          var codes = apiConfigured ? "WHO ICD-11 API" : "sample data";
-          setStatus(apiConfigured ? "is-live" : "is-sample",
-            "Parsed " + parsed.length + " problem" + (parsed.length === 1 ? "" : "s") + " · " + src + " · codes from " + codes);
-        });
+        .then(function (lists) { renderSuggestions(parsed, lists); showStatus(""); });
     });
   }
 
@@ -305,12 +228,9 @@
 
   var elClear = byId("encClear");
   if (elClear) elClear.addEventListener("click", function () {
-    narrative.value = "";
-    problems = [];
+    narrative.value = ""; selected = [];
     elSuggestions.innerHTML = '<p class="enc__hint">Suggestions will appear here once you press Suggest.</p>';
-    renderList();
-    setStatus("", "Type the clinical picture, then press Suggest");
-    narrative.focus();
+    renderOutput(); showStatus(""); narrative.focus();
   });
 
   EXAMPLES.forEach(function (ex) {
@@ -322,5 +242,5 @@
     elExamples.appendChild(b);
   });
 
-  renderList();
+  renderOutput();
 })();
