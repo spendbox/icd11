@@ -14,39 +14,79 @@
   "use strict";
 
   /* ---- Extension dimensions (Chapter X) ---- */
-  var EXT = {
-    laterality: {
-      key: "laterality", label: "Laterality",
-      options: [
-        { label: "Left",      ext: "XK8G" },
-        { label: "Right",     ext: "XK9K" },
-        { label: "Bilateral", ext: "XK70" }
-      ]
-    },
-    severity: {
-      key: "severity", label: "Severity",
-      options: [
-        { label: "Mild",     ext: "XS5W" },
-        { label: "Moderate", ext: "XS0T" },
-        { label: "Severe",   ext: "XS25" }
-      ]
-    }
+  var EXT_CATS = {
+    laterality: { key: "laterality", label: "Laterality", values: [
+      { label: "Left", code: "XK8G" }, { label: "Right", code: "XK9K" }, { label: "Bilateral", code: "XK70" } ] },
+    severity:   { key: "severity", label: "Severity", values: [
+      { label: "Mild", code: "XS5W" }, { label: "Moderate", code: "XS0T" }, { label: "Severe", code: "XS25" } ] },
+    course:     { key: "course", label: "Temporality / course", values: [
+      { label: "Acute", code: "XT8W" }, { label: "Chronic", code: "XT5R" }, { label: "Recurrent", code: "XT4F" }, { label: "In remission", code: "XT2P" } ] },
+    injury:     { key: "injury", label: "Type of injury", values: [
+      { label: "Open", code: "XK4M" }, { label: "Closed", code: "XK5N" }, { label: "Displaced", code: "XK6P" }, { label: "Non-displaced", code: "XK7Q" } ] },
+    topology:   { key: "topology", label: "Anatomical relation", values: [
+      { label: "Proximal", code: "XK9R" }, { label: "Distal", code: "XK8S" }, { label: "Upper", code: "XK3T" }, { label: "Lower", code: "XK2U" } ] },
+    certainty:  { key: "certainty", label: "Diagnosis certainty", values: [
+      { label: "Confirmed", code: "XY7A" }, { label: "Suspected", code: "XY6B" }, { label: "Provisional", code: "XY5C" } ] }
   };
 
-  /* Which extension dimensions are clinically meaningful for a given
-     diagnosis. Inferred from the title so it works for both built-in
-     items AND live WHO results. This is what makes the extensions
-     "context aware" — malaria gets severity but not laterality, a
-     fracture gets laterality, hypertension gets neither. */
-  var LATERAL_RE = /\b(fracture|dislocation|sprain|cataract|glaucoma|conjunctivit|otitis|breast|kidney|renal|ovar|testic|eye|eyelid|ear|limb|arm|leg|hand|foot|knee|hip|shoulder|ankle|wrist|elbow|femur|tibia|fibula|radius|ulna|humerus|clavicle|cellulitis|hernia|burn)\b/;
-  var SEVERITY_RE = /\b(malaria|pneumonia|asthma|copd|chronic obstructive|sepsis|septic|depress|anaemia|anemia|dengue|undernutrition|malnutrition|burn|dehydrat|tuberculosis|bronchiolitis|pre-?eclampsia|pancreatitis)\b/;
+  /* Back-compat shape ({label,ext}) for the encounter coder. */
+  var EXT = {
+    laterality: { key: "laterality", label: "Laterality", options: EXT_CATS.laterality.values.map(function (v) { return { label: v.label, ext: v.code }; }) },
+    severity:   { key: "severity",   label: "Severity",   options: EXT_CATS.severity.values.map(function (v) { return { label: v.label, ext: v.code }; }) }
+  };
 
-  function applicableExt(title, code) {
+  /* Context-aware inference — drives which extensions are SUGGESTED for a
+     given diagnosis (works for built-in items and live WHO results alike).
+     Laterality/severity codes are the commonly-cited real ones; the other
+     example codes illustrate post-coordination. */
+  var LATERAL_RE   = /\b(fracture|dislocation|sprain|cataract|glaucoma|conjunctivit|otitis|breast|kidney|renal|ovar|testic|eye|eyelid|ear|limb|arm|leg|hand|foot|knee|hip|shoulder|ankle|wrist|elbow|femur|tibia|fibula|radius|ulna|humerus|clavicle|cellulitis|hernia|burn)\b/;
+  var SEVERITY_RE  = /\b(malaria|pneumonia|asthma|copd|chronic obstructive|sepsis|septic|depress|anaemia|anemia|dengue|undernutrition|malnutrition|burn|dehydrat|tuberculosis|bronchiolitis|pre-?eclampsia|pancreatitis)\b/;
+  var INJURY_RE    = /\b(fracture|dislocation|sprain|burn|wound|laceration|amputat|injur)\b/;
+  var INFECTION_RE = /\b(malaria|pneumonia|sepsis|septic|tuberculosis|infection|infective|hepatitis|hiv|covid|dengue|cellulitis|uti|urinary tract infection|typhoid|cholera|measles|meningitis|gastroenteritis|conjunctivit|leprosy|amoebiasis)\b/;
+  var CHRONIC_RE   = /\b(hypertension|diabetes|asthma|copd|chronic|kidney disease|ckd|heart failure|arthritis|epilepsy|depress|anxiety|obesity|hypothyroid|thyrotox|migraine|sickle)\b/;
+  var NEOPLASM_RE  = /\b(cancer|neoplasm|tumour|tumor|carcinoma|sarcoma|leiomyoma|fibroid|malignant)\b/;
+
+  /* laterality/severity only — used by the encounter coder to pre-apply
+     extensions detected in free text. */
+  function applicableExt(title) {
     var t = (title || "").toLowerCase();
     var dims = [];
     if (LATERAL_RE.test(t)) dims.push("laterality");
-    if (SEVERITY_RE.test(t)) dims.push("severity");
+    if (SEVERITY_RE.test(t) || INFECTION_RE.test(t)) dims.push("severity");
     return dims;
+  }
+
+  /* Context-aware SUGGESTED categories — genuinely varies by diagnosis. */
+  function suggestExt(title) {
+    var t = (title || "").toLowerCase();
+    var cats = [];
+    function add(c) { if (cats.indexOf(c) === -1) cats.push(c); }
+    if (INJURY_RE.test(t)) { add("injury"); add("laterality"); add("severity"); }
+    else if (LATERAL_RE.test(t)) { add("laterality"); add("severity"); }
+    if (INFECTION_RE.test(t)) { add("severity"); add("course"); add("certainty"); }
+    if (CHRONIC_RE.test(t)) { add("severity"); add("course"); }
+    if (NEOPLASM_RE.test(t)) { add("laterality"); add("topology"); add("certainty"); }
+    if (!cats.length) { add("severity"); add("certainty"); }   // never empty
+    return cats;
+  }
+
+  /* Flat catalogue so the user can SEARCH and add ANY extension. */
+  var EXT_CATALOG = (function () {
+    var a = [];
+    Object.keys(EXT_CATS).forEach(function (k) {
+      EXT_CATS[k].values.forEach(function (v) {
+        a.push({ cat: k, catLabel: EXT_CATS[k].label, label: v.label, code: v.code });
+      });
+    });
+    return a;
+  })();
+
+  function extSearch(q) {
+    q = (q || "").trim().toLowerCase();
+    if (!q) return EXT_CATALOG.slice();
+    return EXT_CATALOG.filter(function (e) {
+      return (e.label + " " + e.code + " " + e.catLabel).toLowerCase().indexOf(q) !== -1;
+    });
   }
 
   /* ---- Clinical course / status (encounter annotations, NOT codes) ---- */
@@ -204,9 +244,12 @@
   }
 
   window.ICD11 = {
-    ITEMS: ITEMS, QUICK: QUICK, EXT: EXT, COURSE: COURSE, ABBREV: ABBREV,
-    LAT: EXT.laterality.options,            // back-compat
+    ITEMS: ITEMS, QUICK: QUICK, EXT: EXT, EXT_CATS: EXT_CATS, EXT_CATALOG: EXT_CATALOG,
+    COURSE: COURSE, ABBREV: ABBREV,
+    LAT: EXT_CATS.laterality.values,        // back-compat
     applicableExt: applicableExt,
+    suggestExt: suggestExt,
+    extSearch: extSearch,
     expandAbbrev: expandAbbrev,
     byCode: byCode,
     search: search

@@ -242,6 +242,8 @@
 
       var sel = document.createElement("select");
       sel.className = "enc__select";
+      sel.title = "Assessment / clinical course";
+      sel.setAttribute("aria-label", "Assessment for " + p.title);
       icd.COURSE.forEach(function (c) {
         var o = document.createElement("option");
         o.value = c; o.textContent = c; if (c === p.course) o.selected = true;
@@ -258,6 +260,9 @@
         '<span class="enc__body"><b>' + esc(p.title) + '</b><small>' + esc(p.chapter) + '</small></span>';
       var ctl = document.createElement("span");
       ctl.className = "enc__ctl";
+      var clab = document.createElement("span");
+      clab.className = "enc__ctllabel"; clab.textContent = "Assessment";
+      ctl.appendChild(clab);
       ctl.appendChild(sel);
       ctl.appendChild(rm);
       li.appendChild(ctl);
@@ -296,6 +301,16 @@
   if (elSuggest) elSuggest.addEventListener("click", run);
   narrative.addEventListener("keydown", function (e) {
     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); run(); }
+  });
+
+  var elClear = byId("encClear");
+  if (elClear) elClear.addEventListener("click", function () {
+    narrative.value = "";
+    problems = [];
+    elSuggestions.innerHTML = '<p class="enc__hint">Suggestions will appear here once you press Suggest.</p>';
+    renderList();
+    setStatus("", "Type the clinical picture, then press Suggest");
+    narrative.focus();
   });
 
   EXAMPLES.forEach(function (ex) {

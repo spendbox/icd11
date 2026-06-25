@@ -160,7 +160,7 @@
     var quick = byId("coderQuick");
     var statusEl = byId("coderStatus");
     var extChips = byId("extChips");
-    var sel = { item: null, exts: {} };   // exts keyed by extension-group key
+    var sel = { item: null, exts: [] };   // selected extensions: [{cat,label,code}]
     var debounce;
     var reqToken = 0;                      // guards against out-of-order responses
     var activeIdx = -1;                    // keyboard-highlighted result
@@ -275,68 +275,103 @@
       if (autoSelect) selectItem(lastResults[0]);
     }
 
+    var extSearchEl = byId("extSearch");
+    var extResultsEl = byId("extResults");
+    var extChosenEl = byId("extChosen");
+    var extChosenWrap = byId("extChosenWrap");
+    var selForEl = byId("selFor");
+
+    function hasExt(code) { return sel.exts.some(function (e) { return e.code === code; }); }
+
+    function toggleExt(cat, label, code) {
+      if (hasExt(code)) {
+        sel.exts = sel.exts.filter(function (e) { return e.code !== code; });
+      } else {
+        sel.exts = sel.exts.filter(function (e) { return e.cat !== cat; });   // one value per category
+        sel.exts.push({ cat: cat, label: label, code: code });
+      }
+      renderSuggested(); renderChosen(); renderExtResults(); renderOutput();
+    }
+
     function selectItem(it) {
-      sel.item = it; sel.exts = {};
+      sel.item = it; sel.exts = [];
       results.innerHTML = "";
       lastResults = []; activeIdx = -1;
       byId("selChapter").textContent = it.chapter || "ICD-11 MMS";
       byId("selTitle").textContent = it.title;
+      if (selForEl) selForEl.textContent = it.title.length > 32 ? "this diagnosis" : it.title.toLowerCase();
+      if (extSearchEl) extSearchEl.value = "";
+      renderSuggested(); renderExtResults(); renderChosen(); renderOutput();
+    }
 
-      // Only show extension dimensions that medically apply to THIS diagnosis.
-      var dims = icd.applicableExt(it.title, it.code);
-      var refine = document.querySelector("#demo .coder__refine");
-      if (refine) refine.style.display = dims.length ? "" : "none";
-
+    // Context-aware suggested extension categories — varies by diagnosis.
+    function renderSuggested() {
       extChips.innerHTML = "";
-      dims.forEach(function (key) {
-        var group = icd.EXT[key];
+      if (!sel.item) return;
+      var cats = icd.suggestExt(sel.item.title, sel.item.code);
+      cats.forEach(function (key) {
+        var group = icd.EXT_CATS[key];
         if (!group) return;
         var row = document.createElement("div");
         row.className = "extgroup";
-        var lbl = document.createElement("span");
-        lbl.className = "extgroup__label";
-        lbl.textContent = group.label;
-        row.appendChild(lbl);
-        group.options.forEach(function (opt) {
+        row.innerHTML = '<span class="extgroup__label">' + esc(group.label) + '</span>';
+        group.values.forEach(function (v) {
           var b = document.createElement("button");
-          b.type = "button"; b.className = "rchip";
-          b.textContent = opt.label + " · " + opt.ext;
-          b.addEventListener("click", function () {
-            var current = sel.exts[group.key];
-            // toggle: clicking the active option clears it
-            sel.exts[group.key] = (current === opt) ? null : opt;
-            Array.prototype.forEach.call(row.querySelectorAll(".rchip"), function (c) { c.classList.remove("active"); });
-            if (sel.exts[group.key]) b.classList.add("active");
-            renderOutput();
-          });
+          b.type = "button";
+          b.className = "rchip" + (hasExt(v.code) ? " active" : "");
+          b.textContent = v.label + " · " + v.code;
+          b.addEventListener("click", function () { toggleExt(key, v.label, v.code); });
           row.appendChild(b);
         });
         extChips.appendChild(row);
       });
-      renderOutput();
     }
 
-    function chosenExts() {
-      var out = [];
-      Object.keys(icd.EXT).forEach(function (k) { if (sel.exts[k]) out.push(sel.exts[k]); });
-      return out;
+    // Free search across the FULL extension catalogue.
+    function renderExtResults() {
+      if (!extResultsEl) return;
+      var q = extSearchEl ? extSearchEl.value : "";
+      if (!q.trim()) { extResultsEl.innerHTML = ""; return; }
+      var list = icd.extSearch(q).slice(0, 8);
+      extResultsEl.innerHTML = "";
+      if (!list.length) { extResultsEl.innerHTML = '<li class="extfind__none">No extension matches</li>'; return; }
+      list.forEach(function (e) {
+        var li = document.createElement("li");
+        li.className = "extfind__item" + (hasExt(e.code) ? " is-on" : "");
+        li.innerHTML = '<code>' + esc(e.code) + '</code><span>' + esc(e.label) + '</span><em>' + esc(e.catLabel) + '</em>';
+        li.addEventListener("click", function () { toggleExt(e.cat, e.label, e.code); });
+        extResultsEl.appendChild(li);
+      });
+    }
+
+    function renderChosen() {
+      if (!extChosenEl) return;
+      extChosenEl.innerHTML = "";
+      if (!sel.exts.length) { if (extChosenWrap) extChosenWrap.hidden = true; return; }
+      if (extChosenWrap) extChosenWrap.hidden = false;
+      sel.exts.forEach(function (e) {
+        var chip = document.createElement("button");
+        chip.type = "button"; chip.className = "chosenchip";
+        chip.innerHTML = esc(e.label) + ' · ' + esc(e.code) + ' <span aria-hidden="true">×</span>';
+        chip.setAttribute("aria-label", "Remove " + e.label);
+        chip.addEventListener("click", function () { toggleExt(e.cat, e.label, e.code); });
+        extChosenEl.appendChild(chip);
+      });
     }
 
     function renderOutput() {
       var it = sel.item;
       if (!it) return;
-      var exts = chosenExts();
-      var cluster = it.code + exts.map(function (e) { return " & " + e.ext; }).join("");
-      var title = it.title + (exts.length ? " — " + exts.map(function (e) { return e.label.toLowerCase(); }).join(", ") : "");
+      var cluster = it.code + sel.exts.map(function (e) { return " & " + e.code; }).join("");
+      var title = it.title + (sel.exts.length ? " — " + sel.exts.map(function (e) { return e.label.toLowerCase(); }).join(", ") : "");
       byId("outIcd").textContent = cluster;
       byId("outIcdTitle").textContent = title;
-      var dims = icd.applicableExt(it.title, it.code);
-      byId("coderNote").textContent = exts.length
-        ? "Cluster: stem " + it.code + " post-coordinated with " + exts.map(function (e) { return e.ext; }).join(" + ") + "."
-        : dims.length
-          ? "Add an extension above to post-coordinate (e.g. " + dims.join(", ") + ")."
-          : "This diagnosis is fully specified by its stem code — no extension applies.";
+      byId("coderNote").textContent = sel.exts.length
+        ? "Cluster: stem " + it.code + " post-coordinated with " + sel.exts.map(function (e) { return e.code; }).join(" + ") + "."
+        : "Pick a suggested extension, or search to add any extension.";
     }
+
+    if (extSearchEl) extSearchEl.addEventListener("input", renderExtResults);
 
     input.addEventListener("input", function () {
       clearTimeout(debounce);

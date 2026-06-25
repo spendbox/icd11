@@ -211,7 +211,18 @@
           </div>
         </div>
 
-        <p class="footnote">Extensions capture <strong>laterality, severity, cause, timing</strong> and more &mdash; the same mechanism for any stem code.</p>
+        <p class="lead" style="margin:1.8rem 0 0.8rem;">ICD-11 gathers all of these in one place &mdash; <strong>Chapter&nbsp;X</strong>, which holds <strong>~1,400 extension codes</strong> grouped by what they describe:</p>
+        <div class="exttypes">
+          <span class="exttype"><b>Laterality</b><small>left · right · bilateral</small></span>
+          <span class="exttype"><b>Severity</b><small>mild · moderate · severe</small></span>
+          <span class="exttype"><b>Temporality / course</b><small>acute · chronic · recurrent · in remission</small></span>
+          <span class="exttype"><b>Anatomy &amp; topology</b><small>specific site · proximal/distal · upper/lower</small></span>
+          <span class="exttype"><b>Aetiology / causal agent</b><small>organism · substance · external cause</small></span>
+          <span class="exttype"><b>Histopathology</b><small>tissue / cell type</small></span>
+          <span class="exttype"><b>Dimensions of injury</b><small>open · closed · displaced</small></span>
+          <span class="exttype"><b>Diagnosis certainty</b><small>confirmed · suspected · provisional</small></span>
+        </div>
+        <p class="footnote">One stem can take several extensions at once &mdash; that combinatorial reuse is how ~17,000 stem codes express the WHO&rsquo;s <strong>1.6&nbsp;million+</strong> codable situations.</p>
       </div>
     </section>
 
@@ -308,9 +319,23 @@
               <span class="coder__chaptag" id="selChapter">&mdash;</span>
               <h3 id="selTitle">&mdash;</h3>
 
-              <div class="coder__refine">
-                <span class="coder__sublabel">Add an extension &mdash; post-coordination:</span>
+              <div class="coder__refine" id="coderRefine">
+                <span class="coder__sublabel">Suggested extensions for <span id="selFor">this diagnosis</span></span>
                 <div class="chipset" id="extChips"></div>
+
+                <div class="extfind">
+                  <span class="coder__sublabel">Add any extension</span>
+                  <div class="searchbox searchbox--sm">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="extSearch" placeholder="Search extensions — left, severe, acute, open…" autocomplete="off" aria-label="Search extensions" />
+                  </div>
+                  <ul class="extfind__results" id="extResults"></ul>
+                </div>
+              </div>
+
+              <div class="coder__chosen" id="extChosenWrap" hidden>
+                <span class="coder__sublabel">Selected extensions</span>
+                <div class="chipset chipset--chosen" id="extChosen"></div>
               </div>
 
               <div class="bigcode">
@@ -319,40 +344,132 @@
                 <small id="outIcdTitle">&mdash;</small>
               </div>
 
-              <p class="coder__note" id="coderNote">Add an extension above to post-coordinate (e.g. laterality).</p>
+              <p class="coder__note" id="coderNote">Pick a diagnosis, then add context-aware extensions.</p>
+              <p class="coder__micro">Example extension codes illustrate post-coordination (Chapter&nbsp;X).</p>
             </div>
           </div>
         </div>
-        <p class="result-disclaimer">Live results come from the WHO ICD-11 API when configured; otherwise built-in ICD-11 sample data is used. Extensions shown are <em>context-aware</em> — only those that apply to the selected diagnosis appear.</p>
+      </div>
+    </section>
+
+    <!-- ============ DIAGNOSIS IS DYNAMIC ============ -->
+    <section class="slide" id="dx-dynamic" data-title="Diagnosis is dynamic">
+      <div class="slide__inner">
+        <p class="kicker">The real-world problem</p>
+        <h2>A diagnosis is not a single moment</h2>
+        <p class="lead">On the ward it <strong>changes by the hour</strong> &mdash; and we can&rsquo;t let coding slow down care.</p>
+
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card__icon">⏱️</div>
+            <h3>Fast at the point of care</h3>
+            <p>A clerking has several problems at once. Capturing them must take seconds, not menus &mdash; or clinicians simply won&rsquo;t do it.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">🔄</div>
+            <h3>It evolves</h3>
+            <p>&ldquo;Query sepsis&rdquo; becomes confirmed; hypertension goes from uncontrolled to stable. The record has to move with the patient.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">🩺</div>
+            <h3>Diagnosis ≠ assessment</h3>
+            <p>&ldquo;Stable&rdquo;, &ldquo;improving&rdquo;, &ldquo;for review&rdquo; are <em>assessments</em> of a known problem &mdash; not diagnoses, and not ICD codes.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">🧾</div>
+            <h3>Our EMR today</h3>
+            <p>Has a single <strong>Diagnosis</strong> field. There is nowhere to record the day-to-day <strong>assessment</strong> &mdash; so nuance is lost or jammed into the wrong box.</p>
+          </div>
+        </div>
+
+        <div class="callout">The fix is two fields, not one: a coded <strong>Diagnosis</strong> <em>and</em> a free <strong>Assessment / clinical course</strong> beside it.</div>
+      </div>
+    </section>
+
+    <!-- ============ HCD ============ -->
+    <section class="slide slide--tint" id="hcd" data-title="Do we need HCD?">
+      <div class="slide__inner">
+        <p class="kicker">A local idea</p>
+        <h2>Do we need an &ldquo;HCD&rdquo;?</h2>
+        <p class="lead"><strong>HCD</strong> &mdash; a <em>Harvey Road Classification of Diseases</em>: our own local code list, shaped around how we actually work.</p>
+
+        <div class="grid grid-2">
+          <div class="pc-col pc-col--pro">
+            <h3><span>✓</span> The appeal</h3>
+            <ul>
+              <li>Tailored to our common presentations.</li>
+              <li>Short codes staff can learn quickly.</li>
+              <li>Room for local concepts ICD may not name.</li>
+            </ul>
+          </div>
+          <div class="pc-col pc-col--con">
+            <h3><span>!</span> What it would take</h3>
+            <ul>
+              <li>Author &amp; maintain the whole code set ourselves.</li>
+              <li>Build a <strong>crosswalk</strong> mapping every HCD code back to ICD-11 (for NHIS/HMO, stats, research).</li>
+              <li>Governance, versioning, training &mdash; <strong>forever</strong>.</li>
+              <li>It stays <strong>local</strong>: not comparable beyond our walls.</li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="footnote">In short: HCD solves the speed/assessment problem by <strong>rebuilding a classification from scratch</strong> &mdash; a large, permanent maintenance burden, and an island of data.</p>
+      </div>
+    </section>
+
+    <!-- ============ HCD vs context-aware ICD-11 ============ -->
+    <section class="slide" id="hcd-vs-icd11" data-title="A better path than HCD">
+      <div class="slide__inner">
+        <p class="kicker">The better path</p>
+        <h2>Keep the global standard &mdash; just use it well</h2>
+        <p class="lead">We can get everything HCD promised <strong>without</strong> maintaining our own classification: adopt ICD-11 in a <strong>context-aware</strong> way and add the missing <strong>assessment</strong> field.</p>
+
+        <div class="table-wrap">
+          <table class="compare">
+            <thead>
+              <tr><th>What we want</th><th>Build HCD</th><th class="hl">Context-aware ICD-11</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Speed at point of care</td><td>Yes (new codes to learn)</td><td class="hl">Yes &mdash; search &amp; shorthand (&ldquo;T2DM&rdquo;)</td></tr>
+              <tr><td>Right detail, no clutter</td><td>Hard-coded per disease</td><td class="hl">Only relevant extensions suggested</td></tr>
+              <tr><td>Record assessment / course</td><td>Add a field</td><td class="hl">Add the same field &mdash; beside the code</td></tr>
+              <tr><td>Maintenance burden</td><td>Ours, forever</td><td class="hl">WHO maintains it</td></tr>
+              <tr><td>Comparable &amp; billable</td><td>Needs a crosswalk</td><td class="hl">Native &mdash; it already <em>is</em> ICD-11</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout">So our build is small: a fast <strong>diagnosis</strong> coder that suggests context-aware extensions, plus an <strong>assessment</strong> field for the clinical course. That&rsquo;s the next slide.</div>
       </div>
     </section>
 
     <!-- ============ ENCOUNTER CODER (multi-problem) ============ -->
     <section class="slide slide--tint" id="encounter" data-title="Code a whole encounter">
       <div class="slide__inner slide__inner--wide">
-        <p class="kicker">Try it yourself &middot; the ward-round way</p>
+        <p class="kicker">Try it yourself &middot; natural language</p>
         <h2>Code a whole encounter</h2>
-        <p class="lead">Real care is messy &mdash; several active problems, some still evolving. Type the clinical picture in plain words or shorthand; we suggest ICD-11 clusters as <strong>pills</strong> and you pick.</p>
+        <p class="lead">Type the clinical picture the way you&rsquo;d say it. We split it into problems, suggest ICD-11 clusters you tap to add, and keep <strong>diagnosis</strong> and <strong>assessment</strong> in separate fields.</p>
 
-        <div class="enc">
-          <div class="enc__input">
-            <label class="enc__label" for="encNarrative">Clinical picture</label>
-            <textarea id="encNarrative" rows="3" placeholder="e.g. symptomatic uterine fibroids with anaemia, uncontrolled HTN, T2DM"></textarea>
-            <div class="enc__controls">
-              <button class="btn btn--solid" id="encSuggest" type="button">Suggest ICD-11 codes &rarr;</button>
-              <div class="enc__examples" id="encExamples"></div>
+        <div class="enc2">
+          <div class="enc2__entry">
+            <label class="enc2__label" for="encNarrative">Clinical picture <span>free text &middot; shorthand like &ldquo;T2DM&rdquo; works</span></label>
+            <textarea id="encNarrative" rows="2" placeholder="symptomatic uterine fibroids with anaemia, uncontrolled HTN, T2DM"></textarea>
+            <div class="enc2__actions">
+              <button class="btn btn--solid btn--lg" id="encSuggest" type="button">Suggest ICD-11 codes &rarr;</button>
+              <button class="btn btn--ghost" id="encClear" type="button">Clear</button>
+              <span class="coder__status" id="encStatus"><span class="dotpulse"></span> Type the clinical picture, then press Suggest</span>
             </div>
-            <div class="coder__status" id="encStatus"><span class="dotpulse"></span> Type the clinical picture, then press Suggest</div>
+            <div class="enc2__try"><span class="enc2__trylabel">Try:</span><div class="enc__examples" id="encExamples"></div></div>
           </div>
 
-          <div class="enc__work">
-            <div class="enc__suggestions" id="encSuggestions">
-              <p class="enc__hint">Suggestions appear here. Click a pill to add it to the problem list &rarr;</p>
+          <div class="enc2__results">
+            <div class="enc2__col">
+              <span class="coder__sublabel">Suggested codes &mdash; tap to add</span>
+              <div class="enc__suggestions" id="encSuggestions"><p class="enc__hint">Suggestions will appear here once you press Suggest.</p></div>
             </div>
-
-            <div class="enc__panel">
+            <div class="enc2__col">
               <div class="enc__panelhead">
-                <span class="coder__sublabel">Encounter problem list</span>
+                <span class="coder__sublabel">Problem list</span>
                 <span class="enc__count" id="encCount">0 problems</span>
               </div>
               <ul class="enc__list" id="encList"></ul>
@@ -363,7 +480,7 @@
             </div>
           </div>
         </div>
-        <p class="result-disclaimer">Parsing uses an AI layer when an OpenAI key is configured, otherwise a built-in rule-based parser; codes come from the WHO ICD-11 API when configured, else sample data. Clinical-course labels (stable, uncontrolled&hellip;) are encounter annotations, not ICD-11 codes.</p>
+        <p class="result-disclaimer">Parsing uses an AI layer when an OpenAI key is set, else a built-in rule-based parser; codes come from the WHO ICD-11 API when configured, else sample data. Assessment labels (stable, uncontrolled&hellip;) are clinical annotations, not ICD-11 codes.</p>
       </div>
     </section>
 
