@@ -459,7 +459,7 @@
       <div class="slide__inner slide__inner--wide">
         <p class="kicker">Try it yourself &middot; natural language</p>
         <h2>Code a whole encounter</h2>
-        <p class="lead">Type the clinical picture in plain words &mdash; tap the suggested ICD-11 clusters to add them. Diagnosis and assessment stay in separate fields.</p>
+        <p class="lead">Type the clinical picture in plain words &mdash; tap the suggested ICD-11 clusters to add them.</p>
 
         <div class="enc2">
           <div class="enc2__entry">
@@ -483,12 +483,9 @@
               <div class="bigcode bigcode--enc">
                 <code id="encOut">&mdash;</code>
               </div>
-              <label class="coder__sublabel" for="encAssessment" style="margin-top:1.1rem;">Assessment <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--muted);">&mdash; clinical course, typed</span></label>
-              <textarea id="encAssessment" class="enc2__assessment" rows="3" placeholder="e.g. fibroids symptomatic, for myomectomy · HTN uncontrolled, optimise · DM stable on metformin"></textarea>
             </div>
           </div>
         </div>
-        <p class="result-disclaimer">Codes come from the WHO ICD-11 API when configured, else built-in sample data. Free-text parsing uses an optional AI layer (OpenAI key) or a built-in rule-based parser. Assessment is free text, not coded.</p>
       </div>
     </section>
 
