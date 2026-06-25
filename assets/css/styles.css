@@ -302,6 +302,19 @@ code {
 .feature-list li::before { content: "›"; position: absolute; left: 0.3rem; top: -1px; color: var(--teal-500); font-weight: 800; font-size: 1.15rem; }
 .feature-list strong { color: var(--ink); }
 
+/* Outline / agenda list */
+.outline-list { list-style: none; counter-reset: ol; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem 1.6rem; }
+.outline-list li { counter-increment: ol; position: relative; padding-left: 2.6rem; min-height: 2rem; display: flex; flex-direction: column; justify-content: center; }
+.outline-list li::before { content: counter(ol); position: absolute; left: 0; top: 0; width: 1.9rem; height: 1.9rem; border-radius: 50%; background: var(--teal-50); color: var(--teal-700); border: 1.5px solid var(--teal-100); display: grid; place-items: center; font-weight: 800; font-size: 0.85rem; font-family: var(--font-sans); }
+.outline-list b { font-size: 1rem; color: var(--ink); }
+.outline-list span { font-size: 0.84rem; color: var(--muted); line-height: 1.35; }
+
+/* References list */
+.refs { padding-left: 1.3rem; margin: 0; display: grid; gap: 0.65rem; max-width: 70ch; }
+.refs li { font-size: 0.95rem; color: var(--ink-soft); line-height: 1.45; }
+.refs li em { color: var(--ink); font-style: italic; }
+.refs li span { display: inline-block; margin-left: 0.2rem; font-size: 0.85rem; font-weight: 600; color: var(--teal-700); }
+
 /* ---------- stats ---------- */
 .stat-row { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2.2rem; }
 .stat { flex: 1 1 160px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 1.2rem 1.4rem; box-shadow: var(--shadow-sm); }
@@ -855,6 +868,11 @@ table.compare tbody tr:last-child td { border-bottom: none; }
 .bigcode .code-card__label { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; margin-bottom: 0.4rem; }
 .bigcode code { font-size: 1.6rem; background: transparent; padding: 0; color: var(--purple); font-weight: 700; }
 .bigcode small { display: block; font-size: 0.9rem; color: var(--ink-soft); margin-top: 0.3rem; }
+
+/* Diagnosis-first variant: emphasise the disease name, shrink the code. */
+.bigcode--dx { border-top-color: var(--teal-500); }
+.bigcode--dx .bigcode__dx { display: block; font-family: var(--font-serif); font-size: clamp(1.3rem, 2.4vw, 1.7rem); line-height: 1.18; font-weight: 700; color: var(--ink); }
+.bigcode--dx .bigcode__code { display: inline-block; margin-top: 0.6rem; font-size: 0.92rem; font-weight: 700; color: var(--purple); background: #f1ecfb; border-radius: 999px; padding: 0.18rem 0.7rem; }
 
 /* =========================================================
    HISTORY TIMELINE
