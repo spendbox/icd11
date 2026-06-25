@@ -7,11 +7,15 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
-# Long cache for static assets
+# Assets are cache-busted with a ?v= query string in index.html. They use a
+# short, revalidating cache instead of a 1-year immutable one — the filenames
+# are unversioned, so an immutable cache would serve an edited file stale for up
+# to a year and updates (e.g. demo animation, encounter coder) would never reach
+# returning visitors.
 [[headers]]
   for = "/assets/*"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "public, max-age=300, must-revalidate"
 
 [[headers]]
   for = "/*.html"

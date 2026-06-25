@@ -1,9 +1,11 @@
 /* =========================================================
    Encounter coder — type a free-text clinical picture (or
    shorthand like "T2DM"); it splits into problems, suggests
-   ICD-11 clusters as pills you tap to add/remove, and writes
-   the codes (with & for post-coordination) into the Diagnosis
-   field. Assessment is a separate, free-text field.
+   ICD-11 codes as pills you tap to add/remove, then lets you
+   add context-aware extension codes (Chapter X) to each picked
+   diagnosis to build a post-coordinated cluster. The codes
+   (with & between stem and extensions) are written into the
+   Diagnosis field.
 
    Parsing: optional OpenAI layer (/.netlify/functions/icd-parse)
    when a key is set, else a built-in rule-based parser.
@@ -28,7 +30,8 @@
 
   var apiConfigured = null;   // WHO search proxy
   var aiAvailable = null;     // OpenAI parse function
-  var selected = [];          // [{ id, code, title, cluster, isQuery }]
+  var selected = [];          // [{ key, pi, code, title, exts:[{cat,label,code}], isQuery }]
+  var view = { parsed: [], lists: [] };   // cached so we can re-render on every toggle
 
   var EXAMPLES = [
     "symptomatic uterine fibroids with anaemia, uncontrolled HTN, T2DM",
@@ -130,34 +133,63 @@
       }).catch(function () { apiConfigured = false; return withAbbr(local).slice(0, 4); });
   }
 
-  /* ---------- cluster building ---------- */
-  function clusterFor(item, parsed) {
-    var dims = icd.applicableExt(item.title, item.code);
-    var exts = [];
-    function ext(key, code) {
-      var g = icd.EXT[key]; if (!g) return;
-      g.options.forEach(function (o) { if (o.ext === code) exts.push(o.ext); });
-    }
-    if (dims.indexOf("laterality") !== -1 && parsed.laterality) ext("laterality", parsed.laterality);
-    if (dims.indexOf("severity") !== -1 && parsed.severity) ext("severity", parsed.severity);
-    return item.code + exts.map(function (e) { return " & " + e; }).join("");
+  /* ---------- extension helpers ---------- */
+  // Resolve a bare extension code (e.g. "XK8G") to its {cat,label,code} record.
+  function extByCode(code) {
+    var all = icd.EXT_CATALOG || [];
+    for (var i = 0; i < all.length; i++) if (all[i].code === code) return { cat: all[i].cat, label: all[i].label, code: all[i].code };
+    return null;
+  }
+  function buildCluster(entry) {
+    return entry.code + entry.exts.map(function (e) { return " & " + e.code; }).join("");
   }
 
   /* ---------- selection ---------- */
-  function isSel(id) { return selected.some(function (s) { return s.id === id; }); }
-  function toggle(entry) {
-    if (isSel(entry.id)) selected = selected.filter(function (s) { return s.id !== entry.id; });
-    else selected.push(entry);
-    renderSuggestionsState(); renderOutput();
+  function findSel(key) { for (var i = 0; i < selected.length; i++) if (selected[i].key === key) return selected[i]; return null; }
+  function removeSel(key) { selected = selected.filter(function (s) { return s.key !== key; }); }
+
+  function toggleCode(pi, c, parsed) {
+    var key = pi + ":" + c.code;
+    if (findSel(key)) { removeSel(key); draw(); return; }
+    // pre-apply any extension the free text already implies (laterality / severity)
+    var exts = [];
+    var dims = icd.applicableExt(c.title, c.code);
+    if (dims.indexOf("laterality") !== -1 && parsed.laterality) { var l = extByCode(parsed.laterality); if (l) exts.push(l); }
+    if (dims.indexOf("severity") !== -1 && parsed.severity) { var s = extByCode(parsed.severity); if (s) exts.push(s); }
+    selected.push({ key: key, pi: pi, code: c.code, title: c.title, exts: exts, isQuery: false });
+    draw();
   }
 
-  /* ---------- render suggestions ---------- */
+  function toggleQuery(pi, parsed) {
+    var key = "q:" + pi;
+    if (findSel(key)) removeSel(key);
+    else selected.push({ key: key, pi: pi, code: "", title: parsed.term || parsed.raw, exts: [], isQuery: true });
+    draw();
+  }
+
+  function toggleExt(entry, catKey, value) {
+    var has = entry.exts.some(function (e) { return e.code === value.code; });
+    if (has) { entry.exts = entry.exts.filter(function (e) { return e.code !== value.code; }); }
+    else {
+      entry.exts = entry.exts.filter(function (e) { return e.cat !== catKey; });   // one value per category
+      entry.exts.push({ cat: catKey, label: value.label, code: value.code });
+    }
+    draw();
+  }
+
+  /* ---------- render ---------- */
   function renderSuggestions(parsed, lists) {
+    view.parsed = parsed; view.lists = lists;
+    draw();
+  }
+
+  function draw() {
     elSuggestions.innerHTML = "";
-    parsed.forEach(function (p, i) {
-      var cands = lists[i] || [];
+    view.parsed.forEach(function (p, i) {
+      var cands = view.lists[i] || [];
       var block = document.createElement("div");
       block.className = "enc__sug";
+
       var head = '<div class="enc__sughead"><b>' + esc(p.term || p.raw) + '</b>';
       if (p.course) head += '<span class="enc__course-badge">' + esc(p.course) + '</span>';
       head += '</div>';
@@ -166,58 +198,81 @@
       var pills = document.createElement("div");
       pills.className = "enc__pills";
       cands.forEach(function (c) {
-        var cluster = clusterFor(c, p);
-        var entry = { id: cluster, code: c.code, title: c.title, cluster: cluster, isQuery: false };
+        var key = i + ":" + c.code;
         var pill = document.createElement("button");
         pill.type = "button";
-        pill.className = "pill" + (isSel(entry.id) ? " is-picked" : "");
-        pill.dataset.id = entry.id;
-        pill.innerHTML = '<code>' + esc(cluster) + '</code><span>' + esc(c.title) + '</span>';
-        pill.addEventListener("click", function () { toggle(entry); });
+        pill.className = "pill" + (findSel(key) ? " is-picked" : "");
+        pill.innerHTML = '<code>' + esc(c.code) + '</code><span>' + esc(c.title) + '</span>';
+        pill.addEventListener("click", function () { toggleCode(i, c, p); });
         pills.appendChild(pill);
       });
 
       // query option — for problems not yet diagnosed
-      var qid = "q:" + (p.term || p.raw);
-      var q = { id: qid, code: "", title: p.term || p.raw, cluster: "", isQuery: true };
       var qpill = document.createElement("button");
       qpill.type = "button";
-      qpill.className = "pill pill--query" + (isSel(qid) ? " is-picked" : "");
-      qpill.dataset.id = qid;
+      qpill.className = "pill pill--query" + (findSel("q:" + i) ? " is-picked" : "");
       qpill.innerHTML = '<span>⟲ Query — work up</span>';
       qpill.title = "Not yet diagnosed — flag for investigation";
-      qpill.addEventListener("click", function () { toggle(q); });
+      qpill.addEventListener("click", function () { toggleQuery(i, p); });
       pills.appendChild(qpill);
 
       block.appendChild(pills);
+
+      // extension picker for each picked code in this problem
+      selected.filter(function (s) { return s.pi === i && !s.isQuery; }).forEach(function (entry) {
+        block.appendChild(renderExtBox(entry));
+      });
+
       elSuggestions.appendChild(block);
     });
+    renderOutput();
   }
 
-  // sync only the picked state (no full rebuild) when toggling
-  function renderSuggestionsState() {
-    var pills = elSuggestions.querySelectorAll(".pill");
-    Array.prototype.forEach.call(pills, function (pill) {
-      pill.classList.toggle("is-picked", isSel(pill.dataset.id));
+  function renderExtBox(entry) {
+    var box = document.createElement("div");
+    box.className = "enc__extbox";
+    box.innerHTML = '<span class="enc__extlabel">Add extensions to <code>' + esc(entry.code) + '</code></span>';
+    var cats = icd.suggestExt(entry.title, entry.code);
+    cats.forEach(function (catKey) {
+      var group = icd.EXT_CATS[catKey];
+      if (!group) return;
+      var row = document.createElement("div");
+      row.className = "extgroup";
+      row.innerHTML = '<span class="extgroup__label">' + esc(group.label) + '</span>';
+      group.values.forEach(function (v) {
+        var on = entry.exts.some(function (e) { return e.code === v.code; });
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "rchip" + (on ? " active" : "");
+        b.textContent = v.label + " · " + v.code;
+        b.addEventListener("click", function () { toggleExt(entry, catKey, v); });
+        row.appendChild(b);
+      });
+      box.appendChild(row);
     });
+    return box;
   }
 
   function renderOutput() {
     if (!selected.length) { elOut.textContent = "—"; return; }
     elOut.textContent = selected.map(function (s) {
-      return s.isQuery ? "Query: " + s.title + " (for work-up)" : s.cluster;
+      return s.isQuery ? "Query: " + s.title + " (for work-up)" : buildCluster(s);
     }).join("\n");
   }
 
   /* ---------- run ---------- */
   function run() {
     var text = (narrative.value || "").trim();
-    if (!text) { elSuggestions.innerHTML = '<p class="enc__hint">Type the clinical picture, then press Suggest.</p>'; return; }
+    if (!text) { view = { parsed: [], lists: [] }; elSuggestions.innerHTML = '<p class="enc__hint">Type the clinical picture, then press Suggest.</p>'; return; }
     showStatus("Suggesting…");
+    selected = [];
     parseNarrative(text).then(function (parsed) {
       if (!parsed.length) { showStatus(""); elSuggestions.innerHTML = '<p class="enc__hint">Couldn’t identify any problems — try rephrasing.</p>'; return; }
       return Promise.all(parsed.map(function (p) { return getCandidates(p.term || p.raw); }))
         .then(function (lists) { renderSuggestions(parsed, lists); showStatus(""); });
+    }).catch(function () {
+      showStatus("");
+      elSuggestions.innerHTML = '<p class="enc__hint">Something went wrong — please try again.</p>';
     });
   }
 
@@ -228,7 +283,7 @@
 
   var elClear = byId("encClear");
   if (elClear) elClear.addEventListener("click", function () {
-    narrative.value = ""; selected = [];
+    narrative.value = ""; selected = []; view = { parsed: [], lists: [] };
     elSuggestions.innerHTML = '<p class="enc__hint">Suggestions will appear here once you press Suggest.</p>';
     renderOutput(); showStatus(""); narrative.focus();
   });
