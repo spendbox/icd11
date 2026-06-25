@@ -498,8 +498,13 @@ table.compare tbody tr:last-child td { border-bottom: none; }
   .code-compare .arrow { transform: rotate(90deg); justify-self: start; }
   .code-cards { grid-template-columns: 1fr; }
   .code-card--hcd { border-right: none; border-bottom: 1px solid var(--line); }
-  .counter { display: none; }
   .brand__text small { display: none; }
+
+  /* Bottom deck nav: 20 dots overflow a phone and push the Next button
+     off-screen — drop the dot rail and keep prev / counter / next usable. */
+  .deck-controls { gap: 0.6rem; padding: 0 1rem; }
+  .dots { display: none; }
+  .counter { display: block; min-width: 0; }
 }
 
 /* =========================================================
@@ -651,6 +656,11 @@ table.compare tbody tr:last-child td { border-bottom: none; }
 .enc__course-badge { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #fff; background: var(--purple); border-radius: 999px; padding: 0.12rem 0.55rem; }
 .enc__pills { display: flex; flex-wrap: wrap; gap: 0.45rem; }
 .enc__nomatch { font-size: 0.85rem; color: var(--muted); }
+
+/* per-diagnosis extension picker (post-coordination) inside the encounter coder */
+.enc__extbox { margin: 0.6rem 0 0.2rem; padding: 0.7rem 0.8rem; background: var(--teal-50); border: 1px dashed var(--teal-100); border-radius: var(--radius-sm); display: flex; flex-direction: column; gap: 0.55rem; }
+.enc__extlabel { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+.enc__extlabel code { font-size: 0.74rem; background: #fff; border-radius: 999px; padding: 0.05rem 0.4rem; color: var(--teal-700); }
 
 .pill {
   display: inline-flex; align-items: center; gap: 0.5rem; max-width: 100%;
