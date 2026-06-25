@@ -253,11 +253,18 @@
     return box;
   }
 
+  // Each diagnosis is recorded both ways: the natural-language name as
+  // written, and the ICD-11 code / post-coordinated cluster.
   function renderOutput() {
-    if (!selected.length) { elOut.textContent = "—"; return; }
-    elOut.textContent = selected.map(function (s) {
-      return s.isQuery ? "Query: " + s.title + " (for work-up)" : buildCluster(s);
-    }).join("\n");
+    if (!selected.length) { elOut.innerHTML = '<span class="encout__empty">—</span>'; return; }
+    elOut.innerHTML = selected.map(function (s) {
+      if (s.isQuery) {
+        return '<div class="encout__row encout__row--query"><span class="encout__dx">' + esc(s.title) +
+          '</span><span class="encout__q">⟲ Query · for work-up</span></div>';
+      }
+      return '<div class="encout__row"><span class="encout__dx">' + esc(s.title) +
+        '</span><code class="encout__code">' + esc(buildCluster(s)) + '</code></div>';
+    }).join("");
   }
 
   /* ---------- run ---------- */

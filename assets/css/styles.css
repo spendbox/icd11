@@ -750,7 +750,17 @@ table.compare tbody tr:last-child td { border-bottom: none; }
 
 /* ---- encounter output + assessment field ---- */
 .bigcode--enc { margin-top: 0.6rem; }
-.bigcode--enc code { white-space: pre-wrap; font-size: 1.05rem; line-height: 1.7; }
+
+/* Encounter diagnosis output: each problem recorded as natural-language
+   name + ICD-11 code / cluster. */
+.encout { display: flex; flex-direction: column; }
+.encout__empty { color: var(--muted); font-size: 1.05rem; }
+.encout__row { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.6rem 0; border-bottom: 1px solid var(--line); }
+.encout__row:first-child { padding-top: 0; }
+.encout__row:last-child { border-bottom: none; padding-bottom: 0; }
+.encout__dx { font-family: var(--font-serif); font-size: 1.08rem; font-weight: 700; color: var(--ink); line-height: 1.25; }
+.encout .encout__code { align-self: flex-start; font-size: 0.85rem; font-weight: 700; color: var(--purple); background: #f1ecfb; border-radius: 999px; padding: 0.12rem 0.6rem; white-space: pre-wrap; }
+.encout__q { align-self: flex-start; font-size: 0.82rem; font-weight: 700; color: var(--purple); }
 .enc2__assessment { width: 100%; box-sizing: border-box; resize: vertical; min-height: 72px; margin-top: 0.45rem;
   font-family: var(--font-sans); font-size: 0.98rem; color: var(--ink); line-height: 1.5;
   border: 1.5px solid var(--line); border-radius: var(--radius-sm); padding: 0.7rem 0.85rem; outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
