@@ -302,6 +302,19 @@ code {
 .feature-list li::before { content: "›"; position: absolute; left: 0.3rem; top: -1px; color: var(--teal-500); font-weight: 800; font-size: 1.15rem; }
 .feature-list strong { color: var(--ink); }
 
+/* Outline / agenda list */
+.outline-list { list-style: none; counter-reset: ol; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem 1.6rem; }
+.outline-list li { counter-increment: ol; position: relative; padding-left: 2.6rem; min-height: 2rem; display: flex; flex-direction: column; justify-content: center; }
+.outline-list li::before { content: counter(ol); position: absolute; left: 0; top: 0; width: 1.9rem; height: 1.9rem; border-radius: 50%; background: var(--teal-50); color: var(--teal-700); border: 1.5px solid var(--teal-100); display: grid; place-items: center; font-weight: 800; font-size: 0.85rem; font-family: var(--font-sans); }
+.outline-list b { font-size: 1rem; color: var(--ink); }
+.outline-list span { font-size: 0.84rem; color: var(--muted); line-height: 1.35; }
+
+/* References list */
+.refs { padding-left: 1.3rem; margin: 0; display: grid; gap: 0.65rem; max-width: 70ch; }
+.refs li { font-size: 0.95rem; color: var(--ink-soft); line-height: 1.45; }
+.refs li em { color: var(--ink); font-style: italic; }
+.refs li span { display: inline-block; margin-left: 0.2rem; font-size: 0.85rem; font-weight: 600; color: var(--teal-700); }
+
 /* ---------- stats ---------- */
 .stat-row { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2.2rem; }
 .stat { flex: 1 1 160px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 1.2rem 1.4rem; box-shadow: var(--shadow-sm); }
@@ -327,6 +340,25 @@ table.compare td:first-child { font-weight: 700; color: var(--ink); width: 18%; 
 table.compare td.hl { background: var(--teal-50); }
 table.compare tbody tr:last-child td { border-bottom: none; }
 .footnote { font-size: 0.85rem; color: var(--muted); margin-top: 1rem; }
+
+/* ---------- structure / counts slide ---------- */
+.struct-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 1.6rem; align-items: start; margin-top: 1.6rem; }
+.struct-h { font-family: var(--font-sans); font-size: 0.92rem; font-weight: 800; color: var(--teal-700); margin-bottom: 0.6rem; }
+.struct-mut { font-weight: 500; color: var(--muted); }
+table.struct-table { width: 100%; border-collapse: collapse; background: #fff; }
+table.struct-table th, table.struct-table td { text-align: left; padding: 0.5rem 0.8rem; border-bottom: 1px solid var(--line); font-size: 0.88rem; vertical-align: top; }
+table.struct-table thead th { background: var(--teal-800); color: #fff; font-weight: 700; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; }
+table.struct-table tbody tr:last-child td { border-bottom: none; }
+table.struct-table code { font-size: 0.82rem; background: var(--teal-50); color: var(--teal-700); border-radius: 5px; padding: 0.05rem 0.35rem; font-weight: 700; }
+.chapters-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+.chapters-cols .table-wrap, .chapters-cols { border: none; box-shadow: none; }
+table.struct-table--chap { min-width: 0; }
+table.struct-table--chap td:first-child { color: var(--muted); font-variant-numeric: tabular-nums; width: 2.2rem; }
+table.struct-table--chap td:nth-child(2) { width: 2.6rem; }
+@media (max-width: 980px) {
+  .struct-grid { grid-template-columns: 1fr; }
+  .chapters-cols { grid-template-columns: 1fr; gap: 0; }
+}
 
 /* ---------- examples ---------- */
 .example-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 1.4rem; box-shadow: var(--shadow-sm); }
@@ -737,7 +769,17 @@ table.compare tbody tr:last-child td { border-bottom: none; }
 
 /* ---- encounter output + assessment field ---- */
 .bigcode--enc { margin-top: 0.6rem; }
-.bigcode--enc code { white-space: pre-wrap; font-size: 1.05rem; line-height: 1.7; }
+
+/* Encounter diagnosis output: each problem recorded as natural-language
+   name + ICD-11 code / cluster. */
+.encout { display: flex; flex-direction: column; }
+.encout__empty { color: var(--muted); font-size: 1.05rem; }
+.encout__row { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.6rem 0; border-bottom: 1px solid var(--line); }
+.encout__row:first-child { padding-top: 0; }
+.encout__row:last-child { border-bottom: none; padding-bottom: 0; }
+.encout__dx { font-family: var(--font-serif); font-size: 1.08rem; font-weight: 700; color: var(--ink); line-height: 1.25; }
+.encout .encout__code { align-self: flex-start; font-size: 0.85rem; font-weight: 700; color: var(--purple); background: #f1ecfb; border-radius: 999px; padding: 0.12rem 0.6rem; white-space: pre-wrap; }
+.encout__q { align-self: flex-start; font-size: 0.82rem; font-weight: 700; color: var(--purple); }
 .enc2__assessment { width: 100%; box-sizing: border-box; resize: vertical; min-height: 72px; margin-top: 0.45rem;
   font-family: var(--font-sans); font-size: 0.98rem; color: var(--ink); line-height: 1.5;
   border: 1.5px solid var(--line); border-radius: var(--radius-sm); padding: 0.7rem 0.85rem; outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
@@ -855,6 +897,11 @@ table.compare tbody tr:last-child td { border-bottom: none; }
 .bigcode .code-card__label { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; margin-bottom: 0.4rem; }
 .bigcode code { font-size: 1.6rem; background: transparent; padding: 0; color: var(--purple); font-weight: 700; }
 .bigcode small { display: block; font-size: 0.9rem; color: var(--ink-soft); margin-top: 0.3rem; }
+
+/* Diagnosis-first variant: emphasise the disease name, shrink the code. */
+.bigcode--dx { border-top-color: var(--teal-500); }
+.bigcode--dx .bigcode__dx { display: block; font-family: var(--font-serif); font-size: clamp(1.3rem, 2.4vw, 1.7rem); line-height: 1.18; font-weight: 700; color: var(--ink); }
+.bigcode--dx .bigcode__code { display: inline-block; margin-top: 0.6rem; font-size: 0.92rem; font-weight: 700; color: var(--purple); background: #f1ecfb; border-radius: 999px; padding: 0.18rem 0.7rem; }
 
 /* =========================================================
    HISTORY TIMELINE

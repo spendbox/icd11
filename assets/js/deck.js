@@ -445,20 +445,4 @@
       if (!input.value) setStatus(configured ? "ready" : "idle");
     });
   }
-
-  /* =========================================================
-     EXPORT BUTTONS  (download deck — unchanged feature)
-     ========================================================= */
-  function bindPptx(id) {
-    var el = byId(id);
-    if (el) el.addEventListener("click", function () {
-      if (window.HCD_EXPORT && window.HCD_EXPORT.toPptx) window.HCD_EXPORT.toPptx(el);
-    });
-  }
-  function bindPdf(id) {
-    var el = byId(id);
-    if (el) el.addEventListener("click", function () { window.print(); });
-  }
-  ["btnPptx", "btnPptx2", "btnPptx3"].forEach(bindPptx);
-  ["btnPdf", "btnPdf2"].forEach(bindPdf);
 })();
