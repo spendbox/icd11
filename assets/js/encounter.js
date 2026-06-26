@@ -257,14 +257,15 @@
   // written, and the ICD-11 code / post-coordinated cluster.
   function renderOutput() {
     if (!selected.length) { elOut.innerHTML = '<span class="encout__empty">—</span>'; return; }
-    elOut.innerHTML = selected.map(function (s) {
-      if (s.isQuery) {
-        return '<div class="encout__row encout__row--query"><span class="encout__dx"><span class="encout__qprefix">⟲ Query —</span> ' + esc(s.title) + '</span></div>';
-      }
+    var queryPis = {};
+    selected.forEach(function (s) { if (s.isQuery) queryPis[s.pi] = true; });
+    var rows = selected.filter(function (s) { return !s.isQuery; }).map(function (s) {
       var diagTitle = s.title + (s.exts.length ? " — " + s.exts.map(function (e) { return e.label.toLowerCase(); }).join(", ") : "");
-      return '<div class="encout__row"><span class="encout__dx">' + esc(diagTitle) +
+      var prefix = queryPis[s.pi] ? '<span class="encout__qprefix">⟲ Query —</span> ' : '';
+      return '<div class="encout__row"><span class="encout__dx">' + prefix + esc(diagTitle) +
         '</span><code class="encout__code">' + esc(buildCluster(s)) + '</code></div>';
-    }).join("");
+    });
+    elOut.innerHTML = rows.length ? rows.join("") : '<span class="encout__empty">—</span>';
   }
 
   /* ---------- run ---------- */
