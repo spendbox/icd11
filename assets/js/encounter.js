@@ -259,8 +259,7 @@
     if (!selected.length) { elOut.innerHTML = '<span class="encout__empty">—</span>'; return; }
     elOut.innerHTML = selected.map(function (s) {
       if (s.isQuery) {
-        return '<div class="encout__row encout__row--query"><span class="encout__dx">' + esc(s.title) +
-          '</span><span class="encout__q">⟲ Query · for work-up</span></div>';
+        return '<div class="encout__row encout__row--query"><span class="encout__dx"><span class="encout__qprefix">⟲ Query —</span> ' + esc(s.title) + '</span></div>';
       }
       var diagTitle = s.title + (s.exts.length ? " — " + s.exts.map(function (e) { return e.label.toLowerCase(); }).join(", ") : "");
       return '<div class="encout__row"><span class="encout__dx">' + esc(diagTitle) +
