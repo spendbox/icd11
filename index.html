@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=20260625g" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=20260629a" />
 </head>
 <body>
 
@@ -48,7 +48,9 @@
         <p class="lead">From what the ICD is, to coding a real encounter on our ward.</p>
 
         <ol class="outline-list">
-          <li><b>What the ICD is</b><span>A short history, and why classification matters</span></li>
+          <li><b>What the ICD is</b><span>A short history of classifying disease</span></li>
+          <li><b>Why we code</b><span>The case for coding &mdash; one code, many names</span></li>
+          <li><b>ICD-10 in brief</b><span>The standard we still use today</span></li>
           <li><b>ICD-11 in brief</b><span>Codes, post-coordination and Chapter&nbsp;X extensions</span></li>
           <li><b>ICD-10 vs ICD-11</b><span>What actually changed</span></li>
           <li><b>Coding in practice</b><span>Inside the EMR &mdash; search, pick, refine (live demo)</span></li>
@@ -123,6 +125,66 @@
       </div>
     </section>
 
+    <!-- ============ WHY BOTHER CODING? (ask & answer) ============ -->
+    <section class="slide" id="why-bother" data-title="Why bother coding?">
+      <div class="slide__inner">
+        <p class="kicker">The honest question</p>
+        <h2>Why stress ourselves coding every diagnosis?</h2>
+        <p class="lead">On a busy ward it feels like extra paperwork. Why not just write &ldquo;heart attack&rdquo; in the notes and move on?</p>
+
+        <div class="whyans">
+          <p class="whyans__because">Because a diagnosis written in free text is just <em>words</em> &mdash; a coded one is <strong>data</strong> the whole system can read, count and act on.</p>
+        </div>
+
+        <div class="whyrow">
+          <div class="whyrow__item">
+            <span class="whyrow__k">🔎</span>
+            <div><b>Words don&rsquo;t compute</b><span>&ldquo;HTN&rdquo;, &ldquo;high BP&rdquo; and &ldquo;hypertension&rdquo; are invisible to a search &mdash; one code unites them all.</span></div>
+          </div>
+          <div class="whyrow__item">
+            <span class="whyrow__k">💳</span>
+            <div><b>No code, no claim</b><span>NHIS/HMO reimbursement, audits and national statistics start from a valid code, not a phrase.</span></div>
+          </div>
+          <div class="whyrow__item">
+            <span class="whyrow__k">🌍</span>
+            <div><b>It travels</b><span>The same code means the same disease in any ward, any hospital, any country.</span></div>
+          </div>
+        </div>
+
+        <div class="callout">The few seconds it takes to code a diagnosis are what turn a note nobody can query into a data point everyone can.</div>
+      </div>
+    </section>
+
+    <!-- ============ ONE CODE, MANY NAMES (universality) ============ -->
+    <section class="slide slide--tint" id="universality" data-title="One code, many names">
+      <div class="slide__inner">
+        <p class="kicker">The proof</p>
+        <h2>One code, many names</h2>
+        <p class="lead">Lay terms, abbreviations, clinical language, other tongues &mdash; all of these name the <strong>same disease</strong>, and ICD-11 collapses them into a single, unambiguous code.</p>
+
+        <div class="uni" role="img" aria-label="The ICD-11 code BA41, Acute myocardial infarction, surrounded by its many names: Heart attack, MI, Myocardial infarction, Coronary thrombosis, Cardiac infarction, Crise cardiaque (French), Herzinfarkt (German), and Infarto de miocardio (Spanish).">
+          <div class="uni__orbit" aria-hidden="true"></div>
+
+          <div class="uni__core">
+            <span class="uni__corecode">BA41</span>
+            <span class="uni__corelabel">Acute myocardial infarction</span>
+            <span class="uni__coretag">ICD-11 &middot; Circulatory system</span>
+          </div>
+
+          <span class="uni__term uni__term--1"><span class="uni__chip">Heart attack</span></span>
+          <span class="uni__term uni__term--2"><span class="uni__chip">MI</span></span>
+          <span class="uni__term uni__term--3"><span class="uni__chip">Myocardial infarction</span></span>
+          <span class="uni__term uni__term--4"><span class="uni__chip">Coronary thrombosis</span></span>
+          <span class="uni__term uni__term--5"><span class="uni__chip">Cardiac infarction</span></span>
+          <span class="uni__term uni__term--6"><span class="uni__chip">Crise cardiaque <em>FR</em></span></span>
+          <span class="uni__term uni__term--7"><span class="uni__chip">Herzinfarkt <em>DE</em></span></span>
+          <span class="uni__term uni__term--8"><span class="uni__chip">Infarto de miocardio <em>ES</em></span></span>
+        </div>
+
+        <p class="footnote">Eight names, one meaning &mdash; <code>BA41</code>. That is what &ldquo;a common language for health&rdquo; actually buys us, and the clearest answer to <em>why we code</em>.</p>
+      </div>
+    </section>
+
     <!-- ============ WHY CODE — BENEFITS ============ -->
     <section class="slide" id="benefits" data-title="Why code a diagnosis?">
       <div class="slide__inner">
@@ -162,6 +224,29 @@
             <p>The same code means the same thing in Lagos, London, or Lausanne &mdash; enabling shared learning.</p>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- ============ ICD-10 IN BRIEF ============ -->
+    <section class="slide" id="icd10" data-title="ICD-10 in brief">
+      <div class="slide__inner">
+        <p class="kicker">The standard we use today</p>
+        <h2>ICD-10, in brief</h2>
+        <p class="lead">For three decades, ICD-10 has been the world&rsquo;s default &mdash; the version most hospitals, including ours, still code with.</p>
+
+        <ul class="feature-list feature-list--lg">
+          <li><strong>Paper-first</strong> &mdash; built for printed tabular volumes and manual coding; software support came later.</li>
+          <li><strong>Alphanumeric codes</strong> &mdash; a letter then digits, e.g. <code>I21</code> for an acute myocardial infarction.</li>
+          <li><strong>Pre-coordinated</strong> &mdash; one fixed code per concept, with little room to combine detail or grow.</li>
+        </ul>
+
+        <div class="stat-row">
+          <div class="stat"><span class="stat__num">~14,400</span><span class="stat__label">codes</span></div>
+          <div class="stat"><span class="stat__num">22</span><span class="stat__label">chapters</span></div>
+          <div class="stat"><span class="stat__num">1994</span><span class="stat__label">came into use</span></div>
+        </div>
+
+        <p class="footnote">Endorsed by the World Health Assembly in 1990 and in use from 1994. ICD-11 was adopted in 2019 and replaced it from 1&nbsp;January&nbsp;2022 &mdash; but ICD-10 remains widely in service through the transition.</p>
       </div>
     </section>
 
