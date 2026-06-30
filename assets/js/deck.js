@@ -81,6 +81,9 @@
     } else if (slide.id === "rx-demo") {
       window.setTimeout(playRx, 620);
     }
+    // Generic hook: let per-deck add-on scripts (e.g. icd10.js) drive their
+    // own timed animations without the shared engine knowing each slide id.
+    slide.dispatchEvent(new CustomEvent("slide:enter", { bubbles: true, detail: { id: slide.id } }));
   }
   function next() { go(current + 1, "next"); }
   function prev() { go(current - 1, "prev"); }
