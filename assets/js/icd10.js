@@ -269,21 +269,21 @@
   var rxEl = byId("a10rx");
   var rxTyped = byId("a10rxTyped");
   var rxToken = 0;
-  var RX_TEXT = "tabs pcm 1g tds x 5/7";
+  var RX_TEXT = "caps astyfer 1 bd x 2/52, tabs pcm 1g tds x 5/7, tabs candesartan 16mg daily x 1/12";
   function playRx() {
     if (!rxEl || !rxTyped) return;
     var myToken = ++rxToken;
-    rxEl.classList.remove("show-suggestions", "pick-1", "show-synced");
+    rxEl.classList.remove("show-suggestions", "pick-1", "pick-2", "pick-3", "show-synced");
     rxTyped.textContent = "";
-    if (reduce) { rxTyped.textContent = RX_TEXT; rxEl.classList.add("show-suggestions", "pick-1", "show-synced"); return; }
+    if (reduce) { rxTyped.textContent = RX_TEXT; rxEl.classList.add("show-suggestions", "pick-1", "pick-2", "pick-3", "show-synced"); return; }
     var i = 0;
     (function type() {
       if (myToken !== rxToken) return;
-      if (i <= RX_TEXT.length) { rxTyped.textContent = RX_TEXT.slice(0, i); i++; window.setTimeout(type, 55); return; }
+      if (i <= RX_TEXT.length) { rxTyped.textContent = RX_TEXT.slice(0, i); i++; window.setTimeout(type, 30); return; }
       seq();
     })();
     function at(cls, delay) { window.setTimeout(function () { if (myToken === rxToken) rxEl.classList.add(cls); }, delay); }
-    function seq() { at("show-suggestions", 380); at("pick-1", 1000); at("show-synced", 1700); }
+    function seq() { at("show-suggestions", 350); at("pick-1", 850); at("pick-2", 1250); at("pick-3", 1650); at("show-synced", 2200); }
   }
   var rxReplay = byId("a10rxReplay");
   if (rxReplay) rxReplay.addEventListener("click", playRx);

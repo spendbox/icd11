@@ -105,6 +105,11 @@
 #reading.slide.is-active .a10chip:nth-child(5) { animation-delay: 1.3s; }
 .a10wt__replay { display: block; margin: 0 auto; }
 
+/* prescribing demo — third confirmation pill (shared CSS only covers 1 & 2) */
+.rx.show-suggestions .rx__suggestions li[data-rx="3"] { transition-delay: 0.24s; }
+.rx.pick-3 .rx__suggestions li[data-rx="3"] { border-color: var(--teal-500); background: var(--teal-50); }
+.rx.pick-3 .rx__suggestions li[data-rx="3"] .rx__tick { background: var(--green); color: #fff; border-color: var(--green); }
+
 /* =========================================================
    DAGGER & ASTERISK — dual-coding cards
    ========================================================= */
