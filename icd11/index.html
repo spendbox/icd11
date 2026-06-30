@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A professional slide presentation on ICD-11 — what it is, how its codes are built, and how it works inside an EMR, with a live ICD-11 coder connected to the WHO ICD-11 API. By Dr Manuwa Tolu, Harvey Road General Hospital, Yaba." />
+  <meta name="author" content="Dr Manuwa Tolu" />
+  <title>ICD-11 — Harvey Road General Hospital, Yaba</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/styles.css?v=20260629a" />
+</head>
+<body>
+
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+  <div class="deck" id="deck">
+    <div class="stage" id="stage">
+
+    <!-- ============ 1 · COVER ============ -->
+    <section class="slide cover is-active" id="cover" data-title="Cover">
+      <div class="cover__bg" aria-hidden="true"></div>
+      <div class="cover__inner">
+        <img src="../assets/img/logo.jpeg?v=20260625g" alt="Harvey Road General Hospital crest" class="cover__logo" />
+        <p class="eyebrow">Harvey Road General Hospital &bull; Yaba, Lagos</p>
+        <h1 class="cover__title">Understanding <span>ICD-11</span></h1>
+        <p class="cover__subtitle">The WHO&rsquo;s modern standard for classifying disease &mdash; and how it actually works.</p>
+        <div class="cover__byline">
+          <div class="avatar" aria-hidden="true"><img class="avatar__img" src="../assets/img/presenter.png?v=20260625g" alt="" onerror="this.remove()" />MT</div>
+          <div>
+            <strong>Dr Manuwa Tolu</strong>
+            <span>Harvey Road General Hospital, Yaba</span>
+          </div>
+        </div>
+        <div class="cover__cta">
+          <button class="btn btn--solid btn--lg" data-target="outline" type="button">Begin &rarr;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ OUTLINE ============ -->
+    <section class="slide slide--tint" id="outline" data-title="Outline">
+      <div class="slide__inner">
+        <p class="kicker">What we&rsquo;ll cover</p>
+        <h2>Outline</h2>
+        <p class="lead">From what the ICD is, to coding a real encounter on our ward.</p>
+
+        <ol class="outline-list">
+          <li><b>What the ICD is</b><span>A short history of classifying disease</span></li>
+          <li><b>Why we code</b><span>The case for coding &mdash; one code, many names</span></li>
+          <li><b>ICD-10 in brief</b><span>The standard we still use today</span></li>
+          <li><b>ICD-11 in brief</b><span>Codes, post-coordination and Chapter&nbsp;X extensions</span></li>
+          <li><b>ICD-10 vs ICD-11</b><span>What actually changed</span></li>
+          <li><b>Coding in practice</b><span>Inside the EMR &mdash; search, pick, refine (live demo)</span></li>
+          <li><b>Pros &amp; cons</b><span>An honest appraisal</span></li>
+          <li><b>The ward problem</b><span>Diagnosis vs assessment; do we need an &ldquo;HCD&rdquo;?</span></li>
+          <li><b>A context-aware workflow</b><span>Coding a whole encounter, and faster prescribing</span></li>
+          <li><b>Into practice</b><span>How we adopt ICD-11 here</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ 2 · WHAT IS ICD ============ -->
+    <section class="slide" id="what-is-icd" data-title="What is the ICD?">
+      <div class="slide__inner">
+        <p class="kicker">Foundations</p>
+        <h2>What is the ICD?</h2>
+        <p class="lead">The WHO&rsquo;s global standard for turning a diagnosis into a structured, comparable <strong>code</strong>.</p>
+
+        <div class="grid grid-3">
+          <div class="card">
+            <div class="card__icon">🌍</div>
+            <h3>Common language</h3>
+            <p>One code means the same worldwide.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">📊</div>
+            <h3>Counts what matters</h3>
+            <p>Statistics and planning start here.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">💳</div>
+            <h3>Runs the business</h3>
+            <p>Billing, NHIS/HMO claims, research.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HISTORY ============ -->
+    <section class="slide slide--tint" id="history" data-title="A short history">
+      <div class="slide__inner">
+        <p class="kicker">Where it came from</p>
+        <h2>A short history</h2>
+        <p class="lead">130 years of classifying disease.</p>
+
+        <ol class="htl">
+          <li>
+            <span class="htl__dot"></span>
+            <span class="htl__year">1893</span>
+            <h3>The first list</h3>
+            <p>Bertillon&rsquo;s International List of Causes of Death.</p>
+          </li>
+          <li>
+            <span class="htl__dot"></span>
+            <span class="htl__year">1948</span>
+            <h3>WHO takes over</h3>
+            <p>ICD-6 &mdash; first to include illness, not just death.</p>
+          </li>
+          <li>
+            <span class="htl__dot"></span>
+            <span class="htl__year">1994</span>
+            <h3>ICD-10</h3>
+            <p>The version most of the world still uses today.</p>
+          </li>
+          <li>
+            <span class="htl__dot"></span>
+            <span class="htl__year">2022</span>
+            <h3>ICD-11</h3>
+            <p>Adopted 2019; in effect since 1 Jan 2022.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ WHY BOTHER CODING? (ask & answer) ============ -->
+    <section class="slide" id="why-bother" data-title="Why bother coding?">
+      <div class="slide__inner">
+        <p class="kicker">The honest question</p>
+        <h2>Why stress ourselves coding every diagnosis?</h2>
+        <p class="lead">On a busy ward it feels like extra paperwork. Why not just write &ldquo;heart attack&rdquo; in the notes and move on?</p>
+
+        <div class="whyans">
+          <p class="whyans__because">Because a diagnosis written in free text is just <em>words</em> &mdash; a coded one is <strong>data</strong> the whole system can read, count and act on.</p>
+        </div>
+
+        <div class="whyrow">
+          <div class="whyrow__item">
+            <span class="whyrow__k">🔎</span>
+            <div><b>Words don&rsquo;t compute</b><span>&ldquo;HTN&rdquo;, &ldquo;high BP&rdquo; and &ldquo;hypertension&rdquo; are invisible to a search &mdash; one code unites them all.</span></div>
+          </div>
+          <div class="whyrow__item">
+            <span class="whyrow__k">💳</span>
+            <div><b>No code, no claim</b><span>NHIS/HMO reimbursement, audits and national statistics start from a valid code, not a phrase.</span></div>
+          </div>
+          <div class="whyrow__item">
+            <span class="whyrow__k">🌍</span>
+            <div><b>It travels</b><span>The same code means the same disease in any ward, any hospital, any country.</span></div>
+          </div>
+        </div>
+
+        <div class="callout">The few seconds it takes to code a diagnosis are what turn a note nobody can query into a data point everyone can.</div>
+      </div>
+    </section>
+
+    <!-- ============ ONE CODE, MANY NAMES (universality) ============ -->
+    <section class="slide slide--tint" id="universality" data-title="One code, many names">
+      <div class="slide__inner">
+        <p class="kicker">The proof</p>
+        <h2>One code, many names</h2>
+        <p class="lead">Lay terms, abbreviations, clinical language, other tongues &mdash; all of these name the <strong>same disease</strong>, and ICD-11 collapses them into a single, unambiguous code.</p>
+
+        <div class="uni" role="img" aria-label="The ICD-11 code BA41, Acute myocardial infarction, surrounded by its many names: Heart attack, MI, Myocardial infarction, Coronary thrombosis, Cardiac infarction, Crise cardiaque (French), Herzinfarkt (German), and Infarto de miocardio (Spanish).">
+          <div class="uni__orbit" aria-hidden="true"></div>
+
+          <div class="uni__core">
+            <span class="uni__corecode">BA41</span>
+            <span class="uni__corelabel">Acute myocardial infarction</span>
+            <span class="uni__coretag">ICD-11 &middot; Circulatory system</span>
+          </div>
+
+          <span class="uni__term uni__term--1"><span class="uni__chip">Heart attack</span></span>
+          <span class="uni__term uni__term--2"><span class="uni__chip">MI</span></span>
+          <span class="uni__term uni__term--3"><span class="uni__chip">Myocardial infarction</span></span>
+          <span class="uni__term uni__term--4"><span class="uni__chip">Coronary thrombosis</span></span>
+          <span class="uni__term uni__term--5"><span class="uni__chip">Cardiac infarction</span></span>
+          <span class="uni__term uni__term--6"><span class="uni__chip">Crise cardiaque <em>FR</em></span></span>
+          <span class="uni__term uni__term--7"><span class="uni__chip">Herzinfarkt <em>DE</em></span></span>
+          <span class="uni__term uni__term--8"><span class="uni__chip">Infarto de miocardio <em>ES</em></span></span>
+        </div>
+
+        <p class="footnote">Eight names, one meaning &mdash; <code>BA41</code>. That is what &ldquo;a common language for health&rdquo; actually buys us, and the clearest answer to <em>why we code</em>.</p>
+      </div>
+    </section>
+
+    <!-- ============ WHY CODE — BENEFITS ============ -->
+    <section class="slide" id="benefits" data-title="Why code a diagnosis?">
+      <div class="slide__inner">
+        <p class="kicker">Why it matters</p>
+        <h2>Why code a diagnosis?</h2>
+        <p class="lead">A coded diagnosis is more than a label &mdash; it becomes data that works for you.</p>
+
+        <div class="grid grid-3">
+          <div class="card">
+            <div class="card__icon">📊</div>
+            <h3>Epidemiology &amp; planning</h3>
+            <p>Track disease burden, spot outbreaks, and allocate resources based on real counts &mdash; not estimates.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">💳</div>
+            <h3>Billing &amp; reimbursement</h3>
+            <p>NHIS/HMO claims, insurance tariffs, and DRG-based payments all start from a valid ICD code.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">🔬</div>
+            <h3>Clinical research</h3>
+            <p>Coded records can be queried in seconds &mdash; no manual chart review for audits or studies.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">📈</div>
+            <h3>Quality &amp; audit</h3>
+            <p>Compare outcomes by diagnosis, monitor readmissions, and benchmark against other facilities.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">🔗</div>
+            <h3>Continuity of care</h3>
+            <p>A coded diagnosis travels with the patient across wards, referrals, and facilities &mdash; unambiguous.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">🌍</div>
+            <h3>Global comparability</h3>
+            <p>The same code means the same thing in Lagos, London, or Lausanne &mdash; enabling shared learning.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ICD-10 IN BRIEF ============ -->
+    <section class="slide" id="icd10" data-title="ICD-10 in brief">
+      <div class="slide__inner">
+        <p class="kicker">The standard we use today</p>
+        <h2>ICD-10, in brief</h2>
+        <p class="lead">For three decades, ICD-10 has been the world&rsquo;s default &mdash; the version most hospitals, including ours, still code with.</p>
+
+        <ul class="feature-list feature-list--lg">
+          <li><strong>Paper-first</strong> &mdash; built for printed tabular volumes and manual coding; software support came later.</li>
+          <li><strong>Alphanumeric codes</strong> &mdash; a letter then digits, e.g. <code>I21</code> for an acute myocardial infarction.</li>
+          <li><strong>Pre-coordinated</strong> &mdash; one fixed code per concept, with little room to combine detail or grow.</li>
+        </ul>
+
+        <div class="stat-row">
+          <div class="stat"><span class="stat__num">~14,400</span><span class="stat__label">codes</span></div>
+          <div class="stat"><span class="stat__num">22</span><span class="stat__label">chapters</span></div>
+          <div class="stat"><span class="stat__num">1994</span><span class="stat__label">came into use</span></div>
+        </div>
+
+        <p class="footnote">Endorsed by the World Health Assembly in 1990 and in use from 1994. ICD-11 was adopted in 2019 and replaced it from 1&nbsp;January&nbsp;2022 &mdash; but ICD-10 remains widely in service through the transition.</p>
+      </div>
+    </section>
+
+    <!-- ============ 3 · ICD-11 ============ -->
+    <section class="slide slide--tint" id="icd11" data-title="ICD-11 in brief">
+      <div class="slide__inner">
+        <p class="kicker">The 2022 standard</p>
+        <h2>ICD-11, in brief</h2>
+        <p class="lead">The first edition designed to live inside software, not books.</p>
+
+        <ul class="feature-list feature-list--lg">
+          <li><strong>One living database</strong> &mdash; updated continuously.</li>
+          <li><strong>Post-coordination</strong> &mdash; stem code + extension codes.</li>
+          <li><strong>Digital-native</strong> &mdash; an official API and coding tool.</li>
+        </ul>
+
+        <div class="stat-row">
+          <div class="stat"><span class="stat__num">1.6M+</span><span class="stat__label">codable concepts</span></div>
+          <div class="stat"><span class="stat__num">28</span><span class="stat__label">chapters</span></div>
+          <div class="stat"><span class="stat__num">2022</span><span class="stat__label">in effect</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 4 · COMPARE ============ -->
+    <section class="slide" id="compare" data-title="ICD-10 vs ICD-11">
+      <div class="slide__inner">
+        <p class="kicker">Side by side</p>
+        <h2>ICD-10 vs ICD-11</h2>
+        <p class="lead">A structural leap, not a cosmetic one.</p>
+
+        <div class="table-wrap">
+          <table class="compare">
+            <thead>
+              <tr><th>&nbsp;</th><th>ICD-10</th><th class="hl">ICD-11</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Era</td><td>Paper-first</td><td class="hl">Digital-first (API)</td></tr>
+              <tr><td>Detail</td><td>Pre-coordinated</td><td class="hl">Stem + extension clustering</td></tr>
+              <tr><td>Scale</td><td>~14,400 codes</td><td class="hl">1.6M+ concepts</td></tr>
+              <tr><td>Updates</td><td>Slow revisions</td><td class="hl">Continuous</td></tr>
+              <tr><td>EMR fit</td><td>Bolted on</td><td class="hl">Native + SNOMED&nbsp;CT</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 5 · ANATOMY OF A CODE ============ -->
+    <section class="slide slide--tint" id="anatomy-code" data-title="Anatomy of a code">
+      <div class="slide__inner">
+        <p class="kicker">Reading a code</p>
+        <h2>Anatomy of a code</h2>
+        <p class="lead">Same disease &mdash; <em>P. falciparum malaria, cerebral</em> &mdash; in each system.</p>
+
+        <div class="ca-grid">
+          <div class="ca-card ca-card--old">
+            <span class="ca-tag">ICD-10</span>
+            <div class="ca-code">
+              <span class="seg s-a">B</span><span class="seg s-b">50</span><span class="dot">.</span><span class="seg s-c">0</span>
+            </div>
+            <ul class="ca-legend">
+              <li><span class="d d-a"></span><strong>B</strong> &mdash; chapter (infectious, A00&ndash;B99)</li>
+              <li><span class="d d-b"></span><strong>50</strong> &mdash; category (falciparum malaria)</li>
+              <li><span class="d d-c"></span><strong>.0</strong> &mdash; detail (cerebral)</li>
+            </ul>
+            <p class="ca-note">1 letter + digits. Little room to grow.</p>
+          </div>
+
+          <div class="ca-card ca-card--new">
+            <span class="ca-tag ca-tag--new">ICD-11</span>
+            <div class="ca-code">
+              <span class="seg s-1">1</span><span class="seg s-2">F</span><span class="seg s-3">40</span><span class="dot">.</span><span class="seg s-4">0</span>
+            </div>
+            <ul class="ca-legend">
+              <li><span class="d d-1"></span><strong>1</strong> &mdash; chapter (01 Infectious)</li>
+              <li><span class="d d-2"></span><strong>F</strong> &mdash; block: a group of related categories (the 2nd char is always a letter)</li>
+              <li><span class="d d-3"></span><strong>40</strong> &mdash; category (the specific diagnosis: falciparum malaria)</li>
+              <li><span class="d d-4"></span><strong>.0</strong> &mdash; detail (cerebral) &middot; can cluster extensions</li>
+            </ul>
+            <p class="ca-note">Letters <strong>O</strong> and <strong>I</strong> are never used &mdash; no confusion with 0 and 1.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STRUCTURE / COUNTS ============ -->
+    <section class="slide" id="structure" data-title="How ICD-11 is structured">
+      <div class="slide__inner slide__inner--wide">
+        <p class="kicker">Numbers &amp; structure</p>
+        <h2>The shape of ICD-11</h2>
+        <p class="lead">Every code is built the same way &mdash; and the first two characters place it on the map.</p>
+
+        <div class="stat-row">
+          <div class="stat"><span class="stat__num">28</span><span class="stat__label">chapters</span></div>
+          <div class="stat"><span class="stat__num">17,000+</span><span class="stat__label">stem codes (categories)</span></div>
+          <div class="stat"><span class="stat__num">120,000+</span><span class="stat__label">codable terms</span></div>
+          <div class="stat"><span class="stat__num">1.6M+</span><span class="stat__label">post-coordinated combinations</span></div>
+        </div>
+
+        <div class="struct-grid">
+          <div class="struct-block">
+            <h3 class="struct-h">Inside a code &mdash; what each position can be</h3>
+            <div class="table-wrap">
+              <table class="struct-table">
+                <thead><tr><th>Position</th><th>What it encodes</th><th>Possible values</th></tr></thead>
+                <tbody>
+                  <tr><td><code>1</code> 1st</td><td>Chapter</td><td>1&ndash;9, then A&ndash;Z</td></tr>
+                  <tr><td><code>A</code> 2nd</td><td>Block <span class="struct-mut">(group of categories)</span></td><td>A&ndash;Z &mdash; always a letter</td></tr>
+                  <tr><td><code>0</code> 3rd</td><td>Category</td><td>0&ndash;9 &mdash; forced digit</td></tr>
+                  <tr><td><code>0</code> 4th</td><td>Category</td><td>0&ndash;9, or A&ndash;Z</td></tr>
+                  <tr><td><code>.0</code> 5th&ndash;6th</td><td>Subcategory / detail</td><td>0&ndash;9, or A&ndash;Z</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="footnote">Letters <strong>I</strong> and <strong>O</strong> are never used (no confusion with 1 and 0). A full code runs <code>1A00.00</code> &rarr; <code>ZZ9Z.ZZ</code>. Extension codes (Chapter&nbsp;X) all start with <code>X</code> and post-coordinate onto a stem with <code>&amp;</code>.</p>
+          </div>
+
+          <div class="struct-block">
+            <h3 class="struct-h">The 28 chapters &mdash; and the character each one starts with</h3>
+            <div class="chapters-cols">
+              <table class="struct-table struct-table--chap">
+                <thead><tr><th>#</th><th>1st</th><th>Chapter</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td><code>1</code></td><td>Certain infectious or parasitic diseases</td></tr>
+                  <tr><td>2</td><td><code>2</code></td><td>Neoplasms</td></tr>
+                  <tr><td>3</td><td><code>3</code></td><td>Blood or blood-forming organs</td></tr>
+                  <tr><td>4</td><td><code>4</code></td><td>Immune system</td></tr>
+                  <tr><td>5</td><td><code>5</code></td><td>Endocrine, nutritional or metabolic</td></tr>
+                  <tr><td>6</td><td><code>6</code></td><td>Mental, behavioural or neurodevelopmental</td></tr>
+                  <tr><td>7</td><td><code>7</code></td><td>Sleep-wake disorders</td></tr>
+                  <tr><td>8</td><td><code>8</code></td><td>Nervous system</td></tr>
+                  <tr><td>9</td><td><code>9</code></td><td>Visual system</td></tr>
+                  <tr><td>10</td><td><code>A</code></td><td>Ear or mastoid process</td></tr>
+                  <tr><td>11</td><td><code>B</code></td><td>Circulatory system</td></tr>
+                  <tr><td>12</td><td><code>C</code></td><td>Respiratory system</td></tr>
+                  <tr><td>13</td><td><code>D</code></td><td>Digestive system</td></tr>
+                  <tr><td>14</td><td><code>E</code></td><td>Skin</td></tr>
+                </tbody>
+              </table>
+              <table class="struct-table struct-table--chap">
+                <thead><tr><th>#</th><th>1st</th><th>Chapter</th></tr></thead>
+                <tbody>
+                  <tr><td>15</td><td><code>F</code></td><td>Musculoskeletal system or connective tissue</td></tr>
+                  <tr><td>16</td><td><code>G</code></td><td>Genitourinary system</td></tr>
+                  <tr><td>17</td><td><code>H</code></td><td>Conditions related to sexual health</td></tr>
+                  <tr><td>18</td><td><code>J</code></td><td>Pregnancy, childbirth or the puerperium</td></tr>
+                  <tr><td>19</td><td><code>K</code></td><td>Certain conditions originating in the perinatal period</td></tr>
+                  <tr><td>20</td><td><code>L</code></td><td>Developmental anomalies</td></tr>
+                  <tr><td>21</td><td><code>M</code></td><td>Symptoms, signs or clinical findings, NEC</td></tr>
+                  <tr><td>22</td><td><code>N</code></td><td>Injury, poisoning or external-cause consequences</td></tr>
+                  <tr><td>23</td><td><code>P</code></td><td>External causes of morbidity or mortality</td></tr>
+                  <tr><td>24</td><td><code>Q</code></td><td>Factors influencing health status</td></tr>
+                  <tr><td>25</td><td><code>R</code></td><td>Codes for special purposes</td></tr>
+                  <tr><td>26</td><td><code>S</code></td><td>Traditional Medicine conditions (Module&nbsp;I)</td></tr>
+                  <tr><td>V</td><td><code>V</code></td><td>Supplementary section for functioning assessment</td></tr>
+                  <tr><td>X</td><td><code>X</code></td><td>Extension codes (for post-coordination)</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="footnote">Chapters 1&ndash;9 use digits; chapters 10&ndash;26 use letters A&ndash;S (skipping I and O); <code>V</code> and <code>X</code> are the two supplementary chapters.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 6 · BUILDING A CODE / EXTENSIONS ============ -->
+    <section class="slide" id="examples" data-title="Extensions">
+      <div class="slide__inner">
+        <p class="kicker">Post-coordination</p>
+        <h2>How extensions work</h2>
+        <p class="lead">Combine a <strong>stem code</strong> with <strong>extension codes</strong> to add detail &mdash; instead of a separate code for every case.</p>
+
+        <div class="build">
+          <div class="build__step">
+            <span class="build__label">Stem code</span>
+            <div class="build__chip build__chip--stem"><code>NC32</code><small>Fracture of forearm</small></div>
+          </div>
+          <div class="build__op">+</div>
+          <div class="build__step">
+            <span class="build__label">Extension</span>
+            <div class="build__chip build__chip--ext"><code>XK8G</code><small>Left</small></div>
+          </div>
+          <div class="build__op">=</div>
+          <div class="build__step">
+            <span class="build__label">Cluster</span>
+            <div class="build__chip build__chip--result"><code>NC32&nbsp;&amp;&nbsp;XK8G</code><small>Fracture of left forearm</small></div>
+          </div>
+        </div>
+
+        <p class="footnote">Extensions capture <strong>laterality, severity, cause, timing</strong> and more &mdash; the same mechanism for any stem code.</p>
+      </div>
+    </section>
+
+    <!-- ============ CHAPTER X · EXTENSION CODES ============ -->
+    <section class="slide slide--tint" id="extension-types" data-title="Chapter X — extension codes">
+      <div class="slide__inner">
+        <p class="kicker">The extension toolbox</p>
+        <h2>Chapter&nbsp;X &mdash; the extension codes</h2>
+        <p class="lead">ICD-11 keeps every extension in one place: <strong>Chapter&nbsp;X</strong>, around <strong>1,400 codes</strong> grouped by what they describe.</p>
+
+        <div class="exttypes">
+          <span class="exttype"><b>Laterality</b><small>left · right · bilateral</small></span>
+          <span class="exttype"><b>Severity</b><small>mild · moderate · severe</small></span>
+          <span class="exttype"><b>Temporality / course</b><small>acute · chronic · recurrent · in remission</small></span>
+          <span class="exttype"><b>Anatomy &amp; topology</b><small>specific site · proximal/distal · upper/lower</small></span>
+          <span class="exttype"><b>Aetiology / causal agent</b><small>organism · substance · external cause</small></span>
+          <span class="exttype"><b>Histopathology</b><small>tissue / cell type</small></span>
+          <span class="exttype"><b>Dimensions of injury</b><small>open · closed · displaced</small></span>
+          <span class="exttype"><b>Diagnosis certainty</b><small>confirmed · suspected · provisional</small></span>
+        </div>
+
+        <div class="callout">One stem can take several extensions at once &mdash; that combinatorial reuse is how <strong>~17,000</strong> stem codes express the WHO&rsquo;s <strong>1.6&nbsp;million+</strong> codable situations.</div>
+      </div>
+    </section>
+
+    <!-- ============ 7 · EMR MECHANISM ============ -->
+    <section class="slide slide--tint" id="emr-how" data-title="How it actually works">
+      <div class="slide__inner">
+        <p class="kicker">How it actually works</p>
+        <h2>ICD-11 inside the EMR</h2>
+        <p class="lead">You don&rsquo;t memorise codes &mdash; you <strong>search, pick, refine</strong>.</p>
+
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card__icon">🔌</div>
+            <h3>Official ICD-API</h3>
+            <p>WHO hosts a live REST API at <code>id.who.int</code>. The EMR queries it for every search.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">🔎</div>
+            <h3>Embedded Coding Tool</h3>
+            <p>A drop-in WHO widget: type a term &rarr; pick from ranked matches.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">⚡</div>
+            <h3>Autocode</h3>
+            <p>Free text in &rarr; closest-match code out.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">📡</div>
+            <h3>Works offline</h3>
+            <p>The API can run on a local server &mdash; vital for poor connectivity.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WALKTHROUGH (illustration) ============ -->
+    <section class="slide" id="demo-walkthrough" data-title="How a code is generated">
+      <div class="slide__inner">
+        <p class="kicker">Watch first</p>
+        <h2>How a code is generated</h2>
+        <p class="lead">Type the diagnosis &rarr; pick the match &rarr; add an extension.</p>
+
+        <div class="wt">
+          <div class="wt__left">
+            <div class="searchbox searchbox--demo">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <span class="wt__typed" id="wtTyped"></span><span class="wt__caret" id="wtCaret"></span>
+            </div>
+            <ul class="wt__results" id="wtResults">
+              <li data-pick="1"><code>NC32</code><span>Fracture of forearm</span></li>
+              <li><code>NC72</code><span>Fracture of femur</span></li>
+              <li><code>NC92</code><span>Fracture of lower leg, including ankle</span></li>
+            </ul>
+          </div>
+
+          <div class="wt__right" id="wtPick">
+            <span class="wt__tag">Selected code</span>
+            <div class="wt__code wt__code--stem"><code>NC32</code><small>Fracture of forearm</small></div>
+            <div class="wt__ext" id="wtExt">
+              <span class="wt__plus">＋ extension</span>
+              <span class="wt__chip">XK8G · Left</span>
+            </div>
+            <div class="wt__code wt__code--cluster" id="wtCluster"><code>NC32&nbsp;&amp;&nbsp;XK8G</code><small>Fracture of left forearm</small></div>
+          </div>
+        </div>
+
+        <button class="btn btn--ghost wt__replay" id="wtReplay" type="button">↻ Replay</button>
+      </div>
+    </section>
+
+    <!-- ============ 8 · LIVE DEMO ============ -->
+    <section class="slide" id="demo" data-title="Live ICD-11 coder">
+      <div class="slide__inner slide__inner--wide">
+        <p class="kicker">Try it yourself</p>
+        <h2>Live ICD-11 coder</h2>
+        <p class="lead">Exactly how an EMR works: <strong>search</strong> the WHO ICD-11 classification, <strong>pick</strong> a code, then <strong>add an extension</strong>.</p>
+
+        <div class="coder">
+          <!-- search column -->
+          <div class="coder__search">
+            <div class="searchbox">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="icdSearch" placeholder="Search ICD-11 — malaria, asthma, fracture…" autocomplete="off" aria-label="Search ICD-11" />
+            </div>
+            <div class="coder__status" id="coderStatus"><span class="dotpulse"></span> Type a diagnosis to search ICD-11</div>
+            <p class="coder__quicklabel">Common searches:</p>
+            <div class="coder__quick" id="coderQuick"></div>
+            <ul class="coder__results" id="icdResults" aria-live="polite"></ul>
+          </div>
+
+          <!-- selection column -->
+          <div class="coder__panel">
+            <div class="coder__selected" id="coderSelected">
+              <span class="coder__chaptag" id="selChapter">&mdash;</span>
+              <h3 id="selTitle">&mdash;</h3>
+
+              <div class="coder__refine" id="coderRefine">
+                <span class="coder__sublabel">Suggested extensions for <span id="selFor">this diagnosis</span></span>
+                <div class="chipset" id="extChips"></div>
+
+                <div class="extfind">
+                  <span class="coder__sublabel">Add any extension</span>
+                  <div class="searchbox searchbox--sm">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="extSearch" placeholder="Search extensions — left, severe, acute, open…" autocomplete="off" aria-label="Search extensions" />
+                  </div>
+                  <ul class="extfind__results" id="extResults"></ul>
+                </div>
+              </div>
+
+              <div class="coder__chosen" id="extChosenWrap" hidden>
+                <span class="coder__sublabel">Selected extensions</span>
+                <div class="chipset chipset--chosen" id="extChosen"></div>
+              </div>
+
+              <div class="bigcode bigcode--dx">
+                <span class="code-card__label">Diagnosis</span>
+                <strong class="bigcode__dx" id="outIcdTitle">&mdash;</strong>
+                <code class="bigcode__code" id="outIcd">&mdash;</code>
+              </div>
+
+              <p class="coder__note" id="coderNote">Pick a diagnosis, then add context-aware extensions.</p>
+              <p class="coder__micro">Example extension codes illustrate post-coordination (Chapter&nbsp;X).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROS & CONS ============ -->
+    <section class="slide slide--tint" id="proscons" data-title="Pros & Cons of ICD-11">
+      <div class="slide__inner">
+        <p class="kicker">An honest appraisal</p>
+        <h2>ICD-11: pros &amp; cons</h2>
+
+        <div class="grid grid-2 pc-grid">
+          <div class="pc-col pc-col--pro">
+            <h3><span>✓</span> Pros</h3>
+            <ul>
+              <li>Greater precision via clustering.</li>
+              <li>Digital-native: API + coding tool.</li>
+              <li>Always current; globally comparable.</li>
+            </ul>
+          </div>
+          <div class="pc-col pc-col--con">
+            <h3><span>!</span> Cons</h3>
+            <ul>
+              <li>Learning curve for ICD-10 staff.</li>
+              <li>Needs tooling &amp; connectivity.</li>
+              <li>Migration &amp; retraining effort.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DIAGNOSIS IS DYNAMIC ============ -->
+    <section class="slide" id="dx-dynamic" data-title="Diagnosis is dynamic">
+      <div class="slide__inner">
+        <p class="kicker">The real-world problem</p>
+        <h2>A diagnosis is not a single moment</h2>
+        <p class="lead">On the ward it <strong>changes by the hour</strong> &mdash; and we can&rsquo;t let coding slow down care.</p>
+
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card__icon">⏱️</div>
+            <h3>Fast at the point of care</h3>
+            <p>A clerking has several problems at once. Capturing them must take seconds, not minutes &mdash; or clinicians simply won&rsquo;t do it.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">🔄</div>
+            <h3>It evolves</h3>
+            <p>&ldquo;Query sepsis&rdquo; becomes confirmed; hypertension goes from uncontrolled to stable. The record has to move with the patient.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">🩺</div>
+            <h3>Diagnosis ≠ assessment</h3>
+            <p>&ldquo;Stable&rdquo;, &ldquo;improving&rdquo;, &ldquo;for review&rdquo; are <em>assessments</em> of a known problem &mdash; not diagnoses, and not ICD codes.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">🧾</div>
+            <h3>Our EMR today</h3>
+            <p>Has a single <strong>Diagnosis</strong> field. There is nowhere to record the day-to-day <strong>assessment</strong> &mdash; so nuance is lost or jammed into the wrong box.</p>
+          </div>
+        </div>
+
+        <div class="callout">The fix is two fields, not one: a coded <strong>Diagnosis</strong> <em>and</em> a free <strong>Assessment / clinical course</strong> beside it.</div>
+      </div>
+    </section>
+
+    <!-- ============ HCD ============ -->
+    <section class="slide slide--tint" id="hcd" data-title="Do we need HCD?">
+      <div class="slide__inner">
+        <p class="kicker">A local idea</p>
+        <h2>Do we need an &ldquo;HCD&rdquo;?</h2>
+        <p class="lead"><strong>HCD</strong> &mdash; a <em>Harvey Road Classification of Diseases</em>: our own local code list, shaped around how we actually work.</p>
+
+        <div class="grid grid-2">
+          <div class="pc-col pc-col--pro">
+            <h3><span>✓</span> The appeal</h3>
+            <ul>
+              <li>Tailored to our common presentations.</li>
+              <li>Short codes staff can learn quickly.</li>
+              <li>Room for local concepts ICD may not name.</li>
+            </ul>
+          </div>
+          <div class="pc-col pc-col--con">
+            <h3><span>!</span> What it would take</h3>
+            <ul>
+              <li>Author &amp; maintain the whole code set ourselves.</li>
+              <li>Build a <strong>crosswalk</strong> mapping every HCD code back to ICD-11 (for NHIS/HMO, stats, research).</li>
+              <li>Governance, versioning, training &mdash; <strong>forever</strong>.</li>
+              <li>It stays <strong>local</strong>: not comparable beyond our walls.</li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="footnote">In short: HCD solves the speed/assessment problem by <strong>rebuilding a classification from scratch</strong> &mdash; a large, permanent maintenance burden, and an island of data.</p>
+      </div>
+    </section>
+
+    <!-- ============ HCD vs context-aware ICD-11 ============ -->
+    <section class="slide" id="hcd-vs-icd11" data-title="A better path than HCD">
+      <div class="slide__inner">
+        <p class="kicker">The better path</p>
+        <h2>Keep the global standard &mdash; just use it well</h2>
+        <p class="lead">We can get everything HCD promised <strong>without</strong> maintaining our own classification: adopt ICD-11 in a <strong>context-aware</strong> way and add the missing <strong>assessment</strong> field.</p>
+
+        <div class="table-wrap">
+          <table class="compare">
+            <thead>
+              <tr><th>What we want</th><th>Build HCD</th><th class="hl">Context-aware ICD-11</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Speed at point of care</td><td>Yes (new codes to learn)</td><td class="hl">Yes &mdash; search &amp; shorthand (&ldquo;T2DM&rdquo;)</td></tr>
+              <tr><td>Right detail, no clutter</td><td>Hard-coded per disease</td><td class="hl">Only relevant extensions suggested</td></tr>
+              <tr><td>Record assessment / course</td><td>Add a field</td><td class="hl">Add the same field &mdash; beside the code</td></tr>
+              <tr><td>Maintenance burden</td><td>Ours, forever</td><td class="hl">WHO maintains it</td></tr>
+              <tr><td>Comparable &amp; billable</td><td>Needs a crosswalk</td><td class="hl">Native &mdash; it already <em>is</em> ICD-11</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout">Proposed solution: a fast <strong>diagnosis</strong> coder that suggests context-aware extensions, plus an <strong>assessment</strong> field for the clinical course. The assessment is typed manually &mdash; and for anything not yet diagnosed, we can <strong>query</strong> it.</div>
+      </div>
+    </section>
+
+    <!-- ============ ENCOUNTER CODER (multi-problem) ============ -->
+    <section class="slide slide--tint" id="encounter" data-title="Code a whole encounter">
+      <div class="slide__inner slide__inner--wide">
+        <p class="kicker">Try it yourself &middot; natural language</p>
+        <h2>Code a whole encounter</h2>
+        <p class="lead">Type the clinical picture in plain words &mdash; tap the suggested ICD-11 clusters to add them.</p>
+
+        <div class="enc2">
+          <div class="enc2__entry">
+            <label class="enc2__label" for="encNarrative">Clinical picture <span>free text &middot; shorthand like &ldquo;T2DM&rdquo; works</span></label>
+            <textarea id="encNarrative" rows="2" placeholder="symptomatic uterine fibroids with anaemia, uncontrolled HTN, T2DM"></textarea>
+            <div class="enc2__actions">
+              <button class="btn btn--solid btn--lg" id="encSuggest" type="button">Suggest ICD-11 codes &rarr;</button>
+              <button class="btn btn--ghost" id="encClear" type="button">Clear</button>
+              <span class="coder__status" id="encStatus" hidden></span>
+            </div>
+            <div class="enc2__try"><span class="enc2__trylabel">Try:</span><div class="enc__examples" id="encExamples"></div></div>
+          </div>
+
+          <div class="enc2__results">
+            <div class="enc2__col">
+              <span class="coder__sublabel">Suggested codes &mdash; tap to add or remove</span>
+              <div class="enc__suggestions" id="encSuggestions"><p class="enc__hint">Suggestions will appear here once you press Suggest.</p></div>
+            </div>
+            <div class="enc2__col">
+              <span class="coder__sublabel">Diagnosis &mdash; name &amp; ICD-11 code</span>
+              <div class="bigcode bigcode--enc">
+                <div id="encOut" class="encout"><span class="encout__empty">&mdash;</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WHY IT'S ACTUALLY FASTER ============ -->
+    <section class="slide" id="efficiency" data-title="Doesn't this slow us down?">
+      <div class="slide__inner">
+        <p class="kicker">The honest trade-off</p>
+        <h2>&ldquo;Won&rsquo;t careful coding slow us down?&rdquo;</h2>
+        <p class="lead">Coding one diagnosis well costs a few extra seconds. The win comes when the <strong>same</strong> pattern &mdash; natural language plus confirmation pills &mdash; runs the <strong>whole</strong> encounter.</p>
+
+        <div class="grid grid-3">
+          <div class="card">
+            <div class="card__icon">🩺</div>
+            <h3>Diagnosis</h3>
+            <p>Type it, tap the context-aware ICD-11 cluster. Coded as you think.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">💊</div>
+            <h3>Prescriptions</h3>
+            <p>Type the order, tap to confirm &mdash; it syncs straight to the <strong>pharmacy</strong>. No second screen, no tick-boxes.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">🧪</div>
+            <h3>Investigations</h3>
+            <p>Type the tests, tap to confirm &mdash; synced to the <strong>lab</strong>. One field, not a form.</p>
+          </div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat"><span class="stat__num">5 → 1</span><span class="stat__label">steps to send a medication</span></div>
+          <div class="stat"><span class="stat__num">3&ndash;5&times;</span><span class="stat__label">faster overall workflow</span></div>
+          <div class="stat"><span class="stat__num">1</span><span class="stat__label">screen for the whole visit</span></div>
+        </div>
+
+        <div class="callout">Today our EMR needs <strong>five steps</strong> just to send one drug to the pharmacy. With natural-language orders and confirmation pills that sync to the pharmacy and lab databases, that becomes <strong>type &rarr; tap</strong>.</div>
+      </div>
+    </section>
+
+    <!-- ============ PRESCRIBING DEMO (animated) ============ -->
+    <section class="slide slide--tint" id="rx-demo" data-title="Prescribing in natural language">
+      <div class="slide__inner">
+        <p class="kicker">Watch &middot; context-aware prescribing</p>
+        <h2>Prescribe by typing &mdash; the pharmacy syncs</h2>
+        <p class="lead">Write the order the way you already do. Confirmation pills map each drug to the pharmacy&rsquo;s database in one tap.</p>
+
+        <div class="rx">
+          <div class="rx__entry">
+            <span class="rx__label">Prescription</span>
+            <div class="searchbox searchbox--demo rx__box">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"></path></svg>
+              <span class="rx__typed" id="rxTyped"></span><span class="rx__caret" id="rxCaret"></span>
+            </div>
+          </div>
+
+          <ul class="rx__suggestions" id="rxSuggestions">
+            <li data-rx="1">
+              <span class="rx__pillmain"><code>PCM</code> Paracetamol 1 g tablet</span>
+              <span class="rx__pillsig">PO &middot; TDS &middot; 5 days &middot; 15 tabs</span>
+              <span class="rx__tick">✓</span>
+            </li>
+            <li data-rx="2">
+              <span class="rx__pillmain"><code>ACT</code> Artemether 80 mg / Lumefantrine 480 mg</span>
+              <span class="rx__pillsig">PO &middot; BD &middot; 3 days &middot; 6 tabs</span>
+              <span class="rx__tick">✓</span>
+            </li>
+          </ul>
+
+          <div class="rx__synced" id="rxSynced">
+            <span class="rx__synceddot"></span> Sent to pharmacy &mdash; 2 items queued for dispensing
+          </div>
+        </div>
+
+        <button class="btn btn--ghost rx__replay" id="rxReplay" type="button">↻ Replay</button>
+        <p class="result-disclaimer">Illustration. <em>pcm 1g tds x 5/7</em> = paracetamol 1 g three times daily for 5 days; <em>ACT 80/480 bd x 3/7</em> = artemether/lumefantrine twice daily for 3 days.</p>
+      </div>
+    </section>
+
+    <!-- ============ IMPLEMENTATION ============ -->
+    <section class="slide" id="implementation" data-title="Into practice">
+      <div class="slide__inner">
+        <p class="kicker">From theory to ward</p>
+        <h2>How do we put ICD-11 into practice?</h2>
+        <p class="lead">Four practical steps &mdash; no rip-and-replace required.</p>
+
+        <ol class="timeline">
+          <li><span class="timeline__phase">Step 1</span><h3>Get API access</h3><p>Register for free WHO ICD-API credentials.</p></li>
+          <li><span class="timeline__phase">Step 2</span><h3>Embed the Coding Tool</h3><p>Drop the WHO widget into the EMR&rsquo;s diagnosis field.</p></li>
+          <li><span class="timeline__phase">Step 3</span><h3>Transition from ICD-10</h3><p>Crosswalk old data; dual-code during the changeover.</p></li>
+          <li><span class="timeline__phase">Step 4</span><h3>Train &amp; audit</h3><p>Short training on search &amp; extensions; check coding quality.</p></li>
+        </ol>
+
+        <div class="callout">Poor internet? The same API can run on a local server on-site.</div>
+      </div>
+    </section>
+
+    <!-- ============ WHO CODES? ============ -->
+    <section class="slide slide--tint" id="who-codes" data-title="Should physicians be the ones coding?">
+      <div class="slide__inner">
+        <p class="kicker">A practical question</p>
+        <h2>Should physicians be the ones coding?</h2>
+        <p class="lead"><strong>Not necessarily.</strong> The model varies by setting &mdash; and technology is changing the answer.</p>
+
+        <div class="grid grid-3">
+          <div class="card">
+            <div class="card__icon">🩺</div>
+            <h3>Physicians document</h3>
+            <p>The clinician records the diagnosis and clinical findings &mdash; in their own words, at the point of care.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">🗂️</div>
+            <h3>Coders translate</h3>
+            <p>In many systems, professional medical coders take that documentation and assign the correct ICD codes &mdash; after the encounter.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">💡</div>
+            <h3>Software assists</h3>
+            <p>Modern EMRs suggest likely ICD codes from the physician&rsquo;s notes &mdash; leaving the clinician to confirm or correct, not code from scratch.</p>
+          </div>
+        </div>
+
+        <div class="callout">The goal is not to make every doctor a coder &mdash; it&rsquo;s to ensure every diagnosis becomes a <strong>coded, comparable data point</strong> with as little friction as possible.</div>
+      </div>
+    </section>
+
+    <!-- ============ REFERENCES ============ -->
+    <section class="slide slide--tint" id="references" data-title="References">
+      <div class="slide__inner">
+        <p class="kicker">Sources</p>
+        <h2>References &amp; further reading</h2>
+        <p class="lead">All ICD-11 materials are published by the World Health Organization.</p>
+
+        <ol class="refs">
+          <li>World Health Organization. <em>International Classification of Diseases, Eleventh Revision (ICD-11)</em>. Geneva: WHO; 2022. <span>icd.who.int</span></li>
+          <li>World Health Organization. <em>ICD-11 for Mortality and Morbidity Statistics (MMS)</em> &mdash; online browser. <span>icd.who.int/browse11</span></li>
+          <li>World Health Organization. <em>ICD-11 Reference Guide</em>. <span>icd.who.int/icd11refguide</span></li>
+          <li>World Health Organization. <em>ICD-API</em> &mdash; ICD-11 web services &amp; embedded Coding Tool. <span>icd.who.int/icdapi</span></li>
+          <li>World Health Organization. <em>ICD-11 Implementation or Transition Guide</em>. Geneva: WHO; 2019.</li>
+          <li>Harrison JE, Weber S, Jakob R, Chute CG. ICD-11: an international classification of diseases for the twenty-first century. <em>BMC Med Inform Decis Mak</em>. 2021;21(Suppl 6):206.</li>
+        </ol>
+
+        <p class="footnote">ICD-11 is a product of the World Health Organization. Codes shown in this deck are illustrative, for teaching.</p>
+      </div>
+    </section>
+
+    <!-- ============ 10 · CLOSE ============ -->
+    <section class="slide slide--dark close" id="close" data-title="Thank you">
+      <div class="slide__inner close__inner">
+        <img src="../assets/img/logo.jpeg?v=20260625g" alt="" class="close__logo" />
+        <h2>ICD-11 &mdash; a modern standard, ready for our EMR</h2>
+        <p class="lead lead--light">Searchable, precise and digital-native &mdash; classification built for how we actually work.</p>
+        <div class="close__byline">
+          <div class="avatar avatar--lg" aria-hidden="true"><img class="avatar__img" src="../assets/img/presenter.png?v=20260625g" alt="" onerror="this.remove()" />MT</div>
+          <div>
+            <strong>Dr Manuwa Tolu</strong>
+            <span>Harvey Road General Hospital, Yaba, Lagos</span>
+          </div>
+        </div>
+        <p class="close__thanks">Thank you.</p>
+        <p class="close__copyright">&copy; <span id="year"></span> Harvey Road General Hospital, Yaba · Educational use. ICD-11 is a product of the World Health Organization.</p>
+      </div>
+    </section>
+
+    </div><!-- /stage -->
+  </div><!-- /deck -->
+
+  <nav class="deck-controls" id="deckControls" aria-label="Slide controls">
+    <button class="navbtn navbtn--prev" id="btnPrev" type="button" aria-label="Previous slide">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <div class="deck-controls__center">
+      <div class="dots" id="dots" role="tablist" aria-label="Go to slide"></div>
+      <span class="counter"><span id="counterNow">1</span> / <span id="counterTotal">1</span></span>
+    </div>
+    <button class="navbtn navbtn--next" id="btnNext" type="button" aria-label="Next slide">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+  </nav>
+
+  <script src="../assets/js/emr.js?v=20260625g"></script>
+  <script src="../assets/js/deck.js?v=20260625g"></script>
+  <script src="../assets/js/encounter.js?v=20260625g"></script>
+</body>
+</html>
