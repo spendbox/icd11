@@ -126,49 +126,73 @@
      ========================================================= */
   (function dxDemo() {
     var textEl = byId("a10dxText"), suggestEl = byId("a10dxSuggest"),
-        rawEl = byId("a10dxRawEcho"), chosenEl = byId("a10dxChosen");
+        rawEl = byId("a10dxRawEcho"), chosenEl = byId("a10dxChosen"), statusEl = byId("a10dxStatus");
     if (!textEl || !suggestEl) return;
     var chosen = [];                       // [{code,title}]
-    var debounce;
+    var localTimer, aiTimer, aiReqToken = 0;
+    var aiAvailable = null;                 // null = not yet probed; true/false once known
+
+    // Probe the shared OpenAI parser (icd-parse) once. Same function the
+    // ICD-11 encounter coder uses; absent locally → offline fallback.
+    fetch("/.netlify/functions/icd-parse?ping=1", { headers: { Accept: "application/json" } })
+      .then(function (r) { return r.ok ? r.json() : {}; })
+      .then(function (j) { aiAvailable = !!(j && j.openai); setStatus(); })
+      .catch(function () { aiAvailable = false; setStatus(); });
+
+    function setStatus(kind, extra) {
+      if (!statusEl) return;
+      var hasText = !!textEl.value.trim();
+      var cls = "coder__status", msg;
+      if (kind === "reading") { cls += " is-searching"; msg = "Reading your note with AI&hellip;"; }
+      else if (kind === "ai")  { cls += " is-live";      msg = extra || "AI read your note &mdash; suggestions below"; }
+      else if (!hasText)       { msg = aiAvailable ? "AI reader on &mdash; write freely, even in prose" : "Type a diagnosis &mdash; suggestions appear as you write"; }
+      else                     { msg = aiAvailable ? "AI reader on &mdash; refining as you write" : "Offline matcher &mdash; suggestions from the ICD-10 set"; }
+      statusEl.className = cls;
+      statusEl.innerHTML = '<span class="dotpulse"></span> ' + msg;
+    }
 
     function splitPhrases(text) {
-      return text.split(/[,;\n]|—| with | and | & /i)
+      return text.split(/[,;\n]|—|\/| with | and | & | plus /i)
         .map(function (s) { return s.trim(); })
         .filter(function (s) { return s.length >= 2; });
     }
-    function gatherSuggestions(text) {
-      var phrases = splitPhrases(text), seen = {}, out = [];
-      phrases.forEach(function (p) {
-        DB.search(p, 3).forEach(function (it) {
+    // De-duplicated ICD-10 matches for a list of phrases/terms.
+    function suggestFor(terms, perTerm, cap) {
+      var seen = {}, out = [];
+      terms.forEach(function (p) {
+        DB.search(p, perTerm || 3).forEach(function (it) {
           if (!seen[it.code]) { seen[it.code] = 1; out.push(it); }
         });
       });
-      return out.slice(0, 8);
+      return out.slice(0, cap || 8);
     }
+
     function isChosen(code) { return chosen.some(function (c) { return c.code === code; }); }
     function toggle(it) {
       if (isChosen(it.code)) chosen = chosen.filter(function (c) { return c.code !== it.code; });
       else chosen.push(it);
-      render();
+      renderSuggestions(lastSugg); renderChosen();
     }
-    function render() {
+
+    var lastSugg = [];
+    function renderSuggestions(sugg) {
+      lastSugg = sugg || [];
       var text = textEl.value.trim();
-      rawEl.innerHTML = text ? esc(text) : '<span class="a10dx__rawempty">&mdash;</span>';
-      var sugg = text ? gatherSuggestions(text) : [];
       suggestEl.innerHTML = "";
-      if (!text) { suggestEl.innerHTML = '<p class="a10dx__hint">Start typing a diagnosis to see suggestions.</p>'; }
-      else if (!sugg.length) { suggestEl.innerHTML = '<p class="a10dx__hint">No match yet &mdash; try &ldquo;malaria&rdquo;, &ldquo;HTN&rdquo;, &ldquo;fungal ear&rdquo;&hellip;</p>'; }
-      else sugg.forEach(function (it) {
+      if (!text) { suggestEl.innerHTML = '<p class="a10dx__hint">Start typing a diagnosis to see suggestions.</p>'; return; }
+      if (!lastSugg.length) { suggestEl.innerHTML = '<p class="a10dx__hint">No match yet &mdash; try &ldquo;malaria&rdquo;, &ldquo;diabetic foot ulcer&rdquo;, &ldquo;HTN&rdquo;&hellip;</p>'; return; }
+      lastSugg.forEach(function (it) {
         var b = document.createElement("button");
         b.type = "button"; b.className = "a10pill" + (isChosen(it.code) ? " is-on" : "");
         b.innerHTML = "<code>" + esc(it.code) + "</code><span>" + esc(it.title) + "</span><span class=\"a10pill__add\">" + (isChosen(it.code) ? "✓" : "+") + "</span>";
         b.addEventListener("click", function () { toggle(it); });
         suggestEl.appendChild(b);
       });
-      // chosen
+    }
+    function renderChosen() {
       chosenEl.innerHTML = "";
-      if (!chosen.length) { chosenEl.innerHTML = '<span class="a10dx__none">No codes selected yet</span>'; }
-      else chosen.forEach(function (it) {
+      if (!chosen.length) { chosenEl.innerHTML = '<span class="a10dx__none">No codes selected yet</span>'; return; }
+      chosen.forEach(function (it) {
         var c = document.createElement("button");
         c.type = "button"; c.className = "a10chosen";
         c.innerHTML = "<code>" + esc(it.code) + "</code> " + esc(it.title) + ' <span class="x" aria-hidden="true">×</span>';
@@ -177,24 +201,52 @@
         chosenEl.appendChild(c);
       });
     }
-    textEl.addEventListener("input", function () { clearTimeout(debounce); debounce = window.setTimeout(render, 180); });
+
+    // Ask the OpenAI parser to read messy prose / shorthand into clean
+    // problem terms, then map each to ICD-10. Returns null on any failure.
+    function aiParse(text) {
+      return fetch("/.netlify/functions/icd-parse", {
+        method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ text: text })
+      }).then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (j) {
+          if (!j || !j.problems || !j.problems.length) return null;
+          return j.problems.map(function (p) { return p.term; }).filter(Boolean);
+        }).catch(function () { return null; });
+    }
+
+    // Instant local pass on every keystroke; AI refine on a longer debounce.
+    function refresh() {
+      var text = textEl.value.trim();
+      rawEl.innerHTML = text ? esc(text) : '<span class="a10dx__rawempty">&mdash;</span>';
+      renderSuggestions(text ? suggestFor(splitPhrases(text)) : []);
+      renderChosen();
+      setStatus();
+      clearTimeout(aiTimer);
+      if (!text || aiAvailable !== true) return;
+      aiTimer = window.setTimeout(function () {
+        var myToken = ++aiReqToken;
+        setStatus("reading");
+        aiParse(text).then(function (terms) {
+          if (myToken !== aiReqToken) return;          // superseded by newer input
+          if (terms && terms.length) {
+            // AI terms lead; fold in any local matches it missed.
+            var merged = suggestFor(terms, 2, 6).concat(suggestFor(splitPhrases(text)));
+            var seen = {}, out = [];
+            merged.forEach(function (it) { if (!seen[it.code]) { seen[it.code] = 1; out.push(it); } });
+            renderSuggestions(out.slice(0, 8));
+            setStatus("ai", "AI read your note &mdash; " + terms.length + (terms.length === 1 ? " problem" : " problems") + " found");
+          } else { setStatus(); }
+        });
+      }, 650);
+    }
+
+    textEl.addEventListener("input", function () { clearTimeout(localTimer); localTimer = window.setTimeout(refresh, 180); });
     document.querySelectorAll("#dx-pills .a10dx__ex").forEach(function (b) {
-      b.addEventListener("click", function () { textEl.value = b.getAttribute("data-ex") || ""; render(); textEl.focus(); });
+      b.addEventListener("click", function () { textEl.value = b.getAttribute("data-ex") || ""; refresh(); textEl.focus(); });
     });
 
-    // gentle auto-demo the first time the slide is shown (only if empty)
-    var demoed = false;
-    document.addEventListener("slide:enter", function (e) {
-      if ((e.detail && e.detail.id) !== "dx-pills" || demoed || textEl.value.trim()) return;
-      demoed = true;
-      window.setTimeout(function () {
-        if (textEl.value.trim()) return;
-        textEl.value = "otomycosis — fungal ear infection";
-        render();
-      }, 500);
-    });
-
-    render();
+    renderSuggestions([]); renderChosen(); setStatus();
   })();
 
   /* =========================================================

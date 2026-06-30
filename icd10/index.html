@@ -360,10 +360,11 @@
         <div class="a10dx">
           <div class="a10dx__entry">
             <label class="a10dx__label" for="a10dxText">Diagnosis / assessment <span>write it the way you think</span></label>
-            <textarea id="a10dxText" rows="2" placeholder="e.g. fungal ear infection (otomycosis), poorly controlled HTN, T2DM"></textarea>
+            <textarea id="a10dxText" rows="2" placeholder="e.g. poorly controlled HTN, T2DM with a foot ulcer, malaria"></textarea>
+            <div class="coder__status" id="a10dxStatus"><span class="dotpulse"></span> Type a diagnosis &mdash; suggestions appear as you write</div>
             <div class="a10dx__try">
               <span class="a10dx__trylabel">Try:</span>
-              <button class="a10dx__ex" type="button" data-ex="otomycosis — fungal ear infection">otomycosis</button>
+              <button class="a10dx__ex" type="button" data-ex="diabetic foot ulcer, T2DM">diabetic foot ulcer</button>
               <button class="a10dx__ex" type="button" data-ex="poorly controlled HTN, T2DM, malaria">HTN, T2DM, malaria</button>
               <button class="a10dx__ex" type="button" data-ex="acute heart failure with AKI">heart failure, AKI</button>
             </div>
@@ -386,7 +387,7 @@
           </div>
         </div>
 
-        <p class="footnote">The raw assessment is preserved verbatim; codes are <strong>added, not substituted</strong>. One field, no drop-down &mdash; and it works offline.</p>
+        <p class="footnote">The raw assessment is preserved verbatim; codes are <strong>added, not substituted</strong>. When the AI reader is enabled it expands shorthand and plain prose; otherwise it matches offline. One field, no drop-down.</p>
       </div>
     </section>
 
@@ -562,7 +563,7 @@
   </nav>
 
   <script src="../assets/js/deck.js?v=20260629a"></script>
-  <script src="../assets/js/icd10-data.js?v=20260630c"></script>
-  <script src="../assets/js/icd10.js?v=20260630b"></script>
+  <script src="../assets/js/icd10-data.js?v=20260630d"></script>
+  <script src="../assets/js/icd10.js?v=20260630d"></script>
 </body>
 </html>

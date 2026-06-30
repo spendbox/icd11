@@ -36,7 +36,8 @@ for **Harvey Road General Hospital, Yaba, Lagos**:
 - **Dagger † & asterisk *** — ICD-10's dual-coding system.
 - **Limitations** — where ICD-10 strains, and why ICD-11 followed.
 
-Animations are pure CSS/JS (no network); motion respects `prefers-reduced-motion`.
+Animations are pure CSS/JS; motion respects `prefers-reduced-motion`. The write-freely
+demo matches offline by default and uses the OpenAI `icd-parse` function when configured.
 
 ## Run locally
 
@@ -56,12 +57,16 @@ adds `emr.js`/`encounter.js` for its live coders.
 
 ## Live coders & environment variables
 
-Two interactive slides talk to the WHO ICD-11 API through Netlify functions:
+Interactive slides talk to the Netlify functions:
 
-- **Live ICD-11 coder** — search → pick → add *context-aware* extensions.
-- **Encounter coder** — type a free-text clinical picture (or shorthand like
-  `T2DM`); it parses the problems, suggests ICD-11 clusters as pills, and builds
+- **Live ICD-11 coder** (ICD-11 deck) — search → pick → add *context-aware* extensions.
+- **Encounter coder** (ICD-11 deck) — type a free-text clinical picture (or shorthand
+  like `T2DM`); it parses the problems, suggests ICD-11 clusters as pills, and builds
   a ward problem list with a clinical course per problem.
+- **Write-freely demo** (ICD-10 deck) — type a diagnosis the way you mean it; it keeps
+  the raw text and suggests ICD-10 code pills to multi-select. Uses the same OpenAI
+  `icd-parse` function to read shorthand/prose when configured, mapping the extracted
+  problems against a local ICD-10 set; otherwise it matches offline.
 
 Both work out of the box with built-in sample data. To go fully live, set these
 in **Netlify → Site settings → Environment variables**:
@@ -70,11 +75,12 @@ in **Netlify → Site settings → Environment variables**:
 | --- | --- | --- |
 | `WHO_CLIENT_ID` / `WHO_CLIENT_SECRET` | WHO ICD-11 API credentials ([register free](https://icd.who.int/icdapi)) | for live ICD-11 search |
 | `WHO_ICD_RELEASE` | MMS release, e.g. `2024-01` | optional |
-| `OPENAI_API_KEY` | enables the AI narrative parser in the Encounter coder | optional |
+| `OPENAI_API_KEY` | enables the AI narrative parser (ICD-11 Encounter coder **and** the ICD-10 write-freely demo) | optional |
 | `OPENAI_MODEL` | OpenAI model (default `gpt-4o-mini`) | optional |
 
-Without `OPENAI_API_KEY` the Encounter coder uses a built-in rule-based parser;
-without the WHO credentials both coders use the built-in sample dataset.
+Without `OPENAI_API_KEY` the Encounter coder and the ICD-10 write-freely demo use a
+built-in rule-based parser; without the WHO credentials the ICD-11 coders use the
+built-in sample dataset (the ICD-10 demo always matches against its local set).
 
 ## Deploy on Netlify
 

@@ -19,12 +19,14 @@
       --font-serif:'Fraunces',Georgia,'Times New Roman',serif;
     }
     *{box-sizing:border-box;}
-    html,body{height:100%;}
+    html,body{min-height:100%;}
     body{
       margin:0; font-family:var(--font-sans); color:#eaf6f7; line-height:1.6;
-      -webkit-font-smoothing:antialiased; min-height:100%;
+      -webkit-font-smoothing:antialiased; min-height:100dvh;
       background:radial-gradient(120% 110% at 80% -10%, var(--teal-700), var(--teal-900) 70%);
-      display:flex; align-items:center; justify-content:center; padding:clamp(1.5rem,5vw,3rem);
+      background-attachment:fixed;
+      display:flex; align-items:center; justify-content:center;
+      padding:clamp(1.25rem,5vw,3rem); padding-top:max(1.25rem,env(safe-area-inset-top));
     }
     .wrap{width:100%; max-width:920px; text-align:center;}
     .logo{width:74px; height:74px; border-radius:16px; object-fit:cover; box-shadow:0 14px 36px rgba(0,0,0,0.28); animation:fade .8s ease both;}

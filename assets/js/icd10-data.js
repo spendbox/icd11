@@ -179,7 +179,97 @@ window.ICD10 = (function () {
     { code: "Z34.9", title: "Supervision of normal pregnancy, unspecified", chapter: "XXI Factors", terms: ["antenatal", "pregnancy", "pregnant", "anc", "antenatal care"] },
     { code: "O03.9", title: "Complete or unspecified spontaneous abortion", chapter: "XV Pregnancy", terms: ["miscarriage", "spontaneous abortion", "incomplete abortion"] },
     { code: "P59.9", title: "Neonatal jaundice, unspecified", chapter: "XVI Perinatal", terms: ["neonatal jaundice", "jaundice newborn", "newborn jaundice"] },
-    { code: "Z00.0", title: "General medical examination", chapter: "XXI Factors", terms: ["medical examination", "check up", "general checkup", "health check"] }
+    { code: "Z00.0", title: "General medical examination", chapter: "XXI Factors", terms: ["medical examination", "check up", "general checkup", "health check"] },
+
+    // gynaecology / obstetrics
+    { code: "D25.9", title: "Leiomyoma of uterus, unspecified", chapter: "II Neoplasms", terms: ["fibroid", "fibroids", "uterine fibroid", "leiomyoma", "myoma"] },
+    { code: "N80.9", title: "Endometriosis, unspecified", chapter: "XIV Genitourinary", terms: ["endometriosis"] },
+    { code: "N83.2", title: "Other and unspecified ovarian cysts", chapter: "XIV Genitourinary", terms: ["ovarian cyst", "ovarian cysts"] },
+    { code: "N70.9", title: "Salpingitis and oophoritis, unspecified", chapter: "XIV Genitourinary", terms: ["pid", "pelvic inflammatory disease", "salpingitis"] },
+    { code: "N81.4", title: "Uterovaginal prolapse, unspecified", chapter: "XIV Genitourinary", terms: ["uterine prolapse", "prolapse", "vaginal prolapse", "pelvic organ prolapse"] },
+    { code: "N92.0", title: "Excessive and frequent menstruation with regular cycle", chapter: "XIV Genitourinary", terms: ["menorrhagia", "heavy periods", "heavy menstrual bleeding"] },
+    { code: "N97.9", title: "Female infertility, unspecified", chapter: "XIV Genitourinary", terms: ["infertility", "subfertility", "unable to conceive"] },
+    { code: "B37.3", title: "Candidiasis of vulva and vagina", chapter: "I Infectious", terms: ["thrush", "candidiasis", "candida", "yeast infection", "vaginal thrush"] },
+    { code: "O24.4", title: "Diabetes mellitus arising in pregnancy", chapter: "XV Pregnancy", terms: ["gestational diabetes", "gdm"] },
+    { code: "O13",   title: "Gestational [pregnancy-induced] hypertension", chapter: "XV Pregnancy", terms: ["gestational hypertension", "pregnancy induced hypertension", "pih"] },
+    { code: "O60.1", title: "Preterm labour with preterm delivery", chapter: "XV Pregnancy", terms: ["preterm labour", "premature labour", "preterm birth"] },
+    { code: "O72.1", title: "Other immediate postpartum haemorrhage", chapter: "XV Pregnancy", terms: ["postpartum haemorrhage", "pph", "post partum bleeding"] },
+    { code: "O82",   title: "Single delivery by caesarean section", chapter: "XV Pregnancy", terms: ["caesarean", "caesarean section", "c-section", "lscs", "cesarean"] },
+
+    // gastro / surgical
+    { code: "K40.9", title: "Inguinal hernia, without obstruction or gangrene", chapter: "XI Digestive", terms: ["hernia", "inguinal hernia", "groin hernia"] },
+    { code: "K44.9", title: "Diaphragmatic hernia without obstruction or gangrene", chapter: "XI Digestive", terms: ["hiatus hernia", "hiatal hernia"] },
+    { code: "K56.6", title: "Other and unspecified intestinal obstruction", chapter: "XI Digestive", terms: ["bowel obstruction", "intestinal obstruction", "obstruction"] },
+    { code: "K85.9", title: "Acute pancreatitis, unspecified", chapter: "XI Digestive", terms: ["pancreatitis", "acute pancreatitis"] },
+    { code: "K57.9", title: "Diverticular disease of intestine, unspecified", chapter: "XI Digestive", terms: ["diverticulitis", "diverticular disease", "diverticulosis"] },
+    { code: "K64.9", title: "Haemorrhoids, unspecified", chapter: "XI Digestive", terms: ["haemorrhoids", "piles", "hemorrhoids"] },
+    { code: "K92.2", title: "Gastrointestinal haemorrhage, unspecified", chapter: "XI Digestive", terms: ["gi bleed", "gastrointestinal bleed", "haematemesis", "melaena", "upper gi bleed", "blood in stool"] },
+
+    // respiratory
+    { code: "J90",   title: "Pleural effusion, not elsewhere classified", chapter: "X Respiratory", terms: ["pleural effusion", "fluid around lung"] },
+    { code: "J93.9", title: "Pneumothorax, unspecified", chapter: "X Respiratory", terms: ["pneumothorax", "collapsed lung"] },
+    { code: "J96.0", title: "Acute respiratory failure", chapter: "X Respiratory", terms: ["respiratory failure", "type 1 respiratory failure", "type 2 respiratory failure"] },
+    { code: "J47",   title: "Bronchiectasis", chapter: "X Respiratory", terms: ["bronchiectasis"] },
+    { code: "J11.1", title: "Influenza with other respiratory manifestations, virus not identified", chapter: "X Respiratory", terms: ["flu", "influenza"] },
+
+    // cardiovascular
+    { code: "I49.9", title: "Cardiac arrhythmia, unspecified", chapter: "IX Circulatory", terms: ["arrhythmia", "palpitations", "irregular heartbeat", "irregular heart beat"] },
+    { code: "I47.1", title: "Supraventricular tachycardia", chapter: "IX Circulatory", terms: ["svt", "supraventricular tachycardia", "fast heart rate"] },
+    { code: "I95.9", title: "Hypotension, unspecified", chapter: "IX Circulatory", terms: ["hypotension", "low blood pressure", "low bp"] },
+    { code: "I71.9", title: "Aortic aneurysm of unspecified site, without rupture", chapter: "IX Circulatory", terms: ["aortic aneurysm", "aaa", "abdominal aortic aneurysm"] },
+    { code: "I73.9", title: "Peripheral vascular disease, unspecified", chapter: "IX Circulatory", terms: ["pvd", "peripheral arterial disease", "peripheral vascular disease", "claudication"] },
+
+    // endocrine / rheum
+    { code: "E16.2", title: "Hypoglycaemia, unspecified", chapter: "IV Endocrine", terms: ["hypoglycaemia", "low blood sugar", "hypo", "hypoglycemia"] },
+    { code: "E04.9", title: "Nontoxic goitre, unspecified", chapter: "IV Endocrine", terms: ["goitre", "goiter", "thyroid swelling"] },
+    { code: "E14.9", title: "Unspecified diabetes mellitus without complications", chapter: "IV Endocrine", terms: ["diabetes", "diabetes mellitus", "diabetic"] },
+    { code: "M32.9", title: "Systemic lupus erythematosus, unspecified", chapter: "XIII Musculoskeletal", terms: ["lupus", "sle", "systemic lupus"] },
+    { code: "D69.3", title: "Immune thrombocytopenic purpura", chapter: "III Blood", terms: ["itp", "low platelets", "thrombocytopenia"] },
+
+    // MSK / injuries
+    { code: "G56.0", title: "Carpal tunnel syndrome", chapter: "VI Nervous", terms: ["carpal tunnel", "carpal tunnel syndrome"] },
+    { code: "M54.3", title: "Sciatica", chapter: "XIII Musculoskeletal", terms: ["sciatica", "sciatic pain"] },
+    { code: "M51.2", title: "Other specified intervertebral disc displacement", chapter: "XIII Musculoskeletal", terms: ["slipped disc", "prolapsed disc", "disc herniation", "disc prolapse", "herniated disc"] },
+    { code: "M75.1", title: "Rotator cuff syndrome", chapter: "XIII Musculoskeletal", terms: ["rotator cuff", "shoulder impingement", "shoulder pain"] },
+    { code: "M25.5", title: "Pain in joint", chapter: "XIII Musculoskeletal", terms: ["joint pain", "arthralgia"] },
+    { code: "S93.4", title: "Sprain and strain of ankle", chapter: "XIX Injury", terms: ["ankle sprain", "sprained ankle", "twisted ankle"] },
+    { code: "S82.9", title: "Fracture of lower leg, part unspecified", chapter: "XIX Injury", terms: ["lower leg fracture", "tibia fracture", "fibula fracture", "ankle fracture"] },
+    { code: "S42.0", title: "Fracture of clavicle", chapter: "XIX Injury", terms: ["clavicle fracture", "collarbone fracture", "broken collarbone"] },
+    { code: "S42.2", title: "Fracture of upper end of humerus", chapter: "XIX Injury", terms: ["humerus fracture", "upper arm fracture", "shoulder fracture"] },
+    { code: "S62.9", title: "Fracture at wrist and hand level, unspecified", chapter: "XIX Injury", terms: ["wrist fracture", "hand fracture", "scaphoid fracture"] },
+    { code: "S06.9", title: "Intracranial injury, unspecified", chapter: "XIX Injury", terms: ["head injury", "traumatic brain injury", "tbi", "concussion"] },
+    { code: "S02.9", title: "Fracture of skull and facial bones, part unspecified", chapter: "XIX Injury", terms: ["skull fracture", "facial fracture"] },
+    { code: "T30.0", title: "Burn of unspecified body region, unspecified degree", chapter: "XIX Injury", terms: ["burn", "burns", "scald", "thermal injury"] },
+
+    // skin / ENT / eye / infectious
+    { code: "B35.9", title: "Dermatophytosis, unspecified", chapter: "I Infectious", terms: ["ringworm", "tinea", "fungal skin infection", "dermatophytosis"] },
+    { code: "L20.9", title: "Atopic dermatitis, unspecified", chapter: "XII Skin", terms: ["eczema", "atopic dermatitis", "atopic eczema"] },
+    { code: "L70.9", title: "Acne, unspecified", chapter: "XII Skin", terms: ["acne", "acne vulgaris", "pimples"] },
+    { code: "C43.9", title: "Malignant melanoma of skin, unspecified", chapter: "II Neoplasms", terms: ["melanoma", "malignant melanoma"] },
+    { code: "C44.9", title: "Malignant neoplasm of skin, unspecified", chapter: "II Neoplasms", terms: ["skin cancer", "basal cell carcinoma", "squamous cell carcinoma", "bcc", "scc"] },
+    { code: "B01.9", title: "Varicella without complication", chapter: "I Infectious", terms: ["chickenpox", "varicella", "chicken pox"] },
+    { code: "B05.9", title: "Measles without complication", chapter: "I Infectious", terms: ["measles"] },
+    { code: "B26.9", title: "Mumps without complication", chapter: "I Infectious", terms: ["mumps"] },
+    { code: "B27.9", title: "Infectious mononucleosis, unspecified", chapter: "I Infectious", terms: ["glandular fever", "mononucleosis", "mono", "epstein barr"] },
+    { code: "A54.9", title: "Gonococcal infection, unspecified", chapter: "I Infectious", terms: ["gonorrhoea", "gonorrhea", "gonococcal"] },
+    { code: "A53.9", title: "Syphilis, unspecified", chapter: "I Infectious", terms: ["syphilis"] },
+    { code: "A35",   title: "Other tetanus", chapter: "I Infectious", terms: ["tetanus", "lockjaw"] },
+    { code: "A37.9", title: "Whooping cough, unspecified species", chapter: "I Infectious", terms: ["whooping cough", "pertussis"] },
+    { code: "H61.2", title: "Impacted cerumen", chapter: "VIII Ear", terms: ["earwax", "ear wax", "cerumen", "impacted wax", "wax in ear"] },
+    { code: "H92.0", title: "Otalgia", chapter: "VIII Ear", terms: ["earache", "ear pain", "otalgia"] },
+    { code: "H65.9", title: "Nonsuppurative otitis media, unspecified", chapter: "VIII Ear", terms: ["glue ear", "otitis media with effusion", "ome", "serous otitis media"] },
+    { code: "H52.1", title: "Myopia", chapter: "VII Eye", terms: ["myopia", "short sightedness", "near sighted"] },
+    { code: "H52.4", title: "Presbyopia", chapter: "VII Eye", terms: ["presbyopia", "age-related long sight"] },
+    { code: "H00.0", title: "Hordeolum and other deep inflammation of eyelid", chapter: "VII Eye", terms: ["stye", "sty", "hordeolum"] },
+
+    // urinary symptoms / mental / behavioural
+    { code: "R31",   title: "Unspecified haematuria", chapter: "XVIII Symptoms", terms: ["haematuria", "blood in urine", "hematuria"] },
+    { code: "R33",   title: "Retention of urine", chapter: "XVIII Symptoms", terms: ["urinary retention", "retention of urine", "cannot pass urine"] },
+    { code: "G44.2", title: "Tension-type headache", chapter: "VI Nervous", terms: ["tension headache", "tension-type headache"] },
+    { code: "F43.1", title: "Post-traumatic stress disorder", chapter: "V Mental", terms: ["ptsd", "post traumatic stress", "post-traumatic stress"] },
+    { code: "F90.0", title: "Disturbance of activity and attention", chapter: "V Mental", terms: ["adhd", "attention deficit hyperactivity disorder", "attention deficit"] },
+    { code: "F84.0", title: "Childhood autism", chapter: "V Mental", terms: ["autism", "autistic", "asd", "autism spectrum"] },
+    { code: "F17.2", title: "Mental & behavioural disorders due to tobacco, dependence", chapter: "V Mental", terms: ["smoking", "nicotine dependence", "tobacco dependence", "smoker"] }
   ];
 
   function norm(s) { return (s || "").toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim(); }
