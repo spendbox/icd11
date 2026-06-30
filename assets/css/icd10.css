@@ -133,7 +133,7 @@
    LIMITATIONS — staggered cards
    ========================================================= */
 .a10lim .card { opacity: 0; }
-#limitations.slide.is-active .a10lim .card { animation: a10-rowin 0.5s cubic-bezier(.22,.61,.36,1) both; animation-delay: calc(var(--i, 0) * 0.09s + 0.15s); }
+.slide.is-active .a10lim .card { animation: a10-rowin 0.5s cubic-bezier(.22,.61,.36,1) both; animation-delay: calc(var(--i, 0) * 0.09s + 0.15s); }
 
 /* =========================================================
    KEYFRAMES (namespaced)
@@ -144,6 +144,66 @@
 @keyframes a10-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 @keyframes a10-draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes a10-float { 0%, 100% { transform: translateY(-3px); } 50% { transform: translateY(3px); } }
+@keyframes a10-flash { 0% { transform: scale(1); } 35% { transform: scale(1.35); } 100% { transform: scale(1); } }
+@keyframes a10-pillpop { from { opacity: 0; transform: translateY(8px) scale(0.92); } to { opacity: 1; transform: none; } }
+
+/* =========================================================
+   ANATOMY — code wrap, live diagnosis line, 4th-char cycle
+   ========================================================= */
+.a10__codewrap { display: flex; flex-direction: column; align-items: center; gap: 0.7rem; }
+.a10dxline { margin: 0; font-size: clamp(0.95rem, 1.7vw, 1.12rem); color: var(--ink-soft); text-align: center; transition: opacity 0.25s; }
+.a10dxline__code { font-family: var(--font-serif); font-weight: 700; color: var(--rose); background: #fbe6e4; border-radius: 8px; padding: 0.05em 0.45em; margin-right: 0.35em; }
+.a10hint { margin: 0; font-size: 0.82rem; color: var(--muted); text-align: center; }
+.a10hint b { color: var(--rose); }
+/* the cycling 4th character */
+#a10SubDigit { display: inline-block; transform-origin: center; }
+#a10SubDigit.is-changing { animation: a10-flash 0.5s ease; }
+.a10dxline.is-changing { opacity: 0.35; }
+#a10SubText { font-weight: 700; color: var(--ink); }
+
+/* =========================================================
+   WRITE-FREELY / SUGGESTION-PILL DEMO
+   ========================================================= */
+.a10dx { display: grid; gap: 1.2rem; }
+.a10dx__entry { display: grid; gap: 0.5rem; }
+.a10dx__label { font-size: 0.8rem; font-weight: 700; color: var(--ink); display: flex; gap: 0.5rem; align-items: baseline; }
+.a10dx__label span { font-weight: 500; color: var(--muted); font-size: 0.78rem; }
+#a10dxText {
+  width: 100%; font-family: var(--font-sans); font-size: 1.02rem; color: var(--ink); resize: vertical;
+  border: 1.5px solid var(--line); border-radius: var(--radius-sm); padding: 0.8rem 0.95rem; background: #fff; line-height: 1.5;
+}
+#a10dxText:focus { outline: none; border-color: var(--teal-500); box-shadow: 0 0 0 3px rgba(20,163,173,0.12); }
+.a10dx__try { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; }
+.a10dx__trylabel { font-size: 0.8rem; font-weight: 700; color: var(--muted); }
+.a10dx__ex { font-family: var(--font-sans); font-size: 0.82rem; font-weight: 600; color: var(--teal-700); background: var(--teal-50); border: 1px solid var(--teal-100); border-radius: 999px; padding: 0.3rem 0.75rem; cursor: pointer; transition: background 0.15s; }
+.a10dx__ex:hover { background: var(--teal-100); }
+
+.a10dx__cols { display: grid; grid-template-columns: 1.1fr 1fr; gap: 1.2rem; align-items: start; }
+.a10dx__col { display: grid; gap: 0.55rem; }
+.a10dx__sub { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.a10dx__suggest { display: flex; flex-wrap: wrap; gap: 0.5rem; min-height: 86px; align-content: flex-start; }
+.a10dx__hint { font-size: 0.9rem; color: var(--muted); margin: 0; }
+
+.a10pill { display: inline-flex; align-items: center; gap: 0.5rem; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 0.4rem 0.5rem 0.4rem 0.55rem; cursor: pointer; box-shadow: var(--shadow-sm); transition: border-color 0.15s, background 0.15s, transform 0.12s; animation: a10-pillpop 0.35s ease both; }
+.a10pill:hover { border-color: var(--teal-400, var(--teal-300)); transform: translateY(-1px); }
+.a10pill code { font-size: 0.8rem; background: var(--teal-50); color: var(--teal-700); }
+.a10pill span { font-size: 0.86rem; color: var(--ink-soft); }
+.a10pill .a10pill__add { width: 19px; height: 19px; border-radius: 50%; background: var(--teal-50); color: var(--teal-700); display: grid; place-items: center; font-weight: 800; font-size: 0.95rem; line-height: 1; }
+.a10pill.is-on { border-color: var(--teal-500); background: var(--teal-50); }
+.a10pill.is-on .a10pill__add { background: var(--green); color: #fff; }
+
+.a10dx__rawcard { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 1.1rem 1.2rem; box-shadow: var(--shadow-sm); display: grid; gap: 0.45rem; }
+.a10dx__rawlabel { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.a10dx__rawlabel + .a10dx__rawlabel, .a10dx__raw + .a10dx__rawlabel { margin-top: 0.5rem; }
+.a10dx__raw { margin: 0; font-size: 1rem; color: var(--ink); font-weight: 600; min-height: 1.4em; border-left: 3px solid var(--teal-300); padding-left: 0.7rem; }
+.a10dx__rawempty, .a10dx__none { color: var(--muted); font-weight: 500; font-size: 0.9rem; }
+.a10dx__chosen { display: flex; flex-wrap: wrap; gap: 0.4rem; min-height: 1.8em; align-items: center; }
+.a10chosen { display: inline-flex; align-items: center; gap: 0.4rem; background: var(--teal-700); color: #fff; border: none; border-radius: 999px; padding: 0.32rem 0.4rem 0.32rem 0.7rem; font-size: 0.82rem; font-weight: 700; cursor: pointer; animation: a10-pillpop 0.3s ease both; }
+.a10chosen code { background: rgba(255,255,255,0.18); color: #fff; font-size: 0.78rem; }
+.a10chosen .x { width: 16px; height: 16px; border-radius: 50%; background: rgba(255,255,255,0.22); display: grid; place-items: center; font-size: 0.8rem; }
+.a10chosen:hover .x { background: rgba(255,255,255,0.38); }
+
+@media (max-width: 760px) { .a10dx__cols { grid-template-columns: 1fr; } }
 
 /* =========================================================
    REDUCED MOTION — reveal everything, no movement
@@ -157,5 +217,5 @@
   #anatomy .a10seg, #anatomy .a10legend__row,
   .a10chap tbody tr, #reading .a10chip,
   #dagger .a10dual__card, #dagger .a10dual__plus, #dagger .a10dual__mark,
-  .a10lim .card { animation: none !important; transform: none !important; }
+  .a10lim .card, .a10pill, .a10chosen, #a10SubDigit { animation: none !important; transform: none !important; }
 }

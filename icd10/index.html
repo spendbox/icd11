@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/css/styles.css?v=20260629a" />
-  <link rel="stylesheet" href="../assets/css/icd10.css?v=20260630a" />
+  <link rel="stylesheet" href="../assets/css/icd10.css?v=20260630b" />
 </head>
 <body>
 
@@ -50,14 +50,16 @@
         <p class="lead">From what the ICD is, to how an ICD-10 code reads &mdash; and why a successor was needed.</p>
 
         <ol class="outline-list">
-          <li><b>What the ICD is</b><span>A short history of classifying disease</span></li>
-          <li><b>Why we code</b><span>What a coded diagnosis buys us</span></li>
+          <li><b>What the ICD is</b><span>A short history, and why we code</span></li>
           <li><b>ICD-10 in brief</b><span>The headline facts</span></li>
           <li><b>Anatomy of a code</b><span>Reading <code>I21.0</code>, piece by piece</span></li>
           <li><b>The 22 chapters</b><span>How the whole system is laid out</span></li>
-          <li><b>Codes in practice</b><span>Everyday diagnoses on our ward</span></li>
+          <li><b>Codes in practice</b><span>Everyday diagnoses, looked up</span></li>
           <li><b>Dagger &amp; asterisk</b><span>ICD-10&rsquo;s dual-coding trick</span></li>
-          <li><b>Limitations</b><span>Where ICD-10 strains &mdash; and why ICD-11 followed</span></li>
+          <li><b>Limitations</b><span>Where ICD-10 strains as a classification</span></li>
+          <li><b>The ward problem</b><span>Why coding is hard in our EMR</span></li>
+          <li><b>A better way</b><span>Write freely, pick code pills &mdash; live demo</span></li>
+          <li><b>Toward ICD-11</b><span>Why a successor followed</span></li>
         </ol>
       </div>
     </section>
@@ -125,6 +127,36 @@
       </div>
     </section>
 
+    <!-- ============ WHY WE STRESS OURSELVES TO CODE ============ -->
+    <section class="slide" id="why-stress" data-title="Why bother coding?">
+      <div class="slide__inner">
+        <p class="kicker">The honest question</p>
+        <h2>Why stress ourselves coding every diagnosis?</h2>
+        <p class="lead">On a busy ward it feels like extra paperwork. Why not just write &ldquo;heart attack&rdquo; in the notes and move on?</p>
+
+        <div class="whyans">
+          <p class="whyans__because">Because a diagnosis written in free text is just <em>words</em> &mdash; a coded one is <strong>data</strong> the whole system can read, count and act on.</p>
+        </div>
+
+        <div class="whyrow">
+          <div class="whyrow__item">
+            <span class="whyrow__k">🔎</span>
+            <div><b>Words don&rsquo;t compute</b><span>&ldquo;HTN&rdquo;, &ldquo;high BP&rdquo; and &ldquo;hypertension&rdquo; are invisible to a search &mdash; one code (<code>I10</code>) unites them all.</span></div>
+          </div>
+          <div class="whyrow__item">
+            <span class="whyrow__k">💳</span>
+            <div><b>No code, no claim</b><span>NHIS/HMO reimbursement, audits and national statistics start from a valid code, not a phrase.</span></div>
+          </div>
+          <div class="whyrow__item">
+            <span class="whyrow__k">🌍</span>
+            <div><b>It travels</b><span>The same code means the same disease in any ward, any hospital, any country.</span></div>
+          </div>
+        </div>
+
+        <div class="callout">The few seconds it takes to code a diagnosis are what turn a note nobody can query into a data point everyone can.</div>
+      </div>
+    </section>
+
     <!-- ============ WHY WE CODE ============ -->
     <section class="slide" id="why-code" data-title="Why we code">
       <div class="slide__inner">
@@ -185,17 +217,21 @@
         <p class="lead">Take a heart attack on the front wall of the heart &mdash; <em>I21.0</em> &mdash; and read it one piece at a time.</p>
 
         <div class="a10">
-          <div class="a10__code" aria-hidden="true">
-            <span class="a10seg a10seg--1">I</span><span class="a10seg a10seg--2">21</span><span class="a10seg a10dot">.</span><span class="a10seg a10seg--3">0</span>
+          <div class="a10__codewrap">
+            <div class="a10__code" aria-hidden="true">
+              <span class="a10seg a10seg--1">I</span><span class="a10seg a10seg--2">21</span><span class="a10seg a10dot">.</span><span class="a10seg a10seg--3" id="a10SubDigit">0</span>
+            </div>
+            <p class="a10dxline"><span class="a10dxline__code" id="a10DxCode">I21.0</span> <span id="a10DxText">Acute MI of the anterior wall</span></p>
+            <p class="a10hint">Watch the <b>4th character</b> &mdash; one category, many diagnoses.</p>
           </div>
           <ul class="a10legend">
             <li class="a10legend__row a10legend__row--1"><span class="a10dotk a10dotk--1"></span><strong>I</strong> &mdash; <b>chapter</b>: IX Diseases of the circulatory system (I00&ndash;I99)</li>
             <li class="a10legend__row a10legend__row--2"><span class="a10dotk a10dotk--2"></span><strong>21</strong> &mdash; <b>category</b>: acute myocardial infarction</li>
-            <li class="a10legend__row a10legend__row--3"><span class="a10dotk a10dotk--3"></span><strong>.0</strong> &mdash; <b>subcategory</b>: of the anterior wall &middot; the 4th character adds detail</li>
+            <li class="a10legend__row a10legend__row--3"><span class="a10dotk a10dotk--3"></span><strong>.<span id="a10SubLegendDigit">0</span></strong> &mdash; <b>subcategory</b>: <span id="a10SubText">anterior wall</span> &middot; the 4th character adds the detail</li>
           </ul>
         </div>
 
-        <p class="footnote">One letter, then digits, then an optional decimal detail. The same heart attack is <code>BA41</code> in ICD-11 &mdash; <a href="../icd11/">see how that deck builds it</a>.</p>
+        <p class="footnote">One letter, then digits, then an optional decimal detail &mdash; and that last character is where one diagnosis becomes many. The same heart attack is <code>BA41</code> in ICD-11 &mdash; <a href="../icd11/">see how that deck builds it</a>.</p>
       </div>
     </section>
 
@@ -321,8 +357,104 @@
       </div>
     </section>
 
+    <!-- ============ CHALLENGES ON OUR WARD ============ -->
+    <section class="slide slide--tint" id="challenges" data-title="The problem on our ward">
+      <div class="slide__inner">
+        <p class="kicker">The real-world friction</p>
+        <h2>Why coding is hard on our ward</h2>
+        <p class="lead">The classification is sound &mdash; but day to day, three things get in the way.</p>
+
+        <div class="grid grid-3 a10lim">
+          <div class="card" style="--i:1"><div class="card__icon">⌨️</div><h3>The search barely works</h3><p>Our EMR&rsquo;s ICD field is sluggish &mdash; it often doesn&rsquo;t register what you type, so you give up and free-type the diagnosis instead.</p></div>
+          <div class="card" style="--i:2"><div class="card__icon">📶</div><h3>It chokes on our internet</h3><p>The lookup leans on connectivity we don&rsquo;t reliably have; on a slow day the code list simply won&rsquo;t load.</p></div>
+          <div class="card" style="--i:3"><div class="card__icon">🔤</div><h3>ICD&rsquo;s words aren&rsquo;t our words</h3><p>You want to write <em>otomycosis</em> &mdash; but the pick-list has no entry, so you reword it as <em>chronic otitis externa</em> and the real picture is lost.</p></div>
+        </div>
+
+        <div class="callout">So clinicians abandon the code field altogether &mdash; and the diagnosis never becomes data.</div>
+      </div>
+    </section>
+
+    <!-- ============ THE FIX: WRITE FREELY, PICK THE CODE (demo) ============ -->
+    <section class="slide" id="dx-pills" data-title="Write freely, pick the code">
+      <div class="slide__inner slide__inner--wide">
+        <p class="kicker">A better way</p>
+        <h2>Write it your way &mdash; code it anyway</h2>
+        <p class="lead">Don&rsquo;t fight a drop-down. Write the diagnosis as you mean it &mdash; the raw text is kept &mdash; and ICD-10 <strong>suggestion pills</strong> appear beneath. Tap the ones that fit; pick as many as you need.</p>
+
+        <div class="a10dx">
+          <div class="a10dx__entry">
+            <label class="a10dx__label" for="a10dxText">Diagnosis / assessment <span>write it the way you think</span></label>
+            <textarea id="a10dxText" rows="2" placeholder="e.g. fungal ear infection (otomycosis), poorly controlled HTN, T2DM"></textarea>
+            <div class="a10dx__try">
+              <span class="a10dx__trylabel">Try:</span>
+              <button class="a10dx__ex" type="button" data-ex="otomycosis — fungal ear infection">otomycosis</button>
+              <button class="a10dx__ex" type="button" data-ex="poorly controlled HTN, T2DM, malaria">HTN, T2DM, malaria</button>
+              <button class="a10dx__ex" type="button" data-ex="acute heart failure with AKI">heart failure, AKI</button>
+            </div>
+          </div>
+
+          <div class="a10dx__cols">
+            <div class="a10dx__col">
+              <span class="a10dx__sub">Suggested ICD-10 codes &mdash; tap to add</span>
+              <div class="a10dx__suggest" id="a10dxSuggest"><p class="a10dx__hint">Start typing a diagnosis to see suggestions.</p></div>
+            </div>
+            <div class="a10dx__col">
+              <span class="a10dx__sub">Your coded diagnosis</span>
+              <div class="a10dx__rawcard">
+                <span class="a10dx__rawlabel">Raw assessment &mdash; kept as written</span>
+                <p class="a10dx__raw" id="a10dxRawEcho"><span class="a10dx__rawempty">&mdash;</span></p>
+                <span class="a10dx__rawlabel">Selected ICD-10 codes</span>
+                <div class="a10dx__chosen" id="a10dxChosen"><span class="a10dx__none">No codes selected yet</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="footnote">The raw assessment is preserved verbatim; codes are <strong>added, not substituted</strong>. One field, no drop-down &mdash; and it works offline.</p>
+      </div>
+    </section>
+
+    <!-- ============ FASTER EVERYWHERE: PRESCRIBING DEMO ============ -->
+    <section class="slide slide--tint" id="faster-rx" data-title="Faster everywhere">
+      <div class="slide__inner">
+        <p class="kicker">The same idea, everywhere</p>
+        <h2>And it makes the whole encounter faster</h2>
+        <p class="lead">Type naturally, tap to confirm &mdash; the same pattern runs prescribing too. Write the order the way you already do; pills map each drug to the pharmacy in one tap.</p>
+
+        <div class="rx" id="a10rx">
+          <div class="rx__entry">
+            <span class="rx__label">Prescription</span>
+            <div class="searchbox searchbox--demo rx__box">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"></path></svg>
+              <span class="rx__typed" id="a10rxTyped"></span><span class="rx__caret" id="a10rxCaret"></span>
+            </div>
+          </div>
+
+          <ul class="rx__suggestions" id="a10rxSuggestions">
+            <li data-rx="1">
+              <span class="rx__pillmain"><code>AUG</code> Amoxicillin/clavulanate 625 mg tablet</span>
+              <span class="rx__pillsig">PO &middot; TDS &middot; 7 days &middot; 21 tabs</span>
+              <span class="rx__tick">✓</span>
+            </li>
+            <li data-rx="2">
+              <span class="rx__pillmain"><code>PCM</code> Paracetamol 1 g tablet</span>
+              <span class="rx__pillsig">PO &middot; QDS PRN &middot; 5 days</span>
+              <span class="rx__tick">✓</span>
+            </li>
+          </ul>
+
+          <div class="rx__synced" id="a10rxSynced">
+            <span class="rx__synceddot"></span> Sent to pharmacy &mdash; 2 items queued for dispensing
+          </div>
+        </div>
+
+        <button class="btn btn--ghost a10wt__replay" id="a10rxReplay" type="button">↻ Replay</button>
+        <p class="result-disclaimer">Illustration. <em>augmentin 625 tds x 7/7</em> = amoxicillin/clavulanate 625 mg three times daily for 7 days; <em>pcm 1g qds prn</em> = paracetamol 1 g four times daily as needed.</p>
+      </div>
+    </section>
+
     <!-- ============ WHY A SUCCESSOR (bridge) ============ -->
-    <section class="slide slide--tint" id="successor" data-title="Why ICD-11 followed">
+    <section class="slide" id="successor" data-title="Why ICD-11 followed">
       <div class="slide__inner">
         <p class="kicker">The next step</p>
         <h2>Why a successor was needed</h2>
@@ -407,6 +539,7 @@
   </nav>
 
   <script src="../assets/js/deck.js?v=20260629a"></script>
-  <script src="../assets/js/icd10.js?v=20260630a"></script>
+  <script src="../assets/js/icd10-data.js?v=20260630b"></script>
+  <script src="../assets/js/icd10.js?v=20260630b"></script>
 </body>
 </html>
