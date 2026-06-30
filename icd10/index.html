@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="A professional slide presentation on ICD-10 — what it is, a short history, how its codes are built and read, the 22 chapters, the dagger/asterisk system, and its limitations. By Dr Manuwa Tolu, Harvey Road General Hospital, Yaba." />
+  <meta name="description" content="A professional slide presentation on ICD-10 — what it is, a short history, how its codes are built and read, the 22 chapters, the friction of coding in a real EMR, a write-freely suggestion-pill demo, and its limitations. By Dr Manuwa Tolu, Harvey Road General Hospital, Yaba." />
   <meta name="author" content="Dr Manuwa Tolu" />
   <title>ICD-10 — Harvey Road General Hospital, Yaba</title>
   <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg" />
@@ -51,15 +51,15 @@
 
         <ol class="outline-list">
           <li><b>What the ICD is</b><span>A short history, and why we code</span></li>
+          <li><b>One code, many names</b><span>Why a code beats a label</span></li>
           <li><b>ICD-10 in brief</b><span>The headline facts</span></li>
           <li><b>Anatomy of a code</b><span>Reading <code>I21.0</code>, piece by piece</span></li>
           <li><b>The 22 chapters</b><span>How the whole system is laid out</span></li>
           <li><b>Codes in practice</b><span>Everyday diagnoses, looked up</span></li>
-          <li><b>Dagger &amp; asterisk</b><span>ICD-10&rsquo;s dual-coding trick</span></li>
-          <li><b>Limitations</b><span>Where ICD-10 strains as a classification</span></li>
-          <li><b>The ward problem</b><span>Why coding is hard in our EMR</span></li>
+          <li><b>Stressful with our EMR</b><span>The real friction on the ward</span></li>
           <li><b>A better way</b><span>Write freely, pick code pills &mdash; live demo</span></li>
-          <li><b>Toward ICD-11</b><span>Why a successor followed</span></li>
+          <li><b>Who should code?</b><span>Doctors, coders and software</span></li>
+          <li><b>Limitations &amp; ICD-11</b><span>Where ICD-10 strains, and what&rsquo;s next</span></li>
         </ol>
       </div>
     </section>
@@ -157,6 +157,36 @@
       </div>
     </section>
 
+    <!-- ============ ONE CODE, MANY NAMES (universality) ============ -->
+    <section class="slide slide--tint" id="universality" data-title="One code, many names">
+      <div class="slide__inner">
+        <p class="kicker">The proof</p>
+        <h2>One code, many names</h2>
+        <p class="lead">Lay terms, abbreviations, clinical language, other tongues &mdash; all of these name the <strong>same disease</strong>, and ICD-10 collapses them into a single, unambiguous code.</p>
+
+        <div class="uni" role="img" aria-label="The ICD-10 code I21.9, Acute myocardial infarction, surrounded by its many names: Heart attack, MI, Myocardial infarction, Coronary thrombosis, Cardiac infarction, Crise cardiaque (French), Herzinfarkt (German), and Infarto de miocardio (Spanish).">
+          <div class="uni__orbit" aria-hidden="true"></div>
+
+          <div class="uni__core">
+            <span class="uni__corecode">I21.9</span>
+            <span class="uni__corelabel">Acute myocardial infarction</span>
+            <span class="uni__coretag">ICD-10 &middot; Circulatory system</span>
+          </div>
+
+          <span class="uni__term uni__term--1"><span class="uni__chip">Heart attack</span></span>
+          <span class="uni__term uni__term--2"><span class="uni__chip">MI</span></span>
+          <span class="uni__term uni__term--3"><span class="uni__chip">Myocardial infarction</span></span>
+          <span class="uni__term uni__term--4"><span class="uni__chip">Coronary thrombosis</span></span>
+          <span class="uni__term uni__term--5"><span class="uni__chip">Cardiac infarction</span></span>
+          <span class="uni__term uni__term--6"><span class="uni__chip">Crise cardiaque <em>FR</em></span></span>
+          <span class="uni__term uni__term--7"><span class="uni__chip">Herzinfarkt <em>DE</em></span></span>
+          <span class="uni__term uni__term--8"><span class="uni__chip">Infarto de miocardio <em>ES</em></span></span>
+        </div>
+
+        <p class="footnote">Eight names, one meaning &mdash; <code>I21.9</code>. That is what &ldquo;a common language for health&rdquo; actually buys us, and the clearest answer to <em>why we code</em>.</p>
+      </div>
+    </section>
+
     <!-- ============ WHY WE CODE ============ -->
     <section class="slide" id="why-code" data-title="Why we code">
       <div class="slide__inner">
@@ -214,7 +244,6 @@
       <div class="slide__inner">
         <p class="kicker">Reading a code</p>
         <h2>Anatomy of an ICD-10 code</h2>
-        <p class="lead">Take a heart attack on the front wall of the heart &mdash; <em>I21.0</em> &mdash; and read it one piece at a time.</p>
 
         <div class="a10">
           <div class="a10__codewrap">
@@ -286,7 +315,7 @@
       <div class="slide__inner">
         <p class="kicker">On the ward</p>
         <h2>Reading codes in practice</h2>
-        <p class="lead">In an EMR you don&rsquo;t memorise codes &mdash; you look them up. Type the diagnosis, pick the match.</p>
+        <p class="lead">In a standard EMR you don&rsquo;t memorise codes &mdash; you look them up. Type the diagnosis, pick the match.</p>
 
         <div class="a10wt">
           <div class="searchbox searchbox--demo a10wt__box">
@@ -300,60 +329,7 @@
           </ul>
         </div>
 
-        <div class="a10ex">
-          <span class="a10chip"><code>I10</code> Essential hypertension</span>
-          <span class="a10chip"><code>E11.9</code> Type&nbsp;2 diabetes, no complications</span>
-          <span class="a10chip"><code>J45</code> Asthma</span>
-          <span class="a10chip"><code>S52</code> Fracture of forearm</span>
-          <span class="a10chip"><code>O80</code> Single spontaneous delivery</span>
-        </div>
-
         <button class="btn btn--ghost a10wt__replay" id="a10Replay" type="button">↻ Replay</button>
-      </div>
-    </section>
-
-    <!-- ============ DAGGER & ASTERISK ============ -->
-    <section class="slide slide--tint" id="dagger" data-title="Dagger & asterisk">
-      <div class="slide__inner">
-        <p class="kicker">A clever trick</p>
-        <h2>The dagger &dagger; and asterisk &lowast;</h2>
-        <p class="lead">ICD-10&rsquo;s way of capturing two truths about one disease at once: its <strong>underlying cause</strong> and the <strong>organ it affects</strong>.</p>
-
-        <div class="a10dual">
-          <div class="a10dual__card a10dual__card--dagger">
-            <span class="a10dual__mark">&dagger;</span>
-            <span class="a10dual__tag">Dagger &mdash; the cause</span>
-            <code>A17.0&dagger;</code>
-            <small>Tuberculous meningitis &mdash; the underlying disease</small>
-          </div>
-          <div class="a10dual__plus">+</div>
-          <div class="a10dual__card a10dual__card--aster">
-            <span class="a10dual__mark">&lowast;</span>
-            <span class="a10dual__tag">Asterisk &mdash; the site</span>
-            <code>G01&lowast;</code>
-            <small>Meningitis in bacterial diseases classified elsewhere</small>
-          </div>
-        </div>
-
-        <div class="callout">Two codes, one condition &mdash; aetiology (<strong>&dagger;</strong>) and manifestation (<strong>&lowast;</strong>). It works, but it is a manual workaround for the kind of detail ICD-11 builds in natively.</div>
-      </div>
-    </section>
-
-    <!-- ============ LIMITATIONS ============ -->
-    <section class="slide" id="limitations" data-title="Limitations">
-      <div class="slide__inner">
-        <p class="kicker">An honest appraisal</p>
-        <h2>Where ICD-10 strains</h2>
-        <p class="lead">It has served well &mdash; but a classification designed for paper in the 1980s shows its age in a digital hospital.</p>
-
-        <div class="grid grid-3 a10lim">
-          <div class="card" style="--i:1"><div class="card__icon">📚</div><h3>Built for paper</h3><p>Designed for printed volumes and manual coding &mdash; bolted onto EMRs rather than built for them.</p></div>
-          <div class="card" style="--i:2"><div class="card__icon">📦</div><h3>Running out of room</h3><p>Categories are nearly full; there is little space to add new diseases without awkward reshuffling.</p></div>
-          <div class="card" style="--i:3"><div class="card__icon">🧩</div><h3>No post-coordination</h3><p>Every combination needs its own pre-built code &mdash; so detail like laterality or severity is often missing.</p></div>
-          <div class="card" style="--i:4"><div class="card__icon">🐢</div><h3>Slow to update</h3><p>Revisions come years apart; the classification lags behind how medicine actually changes.</p></div>
-          <div class="card" style="--i:5"><div class="card__icon">🌐</div><h3>Fragmented variants</h3><p>National editions (ICD-10-CM, ICD-10-GM) diverge &mdash; eroding the very comparability the ICD exists for.</p></div>
-          <div class="card" style="--i:6"><div class="card__icon">💻</div><h3>Not digital-native</h3><p>No official API or live coding tool; search and mapping are bolt-on, not built-in.</p></div>
-        </div>
       </div>
     </section>
 
@@ -361,7 +337,7 @@
     <section class="slide slide--tint" id="challenges" data-title="The problem on our ward">
       <div class="slide__inner">
         <p class="kicker">The real-world friction</p>
-        <h2>Why coding is hard on our ward</h2>
+        <h2>Why coding is stressful with our EMR</h2>
         <p class="lead">The classification is sound &mdash; but day to day, three things get in the way.</p>
 
         <div class="grid grid-3 a10lim">
@@ -453,6 +429,53 @@
       </div>
     </section>
 
+    <!-- ============ WHO SHOULD CODE? ============ -->
+    <section class="slide" id="who-codes" data-title="Should doctors be the ones coding?">
+      <div class="slide__inner">
+        <p class="kicker">A practical question</p>
+        <h2>Should doctors be the ones coding?</h2>
+        <p class="lead"><strong>Not necessarily.</strong> The model varies by setting &mdash; and technology is changing the answer.</p>
+
+        <div class="grid grid-3">
+          <div class="card">
+            <div class="card__icon">🩺</div>
+            <h3>Doctors document</h3>
+            <p>The clinician records the diagnosis and findings &mdash; in their own words, at the point of care.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">🗂️</div>
+            <h3>Coders translate</h3>
+            <p>In many systems, trained medical coders take that documentation and assign the correct ICD codes &mdash; after the encounter.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">💡</div>
+            <h3>Software assists</h3>
+            <p>Modern EMRs suggest likely ICD codes from the notes &mdash; like the pills we just saw &mdash; leaving the clinician to confirm, not code from scratch.</p>
+          </div>
+        </div>
+
+        <div class="callout">The goal is not to make every doctor a coder &mdash; it&rsquo;s to ensure every diagnosis becomes a <strong>coded, comparable data point</strong> with as little friction as possible.</div>
+      </div>
+    </section>
+
+    <!-- ============ LIMITATIONS (an honest appraisal) ============ -->
+    <section class="slide slide--tint" id="limitations" data-title="Limitations">
+      <div class="slide__inner">
+        <p class="kicker">An honest appraisal</p>
+        <h2>Where ICD-10 strains</h2>
+        <p class="lead">It has served well &mdash; but a classification designed for paper in the 1980s shows its age in a digital hospital.</p>
+
+        <div class="grid grid-3 a10lim">
+          <div class="card" style="--i:1"><div class="card__icon">📚</div><h3>Built for paper</h3><p>Designed for printed volumes and manual coding &mdash; bolted onto EMRs rather than built for them.</p></div>
+          <div class="card" style="--i:2"><div class="card__icon">📦</div><h3>Running out of room</h3><p>Categories are nearly full; there is little space to add new diseases without awkward reshuffling.</p></div>
+          <div class="card" style="--i:3"><div class="card__icon">🧩</div><h3>No post-coordination</h3><p>Every combination needs its own pre-built code &mdash; so detail like laterality or severity is often missing.</p></div>
+          <div class="card" style="--i:4"><div class="card__icon">🐢</div><h3>Slow to update</h3><p>Revisions come years apart; the classification lags behind how medicine actually changes.</p></div>
+          <div class="card" style="--i:5"><div class="card__icon">🌐</div><h3>Fragmented variants</h3><p>National editions (ICD-10-CM, ICD-10-GM) diverge &mdash; eroding the very comparability the ICD exists for.</p></div>
+          <div class="card" style="--i:6"><div class="card__icon">💻</div><h3>Not digital-native</h3><p>No official API or live coding tool; search and mapping are bolt-on, not built-in.</p></div>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ WHY A SUCCESSOR (bridge) ============ -->
     <section class="slide" id="successor" data-title="Why ICD-11 followed">
       <div class="slide__inner">
@@ -539,7 +562,7 @@
   </nav>
 
   <script src="../assets/js/deck.js?v=20260629a"></script>
-  <script src="../assets/js/icd10-data.js?v=20260630b"></script>
+  <script src="../assets/js/icd10-data.js?v=20260630c"></script>
   <script src="../assets/js/icd10.js?v=20260630b"></script>
 </body>
 </html>

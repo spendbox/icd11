@@ -88,7 +88,98 @@ window.ICD10 = (function () {
     { code: "G43.9", title: "Migraine, unspecified", chapter: "VI Nervous", terms: ["migraine"] },
     { code: "R51",   title: "Headache", chapter: "XVIII Symptoms", terms: ["headache", "cephalalgia"] },
     { code: "F32.9", title: "Depressive episode, unspecified", chapter: "V Mental", terms: ["depression", "depressive episode", "low mood"] },
-    { code: "F41.9", title: "Anxiety disorder, unspecified", chapter: "V Mental", terms: ["anxiety", "anxiety disorder", "gad"] }
+    { code: "F41.9", title: "Anxiety disorder, unspecified", chapter: "V Mental", terms: ["anxiety", "anxiety disorder", "gad"] },
+    { code: "F03",   title: "Unspecified dementia", chapter: "V Mental", terms: ["dementia", "alzheimer", "alzheimer's", "memory loss"] },
+    { code: "F20.9", title: "Schizophrenia, unspecified", chapter: "V Mental", terms: ["schizophrenia", "psychosis", "psychotic"] },
+    { code: "F31.9", title: "Bipolar affective disorder, unspecified", chapter: "V Mental", terms: ["bipolar", "bipolar disorder", "mania", "manic"] },
+    { code: "F10.2", title: "Mental & behavioural disorders due to alcohol, dependence syndrome", chapter: "V Mental", terms: ["alcohol dependence", "alcoholism", "alcohol use disorder", "alcohol abuse"] },
+
+    // diabetes complications (incl. diabetic foot)
+    { code: "E11.5", title: "Type 2 diabetes mellitus with peripheral circulatory complications", chapter: "IV Endocrine", terms: ["diabetic foot", "diabetic foot ulcer", "diabetic foot disease", "diabetic peripheral vascular disease", "diabetes foot"] },
+    { code: "E11.4", title: "Type 2 diabetes mellitus with neurological complications", chapter: "IV Endocrine", terms: ["diabetic neuropathy", "diabetic peripheral neuropathy", "diabetic nerve"] },
+    { code: "E11.3", title: "Type 2 diabetes mellitus with ophthalmic complications", chapter: "IV Endocrine", terms: ["diabetic retinopathy", "diabetic eye"] },
+    { code: "L97",   title: "Ulcer of lower limb, not elsewhere classified", chapter: "XII Skin", terms: ["foot ulcer", "leg ulcer", "diabetic foot ulcer", "venous ulcer", "chronic ulcer", "non-healing ulcer", "non-healing wound"] },
+    { code: "L89.9", title: "Pressure ulcer, unspecified", chapter: "XII Skin", terms: ["pressure ulcer", "bed sore", "bedsore", "decubitus ulcer", "pressure sore"] },
+    { code: "E55.9", title: "Vitamin D deficiency, unspecified", chapter: "IV Endocrine", terms: ["vitamin d deficiency", "low vitamin d"] },
+
+    // more cardiovascular / respiratory
+    { code: "I11.9", title: "Hypertensive heart disease without heart failure", chapter: "IX Circulatory", terms: ["hypertensive heart disease", "hhd"] },
+    { code: "I20.9", title: "Angina pectoris, unspecified", chapter: "IX Circulatory", terms: ["angina", "stable angina", "angina pectoris", "cardiac chest pain"] },
+    { code: "I26.9", title: "Pulmonary embolism without acute cor pulmonale", chapter: "IX Circulatory", terms: ["pe", "pulmonary embolism", "lung clot"] },
+    { code: "I82.9", title: "Embolism and thrombosis of unspecified vein", chapter: "IX Circulatory", terms: ["dvt", "deep vein thrombosis", "venous thrombosis", "leg clot"] },
+    { code: "J81",   title: "Pulmonary oedema", chapter: "X Respiratory", terms: ["pulmonary oedema", "pulmonary edema", "fluid on the lungs"] },
+    { code: "J30.9", title: "Allergic rhinitis, unspecified", chapter: "X Respiratory", terms: ["allergic rhinitis", "hay fever", "rhinitis"] },
+    { code: "J32.9", title: "Chronic sinusitis, unspecified", chapter: "X Respiratory", terms: ["sinusitis", "chronic sinusitis"] },
+
+    // gastro / hepatobiliary
+    { code: "K21.9", title: "Gastro-oesophageal reflux disease without oesophagitis", chapter: "XI Digestive", terms: ["gerd", "gord", "reflux", "acid reflux", "heartburn", "gastro-oesophageal reflux"] },
+    { code: "K80.2", title: "Calculus of gallbladder without cholecystitis", chapter: "XI Digestive", terms: ["gallstones", "cholelithiasis", "gall stones", "gallstone"] },
+    { code: "K81.0", title: "Acute cholecystitis", chapter: "XI Digestive", terms: ["cholecystitis", "gallbladder inflammation"] },
+    { code: "K74.6", title: "Other and unspecified cirrhosis of liver", chapter: "XI Digestive", terms: ["cirrhosis", "liver cirrhosis", "hepatic cirrhosis"] },
+    { code: "K76.0", title: "Fatty (change of) liver, not elsewhere classified", chapter: "XI Digestive", terms: ["fatty liver", "hepatic steatosis", "nafld"] },
+    { code: "B18.1", title: "Chronic viral hepatitis B without delta-agent", chapter: "I Infectious", terms: ["hepatitis b", "hbv", "chronic hep b"] },
+    { code: "B18.2", title: "Chronic viral hepatitis C", chapter: "I Infectious", terms: ["hepatitis c", "hcv", "chronic hep c"] },
+    { code: "U07.1", title: "COVID-19, virus identified", chapter: "XXII Special", terms: ["covid", "covid-19", "coronavirus", "sars-cov-2"] },
+    { code: "G03.9", title: "Meningitis, unspecified", chapter: "VI Nervous", terms: ["meningitis", "meningococcal", "bacterial meningitis"] },
+
+    // renal / urology
+    { code: "N20.0", title: "Calculus of kidney", chapter: "XIV Genitourinary", terms: ["kidney stone", "renal stone", "renal calculus", "nephrolithiasis", "kidney stones"] },
+    { code: "N23",   title: "Unspecified renal colic", chapter: "XIV Genitourinary", terms: ["renal colic", "ureteric colic"] },
+    { code: "N18.5", title: "Chronic kidney disease, stage 5", chapter: "XIV Genitourinary", terms: ["esrd", "end stage renal disease", "kidney failure", "dialysis", "end-stage kidney"] },
+    { code: "N76.0", title: "Acute vaginitis", chapter: "XIV Genitourinary", terms: ["vaginitis", "vaginal infection"] },
+
+    // symptoms & signs (R)
+    { code: "R10.4", title: "Other and unspecified abdominal pain", chapter: "XVIII Symptoms", terms: ["abdominal pain", "abdo pain", "tummy pain", "stomach pain", "belly pain"] },
+    { code: "R50.9", title: "Fever, unspecified", chapter: "XVIII Symptoms", terms: ["fever", "pyrexia", "febrile", "high temperature", "raised temperature"] },
+    { code: "R11",   title: "Nausea and vomiting", chapter: "XVIII Symptoms", terms: ["vomiting", "nausea", "throwing up"] },
+    { code: "R05",   title: "Cough", chapter: "XVIII Symptoms", terms: ["cough", "persistent cough"] },
+    { code: "R06.0", title: "Dyspnoea", chapter: "XVIII Symptoms", terms: ["shortness of breath", "breathlessness", "dyspnoea", "sob", "difficulty breathing"] },
+    { code: "R07.4", title: "Chest pain, unspecified", chapter: "XVIII Symptoms", terms: ["chest pain"] },
+    { code: "R42",   title: "Dizziness and giddiness", chapter: "XVIII Symptoms", terms: ["dizziness", "vertigo", "lightheadedness", "giddiness"] },
+    { code: "R60.9", title: "Oedema, unspecified", chapter: "XVIII Symptoms", terms: ["oedema", "edema", "leg swelling", "swelling", "swollen legs"] },
+    { code: "R53",   title: "Malaise and fatigue", chapter: "XVIII Symptoms", terms: ["fatigue", "tiredness", "weakness", "malaise", "lethargy"] },
+    { code: "K59.0", title: "Constipation", chapter: "XI Digestive", terms: ["constipation"] },
+    { code: "E86",   title: "Volume depletion", chapter: "IV Endocrine", terms: ["dehydration", "volume depletion", "fluid depletion"] },
+
+    // neuro
+    { code: "G40.9", title: "Epilepsy, unspecified", chapter: "VI Nervous", terms: ["epilepsy", "seizures", "seizure disorder", "convulsions", "fits"] },
+    { code: "G20",   title: "Parkinson disease", chapter: "VI Nervous", terms: ["parkinson", "parkinsons", "parkinsonism", "parkinson's disease"] },
+
+    // rheumatology / MSK
+    { code: "M06.9", title: "Rheumatoid arthritis, unspecified", chapter: "XIII Musculoskeletal", terms: ["rheumatoid arthritis", "ra"] },
+    { code: "M10.9", title: "Gout, unspecified", chapter: "XIII Musculoskeletal", terms: ["gout", "gouty arthritis"] },
+    { code: "M81.9", title: "Osteoporosis, unspecified", chapter: "XIII Musculoskeletal", terms: ["osteoporosis", "thin bones"] },
+    { code: "M16.9", title: "Osteoarthritis of hip, unspecified", chapter: "XIII Musculoskeletal", terms: ["hip osteoarthritis", "oa hip", "hip arthritis"] },
+
+    // skin / soft-tissue
+    { code: "L03.9", title: "Cellulitis, unspecified", chapter: "XII Skin", terms: ["cellulitis", "skin infection"] },
+    { code: "L02.9", title: "Cutaneous abscess, furuncle and carbuncle, unspecified", chapter: "XII Skin", terms: ["abscess", "boil", "furuncle", "skin abscess"] },
+    { code: "L40.9", title: "Psoriasis, unspecified", chapter: "XII Skin", terms: ["psoriasis"] },
+    { code: "L50.9", title: "Urticaria, unspecified", chapter: "XII Skin", terms: ["urticaria", "hives", "nettle rash"] },
+    { code: "T78.4", title: "Allergy, unspecified", chapter: "XIX Injury", terms: ["allergy", "allergic reaction", "allergies"] },
+
+    // eye
+    { code: "H10.9", title: "Conjunctivitis, unspecified", chapter: "VII Eye", terms: ["conjunctivitis", "red eye", "pink eye"] },
+    { code: "H25.9", title: "Senile cataract, unspecified", chapter: "VII Eye", terms: ["cataract", "cataracts"] },
+    { code: "H40.9", title: "Glaucoma, unspecified", chapter: "VII Eye", terms: ["glaucoma"] },
+
+    // oncology
+    { code: "C50.9", title: "Malignant neoplasm of breast, unspecified", chapter: "II Neoplasms", terms: ["breast cancer", "carcinoma of breast", "breast carcinoma", "breast ca"] },
+    { code: "C61",   title: "Malignant neoplasm of prostate", chapter: "II Neoplasms", terms: ["prostate cancer", "prostate carcinoma", "prostate ca"] },
+    { code: "C18.9", title: "Malignant neoplasm of colon, unspecified", chapter: "II Neoplasms", terms: ["colon cancer", "colorectal cancer", "bowel cancer"] },
+    { code: "C34.9", title: "Malignant neoplasm of bronchus or lung, unspecified", chapter: "II Neoplasms", terms: ["lung cancer", "lung carcinoma", "lung ca"] },
+    { code: "C22.0", title: "Liver cell carcinoma", chapter: "II Neoplasms", terms: ["hepatocellular carcinoma", "hcc", "liver cancer"] },
+    { code: "C53.9", title: "Malignant neoplasm of cervix uteri, unspecified", chapter: "II Neoplasms", terms: ["cervical cancer", "cervix cancer"] },
+
+    // electrolytes
+    { code: "E87.6", title: "Hypokalaemia", chapter: "IV Endocrine", terms: ["hypokalaemia", "hypokalemia", "low potassium"] },
+    { code: "E87.1", title: "Hypo-osmolality and hyponatraemia", chapter: "IV Endocrine", terms: ["hyponatraemia", "hyponatremia", "low sodium"] },
+
+    // obstetric / neonatal / general
+    { code: "Z34.9", title: "Supervision of normal pregnancy, unspecified", chapter: "XXI Factors", terms: ["antenatal", "pregnancy", "pregnant", "anc", "antenatal care"] },
+    { code: "O03.9", title: "Complete or unspecified spontaneous abortion", chapter: "XV Pregnancy", terms: ["miscarriage", "spontaneous abortion", "incomplete abortion"] },
+    { code: "P59.9", title: "Neonatal jaundice, unspecified", chapter: "XVI Perinatal", terms: ["neonatal jaundice", "jaundice newborn", "newborn jaundice"] },
+    { code: "Z00.0", title: "General medical examination", chapter: "XXI Factors", terms: ["medical examination", "check up", "general checkup", "health check"] }
   ];
 
   function norm(s) { return (s || "").toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim(); }
