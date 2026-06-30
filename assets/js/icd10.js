@@ -156,37 +156,54 @@
         .map(function (s) { return s.trim(); })
         .filter(function (s) { return s.length >= 2; });
     }
-    // De-duplicated ICD-10 matches for a list of phrases/terms.
-    function suggestFor(terms, perTerm, cap) {
-      var seen = {}, out = [];
-      terms.forEach(function (p) {
-        DB.search(p, perTerm || 3).forEach(function (it) {
-          if (!seen[it.code]) { seen[it.code] = 1; out.push(it); }
-        });
+    // Build one suggestion group per typed diagnosis / parsed problem, so the
+    // pills stay categorised under the phrase they came from.
+    function buildGroups(labels) {
+      var groups = [];
+      labels.forEach(function (label) {
+        label = label.trim();
+        if (label.length < 2) return;
+        groups.push({ label: label, items: DB.search(label, 4) });
       });
-      return out.slice(0, cap || 8);
+      return groups.slice(0, 6);
     }
 
     function isChosen(code) { return chosen.some(function (c) { return c.code === code; }); }
     function toggle(it) {
       if (isChosen(it.code)) chosen = chosen.filter(function (c) { return c.code !== it.code; });
       else chosen.push(it);
-      renderSuggestions(lastSugg); renderChosen();
+      renderGroups(lastGroups); renderChosen();
     }
 
-    var lastSugg = [];
-    function renderSuggestions(sugg) {
-      lastSugg = sugg || [];
+    function pill(it) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "a10pill" + (isChosen(it.code) ? " is-on" : "");
+      b.innerHTML = "<code>" + esc(it.code) + "</code><span>" + esc(it.title) + "</span><span class=\"a10pill__add\">" + (isChosen(it.code) ? "✓" : "+") + "</span>";
+      b.addEventListener("click", function () { toggle(it); });
+      return b;
+    }
+
+    var lastGroups = [];
+    function renderGroups(groups) {
+      lastGroups = groups || [];
       var text = textEl.value.trim();
       suggestEl.innerHTML = "";
       if (!text) { suggestEl.innerHTML = '<p class="a10dx__hint">Start typing a diagnosis to see suggestions.</p>'; return; }
-      if (!lastSugg.length) { suggestEl.innerHTML = '<p class="a10dx__hint">No match yet &mdash; try &ldquo;malaria&rdquo;, &ldquo;diabetic foot ulcer&rdquo;, &ldquo;HTN&rdquo;&hellip;</p>'; return; }
-      lastSugg.forEach(function (it) {
-        var b = document.createElement("button");
-        b.type = "button"; b.className = "a10pill" + (isChosen(it.code) ? " is-on" : "");
-        b.innerHTML = "<code>" + esc(it.code) + "</code><span>" + esc(it.title) + "</span><span class=\"a10pill__add\">" + (isChosen(it.code) ? "✓" : "+") + "</span>";
-        b.addEventListener("click", function () { toggle(it); });
-        suggestEl.appendChild(b);
+      var anyItems = lastGroups.some(function (g) { return g.items.length; });
+      if (!lastGroups.length || !anyItems) { suggestEl.innerHTML = '<p class="a10dx__hint">No match yet &mdash; try &ldquo;malaria&rdquo;, &ldquo;diabetic foot ulcer&rdquo;, &ldquo;HTN&rdquo;&hellip;</p>'; return; }
+      lastGroups.forEach(function (g) {
+        var wrap = document.createElement("div");
+        wrap.className = "a10grp";
+        var head = document.createElement("span");
+        head.className = "a10grp__label";
+        head.innerHTML = esc(g.label) + (g.items.length ? ' <span class="a10grp__count">' + g.items.length + "</span>" : "");
+        wrap.appendChild(head);
+        var pills = document.createElement("div");
+        pills.className = "a10grp__pills";
+        if (!g.items.length) { pills.innerHTML = '<span class="a10grp__none">no ICD-10 match &mdash; keep the raw text</span>'; }
+        else g.items.forEach(function (it) { pills.appendChild(pill(it)); });
+        wrap.appendChild(pills);
+        suggestEl.appendChild(wrap);
       });
     }
     function renderChosen() {
@@ -219,7 +236,7 @@
     function refresh() {
       var text = textEl.value.trim();
       rawEl.innerHTML = text ? esc(text) : '<span class="a10dx__rawempty">&mdash;</span>';
-      renderSuggestions(text ? suggestFor(splitPhrases(text)) : []);
+      renderGroups(text ? buildGroups(splitPhrases(text)) : []);
       renderChosen();
       setStatus();
       clearTimeout(aiTimer);
@@ -230,11 +247,8 @@
         aiParse(text).then(function (terms) {
           if (myToken !== aiReqToken) return;          // superseded by newer input
           if (terms && terms.length) {
-            // AI terms lead; fold in any local matches it missed.
-            var merged = suggestFor(terms, 2, 6).concat(suggestFor(splitPhrases(text)));
-            var seen = {}, out = [];
-            merged.forEach(function (it) { if (!seen[it.code]) { seen[it.code] = 1; out.push(it); } });
-            renderSuggestions(out.slice(0, 8));
+            // AI gives clean problem terms — group the pills under each.
+            renderGroups(buildGroups(terms));
             setStatus("ai", "AI read your note &mdash; " + terms.length + (terms.length === 1 ? " problem" : " problems") + " found");
           } else { setStatus(); }
         });
@@ -246,7 +260,7 @@
       b.addEventListener("click", function () { textEl.value = b.getAttribute("data-ex") || ""; refresh(); textEl.focus(); });
     });
 
-    renderSuggestions([]); renderChosen(); setStatus();
+    renderGroups([]); renderChosen(); setStatus();
   })();
 
   /* =========================================================
@@ -255,21 +269,21 @@
   var rxEl = byId("a10rx");
   var rxTyped = byId("a10rxTyped");
   var rxToken = 0;
-  var RX_TEXT = "tabs augmentin 625mg tds x 7/7, tabs pcm 1g qds prn";
+  var RX_TEXT = "tabs pcm 1g tds x 5/7";
   function playRx() {
     if (!rxEl || !rxTyped) return;
     var myToken = ++rxToken;
-    rxEl.classList.remove("show-suggestions", "pick-1", "pick-2", "show-synced");
+    rxEl.classList.remove("show-suggestions", "pick-1", "show-synced");
     rxTyped.textContent = "";
-    if (reduce) { rxTyped.textContent = RX_TEXT; rxEl.classList.add("show-suggestions", "pick-1", "pick-2", "show-synced"); return; }
+    if (reduce) { rxTyped.textContent = RX_TEXT; rxEl.classList.add("show-suggestions", "pick-1", "show-synced"); return; }
     var i = 0;
     (function type() {
       if (myToken !== rxToken) return;
-      if (i <= RX_TEXT.length) { rxTyped.textContent = RX_TEXT.slice(0, i); i++; window.setTimeout(type, 42); return; }
+      if (i <= RX_TEXT.length) { rxTyped.textContent = RX_TEXT.slice(0, i); i++; window.setTimeout(type, 55); return; }
       seq();
     })();
     function at(cls, delay) { window.setTimeout(function () { if (myToken === rxToken) rxEl.classList.add(cls); }, delay); }
-    function seq() { at("show-suggestions", 400); at("pick-1", 1150); at("pick-2", 1700); at("show-synced", 2350); }
+    function seq() { at("show-suggestions", 380); at("pick-1", 1000); at("show-synced", 1700); }
   }
   var rxReplay = byId("a10rxReplay");
   if (rxReplay) rxReplay.addEventListener("click", playRx);

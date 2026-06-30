@@ -181,8 +181,17 @@
 .a10dx__cols { display: grid; grid-template-columns: 1.1fr 1fr; gap: 1.2rem; align-items: start; }
 .a10dx__col { display: grid; gap: 0.55rem; }
 .a10dx__sub { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
-.a10dx__suggest { display: flex; flex-wrap: wrap; gap: 0.5rem; min-height: 86px; align-content: flex-start; }
+.a10dx__suggest { display: block; min-height: 86px; }
 .a10dx__hint { font-size: 0.9rem; color: var(--muted); margin: 0; }
+
+/* suggestions grouped by the diagnosis that was typed */
+.a10grp { margin-bottom: 0.8rem; }
+.a10grp:last-child { margin-bottom: 0; }
+.a10grp__label { display: flex; align-items: center; gap: 0.4rem; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--teal-700); margin-bottom: 0.4rem; }
+.a10grp__label::before { content: ""; width: 7px; height: 7px; border-radius: 2px; background: var(--teal-500); flex: none; }
+.a10grp__label .a10grp__count { color: var(--muted); font-weight: 700; letter-spacing: 0; text-transform: none; }
+.a10grp__pills { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.a10grp__none { font-size: 0.82rem; color: var(--muted); }
 
 .a10pill { display: inline-flex; align-items: center; gap: 0.5rem; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 0.4rem 0.5rem 0.4rem 0.55rem; cursor: pointer; box-shadow: var(--shadow-sm); transition: border-color 0.15s, background 0.15s, transform 0.12s; animation: a10-pillpop 0.35s ease both; }
 .a10pill:hover { border-color: var(--teal-400, var(--teal-300)); transform: translateY(-1px); }

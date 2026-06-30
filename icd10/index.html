@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/css/styles.css?v=20260629a" />
-  <link rel="stylesheet" href="../assets/css/icd10.css?v=20260630b" />
+  <link rel="stylesheet" href="../assets/css/icd10.css?v=20260630e" />
 </head>
 <body>
 
@@ -306,7 +306,6 @@
           </table>
         </div>
 
-        <p class="footnote">Chapter&nbsp;IX (circulatory) holds <code>I21</code> &mdash; our heart attack. Letters map to body systems; <code>U</code> is reserved for special purposes.</p>
       </div>
     </section>
 
@@ -350,8 +349,42 @@
       </div>
     </section>
 
+    <!-- ============ THE REAL-WORLD PROBLEM (diagnosis is dynamic) ============ -->
+    <section class="slide" id="dx-dynamic" data-title="The real-world problem">
+      <div class="slide__inner">
+        <p class="kicker">The real-world problem</p>
+        <h2>A diagnosis is not a single moment</h2>
+        <p class="lead">On the ward it <strong>changes by the hour</strong> &mdash; and we can&rsquo;t let coding slow down care.</p>
+
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card__icon">⏱️</div>
+            <h3>Fast at the point of care</h3>
+            <p>A clerking has several problems at once. Capturing them must take seconds, not minutes &mdash; or clinicians simply won&rsquo;t do it.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">🔄</div>
+            <h3>It evolves</h3>
+            <p>&ldquo;Query sepsis&rdquo; becomes confirmed; hypertension goes from uncontrolled to stable. The record has to move with the patient.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">🩺</div>
+            <h3>Diagnosis ≠ assessment</h3>
+            <p>&ldquo;Stable&rdquo;, &ldquo;improving&rdquo;, &ldquo;for review&rdquo; are <em>assessments</em> of a known problem &mdash; not diagnoses, and not ICD codes.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">🧾</div>
+            <h3>Our EMR today</h3>
+            <p>Has a single <strong>Diagnosis</strong> field. There is nowhere to record the day-to-day <strong>assessment</strong> &mdash; so nuance is lost or jammed into the wrong box.</p>
+          </div>
+        </div>
+
+        <div class="callout">The fix is two fields, not one: a coded <strong>Diagnosis</strong> <em>and</em> a free <strong>Assessment / clinical course</strong> beside it.</div>
+      </div>
+    </section>
+
     <!-- ============ THE FIX: WRITE FREELY, PICK THE CODE (demo) ============ -->
-    <section class="slide" id="dx-pills" data-title="Write freely, pick the code">
+    <section class="slide slide--tint" id="dx-pills" data-title="Write freely, pick the code">
       <div class="slide__inner slide__inner--wide">
         <p class="kicker">A better way</p>
         <h2>Write it your way &mdash; code it anyway</h2>
@@ -391,6 +424,41 @@
       </div>
     </section>
 
+    <!-- ============ WON'T CAREFUL CODING SLOW US DOWN? ============ -->
+    <section class="slide" id="efficiency" data-title="Won't this slow us down?">
+      <div class="slide__inner">
+        <p class="kicker">The honest trade-off</p>
+        <h2>&ldquo;Won&rsquo;t careful coding slow us down?&rdquo;</h2>
+        <p class="lead">Coding one diagnosis well costs a few extra seconds. The win comes when the <strong>same</strong> pattern &mdash; natural language plus confirmation pills &mdash; runs the <strong>whole</strong> encounter.</p>
+
+        <div class="grid grid-3">
+          <div class="card">
+            <div class="card__icon">🩺</div>
+            <h3>Diagnosis</h3>
+            <p>Type it, tap the ICD-10 code pill. Coded as you think &mdash; without leaving the note.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">💊</div>
+            <h3>Prescriptions</h3>
+            <p>Type the order, tap to confirm &mdash; it syncs straight to the <strong>pharmacy</strong>. No second screen, no tick-boxes.</p>
+          </div>
+          <div class="card">
+            <div class="card__icon">🧪</div>
+            <h3>Investigations</h3>
+            <p>Type the tests, tap to confirm &mdash; synced to the <strong>lab</strong>. One field, not a form.</p>
+          </div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat"><span class="stat__num">5 → 1</span><span class="stat__label">steps to send a medication</span></div>
+          <div class="stat"><span class="stat__num">3&ndash;5&times;</span><span class="stat__label">faster overall workflow</span></div>
+          <div class="stat"><span class="stat__num">1</span><span class="stat__label">screen for the whole visit</span></div>
+        </div>
+
+        <div class="callout">Today our EMR needs <strong>five steps</strong> just to send one drug to the pharmacy. With natural-language orders and confirmation pills that sync to the pharmacy and lab databases, that becomes <strong>type &rarr; tap</strong>.</div>
+      </div>
+    </section>
+
     <!-- ============ FASTER EVERYWHERE: PRESCRIBING DEMO ============ -->
     <section class="slide slide--tint" id="faster-rx" data-title="Faster everywhere">
       <div class="slide__inner">
@@ -409,24 +477,19 @@
 
           <ul class="rx__suggestions" id="a10rxSuggestions">
             <li data-rx="1">
-              <span class="rx__pillmain"><code>AUG</code> Amoxicillin/clavulanate 625 mg tablet</span>
-              <span class="rx__pillsig">PO &middot; TDS &middot; 7 days &middot; 21 tabs</span>
-              <span class="rx__tick">✓</span>
-            </li>
-            <li data-rx="2">
               <span class="rx__pillmain"><code>PCM</code> Paracetamol 1 g tablet</span>
-              <span class="rx__pillsig">PO &middot; QDS PRN &middot; 5 days</span>
+              <span class="rx__pillsig">PO &middot; TDS &middot; 5 days &middot; 15 tabs</span>
               <span class="rx__tick">✓</span>
             </li>
           </ul>
 
           <div class="rx__synced" id="a10rxSynced">
-            <span class="rx__synceddot"></span> Sent to pharmacy &mdash; 2 items queued for dispensing
+            <span class="rx__synceddot"></span> Sent to pharmacy &mdash; 1 item queued for dispensing
           </div>
         </div>
 
         <button class="btn btn--ghost a10wt__replay" id="a10rxReplay" type="button">↻ Replay</button>
-        <p class="result-disclaimer">Illustration. <em>augmentin 625 tds x 7/7</em> = amoxicillin/clavulanate 625 mg three times daily for 7 days; <em>pcm 1g qds prn</em> = paracetamol 1 g four times daily as needed.</p>
+        <p class="result-disclaimer">Illustration. <em>tabs pcm 1g tds x 5/7</em> = paracetamol 1 g tablets three times daily for 5 days (15 tablets).</p>
       </div>
     </section>
 
@@ -563,7 +626,7 @@
   </nav>
 
   <script src="../assets/js/deck.js?v=20260629a"></script>
-  <script src="../assets/js/icd10-data.js?v=20260630d"></script>
-  <script src="../assets/js/icd10.js?v=20260630d"></script>
+  <script src="../assets/js/icd10-data.js?v=20260630e"></script>
+  <script src="../assets/js/icd10.js?v=20260630e"></script>
 </body>
 </html>

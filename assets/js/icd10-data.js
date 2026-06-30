@@ -98,7 +98,13 @@ window.ICD10 = (function () {
     { code: "E11.5", title: "Type 2 diabetes mellitus with peripheral circulatory complications", chapter: "IV Endocrine", terms: ["diabetic foot", "diabetic foot ulcer", "diabetic foot disease", "diabetic peripheral vascular disease", "diabetes foot"] },
     { code: "E11.4", title: "Type 2 diabetes mellitus with neurological complications", chapter: "IV Endocrine", terms: ["diabetic neuropathy", "diabetic peripheral neuropathy", "diabetic nerve"] },
     { code: "E11.3", title: "Type 2 diabetes mellitus with ophthalmic complications", chapter: "IV Endocrine", terms: ["diabetic retinopathy", "diabetic eye"] },
-    { code: "L97",   title: "Ulcer of lower limb, not elsewhere classified", chapter: "XII Skin", terms: ["foot ulcer", "leg ulcer", "diabetic foot ulcer", "venous ulcer", "chronic ulcer", "non-healing ulcer", "non-healing wound"] },
+    // diabetes mellitus with foot ulcer (ICD-10-CM .621 series)
+    { code: "E11.621", title: "Type 2 diabetes mellitus with foot ulcer", chapter: "IV Endocrine", terms: ["diabetic foot ulcer", "type 2 diabetes foot ulcer", "t2dm foot ulcer", "diabetic foot", "diabetes foot ulcer"] },
+    { code: "E10.621", title: "Type 1 diabetes mellitus with foot ulcer", chapter: "IV Endocrine", terms: ["diabetic foot ulcer", "type 1 diabetes foot ulcer", "t1dm foot ulcer"] },
+    { code: "E13.621", title: "Other specified diabetes mellitus with foot ulcer", chapter: "IV Endocrine", terms: ["other diabetes foot ulcer", "other specified diabetes foot ulcer"] },
+    { code: "E08.621", title: "Diabetes mellitus due to underlying condition with foot ulcer", chapter: "IV Endocrine", terms: ["secondary diabetes foot ulcer", "diabetes due to underlying condition foot ulcer"] },
+    { code: "E09.621", title: "Drug or chemical induced diabetes mellitus with foot ulcer", chapter: "IV Endocrine", terms: ["drug induced diabetes foot ulcer", "steroid induced diabetes foot ulcer"] },
+    { code: "L97",   title: "Ulcer of lower limb, not elsewhere classified", chapter: "XII Skin", terms: ["foot ulcer", "leg ulcer", "venous ulcer", "chronic ulcer", "non-healing ulcer", "non-healing wound"] },
     { code: "L89.9", title: "Pressure ulcer, unspecified", chapter: "XII Skin", terms: ["pressure ulcer", "bed sore", "bedsore", "decubitus ulcer", "pressure sore"] },
     { code: "E55.9", title: "Vitamin D deficiency, unspecified", chapter: "IV Endocrine", terms: ["vitamin d deficiency", "low vitamin d"] },
 
