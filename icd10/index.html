@@ -337,12 +337,13 @@
       <div class="slide__inner">
         <p class="kicker">The real-world friction</p>
         <h2>Why coding is stressful with our EMR</h2>
-        <p class="lead">The classification is sound &mdash; but day to day, three things get in the way.</p>
+        <p class="lead">The classification is sound &mdash; but day to day, four things get in the way.</p>
 
-        <div class="grid grid-3 a10lim">
+        <div class="grid grid-2 a10lim">
           <div class="card" style="--i:1"><div class="card__icon">⌨️</div><h3>The search barely works</h3><p>Our EMR&rsquo;s ICD field is sluggish &mdash; it often doesn&rsquo;t register what you type, so you give up and free-type the diagnosis instead.</p></div>
           <div class="card" style="--i:2"><div class="card__icon">📶</div><h3>It chokes on our internet</h3><p>The lookup leans on connectivity we don&rsquo;t reliably have; on a slow day the code list simply won&rsquo;t load.</p></div>
           <div class="card" style="--i:3"><div class="card__icon">🔤</div><h3>ICD&rsquo;s words aren&rsquo;t our words</h3><p>You want to write <em>otomycosis</em> &mdash; but the pick-list has no entry, so you reword it as <em>chronic otitis externa</em> and the real picture is lost.</p></div>
+          <div class="card" style="--i:4"><div class="card__icon">📖</div><h3>A code isn&rsquo;t the whole story</h3><p>A diagnosis carries context a single code can&rsquo;t hold. You want to record <em>unbooked G2P1 with severe pre-eclampsia</em> &mdash; but the field only offers <em>pre-eclampsia&nbsp;(O14.1)</em>, and the booking status, gravidity and parity are lost.</p></div>
         </div>
 
         <div class="callout">So clinicians abandon the code field altogether &mdash; and the diagnosis never becomes data.</div>
@@ -577,6 +578,23 @@
       </div>
     </section>
 
+    <!-- ============ CONCLUSION ============ -->
+    <section class="slide slide--tint" id="conclusion" data-title="Conclusion">
+      <div class="slide__inner">
+        <p class="kicker">The takeaway</p>
+        <h2>Where this leaves us</h2>
+        <p class="lead">ICD-10 turns every diagnosis into data the whole system can use &mdash; and it isn&rsquo;t going away tomorrow.</p>
+
+        <ul class="feature-list feature-list--lg">
+          <li><strong>Coding is worth the few seconds</strong> &mdash; it is what makes a note countable, billable and comparable.</li>
+          <li><strong>The friction is our EMR, not the classification</strong> &mdash; a search that barely works, and a single field that flattens the whole clinical story.</li>
+          <li><strong>The fix is a better workflow</strong> &mdash; write the assessment as you mean it, keep it verbatim, and pick suggested ICD-10 pills. The same pattern speeds prescribing; ICD-11 is the natural next step.</li>
+        </ul>
+
+        <div class="callout">Keep the doctor&rsquo;s words. Add the code. Lose neither.</div>
+      </div>
+    </section>
+
     <!-- ============ REFERENCES ============ -->
     <section class="slide" id="references" data-title="References">
       <div class="slide__inner">
@@ -635,7 +653,7 @@
   </nav>
 
   <script src="../assets/js/deck.js?v=20260629a"></script>
-  <script src="../assets/js/icd10-data.js?v=20260630e"></script>
+  <script src="../assets/js/icd10-data.js?v=20260630g"></script>
   <script src="../assets/js/icd10.js?v=20260630f"></script>
 </body>
 </html>

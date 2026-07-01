@@ -73,6 +73,7 @@ window.ICD10 = (function () {
 
     // obstetric
     { code: "O80",   title: "Single spontaneous delivery", chapter: "XV Pregnancy", terms: ["normal delivery", "svd", "spontaneous delivery", "vaginal delivery"] },
+    { code: "O14.1", title: "Severe pre-eclampsia", chapter: "XV Pregnancy", terms: ["severe pre-eclampsia", "severe preeclampsia", "severe pet"] },
     { code: "O14.9", title: "Pre-eclampsia, unspecified", chapter: "XV Pregnancy", terms: ["pre-eclampsia", "preeclampsia", "pet", "pregnancy hypertension"] },
 
     // injury / msk
