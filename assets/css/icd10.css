@@ -111,6 +111,46 @@
 .rx.pick-3 .rx__suggestions li[data-rx="3"] .rx__tick { background: var(--green); color: #fff; border-color: var(--green); }
 
 /* =========================================================
+   "HOW CAN WE IMPROVE?" — one-shot cat → car → plane scene.
+   Plays once on slide entry (no loop); replays if re-entered.
+   ========================================================= */
+.imp-stage {
+  position: relative; width: 100%; max-width: 880px; margin: 0.5rem auto 0;
+  height: clamp(220px, 40vh, 350px); border-radius: var(--radius); overflow: hidden;
+  border: 1px solid var(--line); box-shadow: var(--shadow-sm);
+  background: linear-gradient(180deg, #e7f5fb 0%, #f2fbfb 60%, #e6f2e5 60%, #dcecda 100%);
+}
+.imp-ground { position: absolute; left: 0; right: 0; bottom: 0; height: 34%; background: linear-gradient(180deg, #e3f0e2, #d3e7d1); }
+.imp-ground::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--teal-300); opacity: 0.55; }
+.imp-cloud { position: absolute; font-size: clamp(1.5rem, 4vw, 2.6rem); opacity: 0.9; }
+.imp-cloud--1 { top: 12%; left: 12%; } .imp-cloud--2 { top: 26%; left: 68%; }
+.imp-actor { position: absolute; bottom: 31%; left: 44%; font-size: clamp(2.6rem, 8vw, 4.4rem); line-height: 1; opacity: 0; will-change: left, transform, opacity; }
+
+.slide.is-active .imp-cat   { animation: imp-cat-run 3s linear forwards, imp-cat-bob 0.32s ease-in-out 9; }
+.slide.is-active .imp-car   { animation: imp-car 4s ease forwards; animation-delay: 3s; }
+.slide.is-active .imp-plane { animation: imp-plane 3.6s ease-in forwards; animation-delay: 5s; }
+/* id-scoped so it outranks the deck's per-child reveal stagger and stays
+   hidden until the plane takes off */
+#improve.slide.is-active .imp-caption { animation: imp-fade 0.8s ease forwards 6.7s; }
+
+@keyframes imp-cat-run { 0% { left: -14%; opacity: 0; } 8% { opacity: 1; } 82% { left: 42%; opacity: 1; } 100% { left: 50%; opacity: 0; } }
+@keyframes imp-cat-bob { 0%, 100% { transform: translateY(0) scaleX(-1); } 50% { transform: translateY(-11px) scaleX(-1); } }
+@keyframes imp-car { 0% { opacity: 0; transform: translateY(12px) scale(0.9); } 12% { opacity: 1; transform: none; } 55% { opacity: 1; transform: none; } 82% { opacity: 0; transform: translateY(-6px) scale(1.08); } 100% { opacity: 0; } }
+@keyframes imp-plane { 0% { opacity: 0; transform: translateY(8px) scale(0.82); } 25% { opacity: 1; transform: none; } 44% { opacity: 1; transform: translate(3%, -6%) rotate(2deg); } 100% { opacity: 0; transform: translate(165%, -135%) scale(0.5) rotate(10deg); } }
+@keyframes imp-fade { to { opacity: 1; } }
+
+.imp-caption { text-align: center; margin-top: 1rem; font-size: 1rem; color: var(--ink-soft); opacity: 0; }
+.imp-caption strong { color: var(--teal-700); }
+
+@media (prefers-reduced-motion: reduce) {
+  .imp-stage { height: auto; padding: 1.6rem; display: flex; align-items: center; justify-content: center; gap: clamp(1rem, 5vw, 3rem); background: var(--bg-tint); }
+  .imp-ground, .imp-cloud { display: none; }
+  .imp-actor { position: static; opacity: 1 !important; animation: none !important; font-size: clamp(2.2rem, 7vw, 3.4rem); }
+  .imp-cat { transform: scaleX(-1); }
+  .imp-caption { opacity: 1 !important; animation: none !important; }
+}
+
+/* =========================================================
    DAGGER & ASTERISK — dual-coding cards
    ========================================================= */
 .a10dual { display: flex; flex-wrap: wrap; align-items: stretch; justify-content: center; gap: 1rem; margin: 0.6rem 0 1.6rem; }
