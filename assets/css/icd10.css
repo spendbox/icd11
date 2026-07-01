@@ -121,12 +121,14 @@
   border: 1px solid var(--line); box-shadow: var(--shadow-sm);
   background: radial-gradient(120% 90% at 50% 34%, #ffffff 0%, #eef5f6 62%, #e2edef 100%);
 }
-.imp-scene { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 11%; transform-origin: center 78%; }
+.imp-scene { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; transform-origin: center center; }
 .slide.is-active .imp-scene { animation: imp-cam 15s cubic-bezier(.5,0,.2,1) forwards; }
-@keyframes imp-cam { 0% { transform: scale(1.14); } 46% { transform: scale(1.14); } 70% { transform: scale(0.92); } 100% { transform: scale(0.92); } }
+/* stays inside the frame at every scale (start only slightly zoomed, then pull back) */
+@keyframes imp-cam { 0% { transform: scale(1.05); } 44% { transform: scale(1.05); } 70% { transform: scale(0.82); } 100% { transform: scale(0.82); } }
 
-/* the statue — a grid mosaic of small marble blocks */
-.imp-statue { --cell: clamp(11px, 2.4vw, 18px); --gap: 2px; position: relative;
+/* the statue — a grid mosaic of small marble blocks.
+   --cell tracks viewport height so the full statue always fits the (height-capped) stage. */
+.imp-statue { --cell: clamp(9px, 1.9vh, 17px); --gap: 2px; position: relative;
   display: grid; grid-template-columns: repeat(11, var(--cell)); grid-template-rows: repeat(14, var(--cell)); gap: var(--gap);
   filter: drop-shadow(0 10px 12px rgba(10,85,96,0.18)); }
 .imp-block {
@@ -144,7 +146,7 @@
 @keyframes imp-shine { 0%, 100% { filter: brightness(1); } 45% { filter: brightness(1.6) saturate(0.85); } }
 
 /* the pedestal — slides up as the camera pulls back */
-.imp-pedestal { width: calc(11 * clamp(11px,2.4vw,18px) + 54px); height: clamp(16px, 3.4vw, 26px);
+.imp-pedestal { width: calc(11 * clamp(9px,1.9vh,17px) + 54px); height: clamp(15px, 2.8vh, 24px);
   margin-top: 5px; border-radius: 4px; border-top: clamp(4px,0.8vw,6px) solid #f2f7f8;
   background: linear-gradient(180deg, #dbe6e8 0%, #c6d5d7 60%, #b3c4c6 100%);
   box-shadow: 0 10px 16px rgba(10,85,96,0.2), inset 0 1px 0 rgba(255,255,255,0.9);
