@@ -288,6 +288,46 @@
   var rxReplay = byId("a10rxReplay");
   if (rxReplay) rxReplay.addEventListener("click", playRx);
 
+  /* =========================================================
+     "HOW CAN WE IMPROVE?" — build the cat-statue block mosaic.
+     Bottom rows stack first; a left→right shine polishes it.
+     Built once; the CSS animations replay when the slide re-enters.
+     ========================================================= */
+  (function buildStatue() {
+    var host = byId("impStatue");
+    if (!host) return;
+    var ROWS = [
+      "  #     #  ",
+      "  ##   ##  ",
+      "  ### ###  ",
+      "   #####   ",
+      "  #######  ",
+      "  #######  ",
+      "   #####   ",
+      "   #####   ",
+      "  #######  ",
+      "  #######  ",
+      " ######### ",
+      " ######### ",
+      "###########",
+      "###########"
+    ];
+    var maxRow = ROWS.length - 1, frag = document.createDocumentFragment();
+    for (var r = 0; r < ROWS.length; r++) {
+      for (var c = 0; c < ROWS[r].length; c++) {
+        if (ROWS[r].charAt(c) !== "#") continue;
+        var b = document.createElement("span");
+        b.className = "imp-block";
+        b.style.gridColumn = (c + 1);
+        b.style.gridRow = (r + 1);
+        b.style.setProperty("--d", ((maxRow - r) * 0.42 + c * 0.02 + 0.4).toFixed(2) + "s"); // bottom-up stack
+        b.style.setProperty("--s", (10.6 + c * 0.09).toFixed(2) + "s");                      // shine sweep L→R
+        frag.appendChild(b);
+      }
+    }
+    host.appendChild(frag);
+  })();
+
   /* ---------- wire everything to slide entry ---------- */
   document.addEventListener("slide:enter", function (e) {
     var id = e.detail && e.detail.id;
